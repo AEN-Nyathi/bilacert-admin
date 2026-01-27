@@ -31,7 +31,6 @@ export default function TestimonialEmbed({ postUrl }: TestimonialEmbedProps) {
         key={postUrl} // Using key to help React remount the component on URL change
         className="fb-post"
         data-href={postUrl}
-        data-width="500"
         data-show-text="true"
       />
     </div>

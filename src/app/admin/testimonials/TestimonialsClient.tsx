@@ -65,7 +65,7 @@ export default function TestimonialsClient() {
                 <CardContent className="p-0">
                 <TestimonialEmbed postUrl={testimonial.postUrl} />
                 </CardContent>
-                <CardFooter className="flex justify-end gap-2 border-t p-4">
+                <CardFooter className="flex justify-center gap-2 border-t p-4">
                 <Button variant="outline" size="sm" onClick={() => handleEdit(testimonial)}>
                     <Edit className="h-3 w-3" />
                     <span className="sr-only">Edit</span>
