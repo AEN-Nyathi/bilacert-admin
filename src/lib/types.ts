@@ -1,5 +1,4 @@
 
-
 export interface Submission {
   id?: string;
   formType: string;
@@ -38,11 +37,13 @@ export interface Testimonial {
   createdAt: Date;
 }
 
-export interface Blog {
+export interface BlogPost {
   id: string;
   title: string;
   slug: string;
-  content: string; // MDX content
-  publishedAt: Date;
-  author: string;
+  excerpt?: string;
+  content?: string;
+  category?: string;
+  published: boolean;
+  createdAt: string;
 }

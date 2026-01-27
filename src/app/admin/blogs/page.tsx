@@ -1,17 +1,20 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { Suspense } from 'react';
+import BlogsClient from './BlogsClient';
+import BlogsLoading from './loading';
+
+export const metadata = {
+    title: 'Blogs | Bilacert Admin Pro',
+    description: 'Create and manage blog posts.',
+};
 
 export default function BlogsPage() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold tracking-tight mb-6">Blogs</h1>
-      <Card>
-        <CardHeader>
-          <CardTitle>Manage Blog Posts</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>This is where the content management for MDX-based blog posts will be implemented.</p>
-        </CardContent>
-      </Card>
+    <div className="space-y-6">
+        <h1 className="text-3xl font-bold tracking-tight">Blogs</h1>
+        <Suspense fallback={<BlogsLoading />}>
+            <BlogsClient />
+        </Suspense>
     </div>
   );
 }
