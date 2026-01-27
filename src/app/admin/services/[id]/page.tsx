@@ -22,11 +22,22 @@ async function getService(id: string): Promise<Service | null> {
         href: data.href,
         category: data.category,
         description: data.description,
+        shortDescription: data.short_description,
+        icon: data.icon,
+        orderIndex: data.order_index,
         content: data.content,
+        features: data.features,
+        requirements: data.requirements,
         published: data.published,
+        featured: data.featured,
         createdAt: data.created_at,
         processingTime: data.processing_time,
         pricing: data.pricing,
+        image: data.image,
+        thumbnail: data.thumbnail,
+        seoTitle: data.seo_title,
+        seoDescription: data.seo_description,
+        seoKeywords: data.seo_keywords,
     } as Service;
 }
 

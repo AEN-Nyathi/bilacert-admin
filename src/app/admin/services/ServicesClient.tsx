@@ -89,10 +89,15 @@ export default function ServicesClient() {
                     </p>
                     )}
                     <div>
-                    <h4 className="text-xs font-medium uppercase text-muted-foreground">Status</h4>
-                    <Badge variant={service.published ? 'default' : 'secondary'}>
-                        {service.published ? 'Published' : 'Draft'}
-                    </Badge>
+                      <h4 className="text-xs font-medium uppercase text-muted-foreground">Status</h4>
+                        <Badge variant={service.published ? 'default' : 'secondary'}>
+                            {service.published ? 'Published' : 'Draft'}
+                        </Badge>
+                        {service.featured && (
+                            <Badge variant="outline" className="ml-2">
+                                Featured
+                            </Badge>
+                        )}
                     </div>
                     <div>
                     <h4 className="text-xs font-medium uppercase text-muted-foreground">Processing Time</h4>

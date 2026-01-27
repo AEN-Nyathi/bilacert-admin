@@ -30,13 +30,26 @@ export function useServices() {
         const mappedData = data.map(item => ({
             id: item.id,
             title: item.title,
+            slug: item.slug,
+            href: item.href,
             category: item.category,
             description: item.description,
+            shortDescription: item.short_description,
+            icon: item.icon,
+            orderIndex: item.order_index,
             content: item.content,
+            features: item.features,
+            requirements: item.requirements,
             published: item.published,
+            featured: item.featured,
             createdAt: item.created_at,
             processingTime: item.processing_time,
             pricing: item.pricing,
+            image: item.image,
+            thumbnail: item.thumbnail,
+            seoTitle: item.seo_title,
+            seoDescription: item.seo_description,
+            seoKeywords: item.seo_keywords,
         })) as Service[];
 
         setServices(mappedData);

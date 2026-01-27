@@ -22,15 +22,26 @@ export interface Submission {
 export interface Service {
   id: string;
   title: string;
+  description: string;
+  shortDescription?: string;
   slug: string;
+  icon?: string;
   href: string;
   category: string;
-  description?: string;
+  orderIndex?: number;
   content?: string;
-  published: boolean;
-  createdAt: string;
+  features?: any;
+  requirements?: any;
   processingTime?: string;
   pricing?: any;
+  image?: string;
+  thumbnail?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string;
+  published: boolean;
+  featured?: boolean;
+  createdAt: string;
 }
 
 export interface Testimonial {
