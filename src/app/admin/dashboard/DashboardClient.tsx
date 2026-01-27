@@ -1,27 +1,40 @@
 'use client';
 
-import { BarChart as BarChartIcon, CreditCard, DollarSign, Package } from 'lucide-react';
+import {
+  BarChart as BarChartIcon,
+  CreditCard,
+  DollarSign,
+  Package,
+  Shield,
+  CheckSquare,
+  FileText,
+  Radio,
+  Sailboat,
+  MessageSquare,
+  Clock,
+} from 'lucide-react';
 import StatCard from '@/components/admin/StatCard';
 import { useSubmissions } from '@/hooks/useSubmissions';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  ChartConfig,
-} from '@/components/ui/chart';
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { useMemo } from 'react';
-import { format, subDays } from 'date-fns';
-import type { Submission } from '@/lib/types';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { useMemo } from 'react';
+import { format } from 'date-fns';
 
-const chartConfig = {
-  submissions: {
-    label: 'Submissions',
-    color: 'hsl(var(--chart-1))',
-  },
-} satisfies ChartConfig;
+const serviceTypeToIconMap: Record<string, React.ElementType> = {
+    'Class ECS/ECNS Licensing': Shield,
+    'ICASA Type Approvals': CheckSquare,
+    'License Exemptions': FileText,
+    'NRCS LOA Applications': FileText,
+    'Radio Dealer Licensing': Radio,
+    'Ski Boat VHF Licensing': Sailboat,
+    'Contact Form Submissions': MessageSquare,
+    'default': Package,
+};
+  
+const getIconForServiceType = (type: string, props?: { className: string }) => {
+      const Icon = serviceTypeToIconMap[type] || serviceTypeToIconMap.default;
+      return <Icon {...props} />;
+};
 
 export default function DashboardClient() {
   const { submissions, loading, error } = useSubmissions();
@@ -34,15 +47,8 @@ export default function DashboardClient() {
     return { total, newCount, inProgress, completed };
   }, [submissions]);
 
-  const chartData = useMemo(() => {
-    const last7Days = Array.from({ length: 7 }, (_, i) => subDays(new Date(), i)).reverse();
-    return last7Days.map(day => ({
-      date: format(day, 'MMM d'),
-      submissions: submissions.filter(s => {
-        const subDate = (s.submittedAt as any).toDate ? (s.submittedAt as any).toDate() : s.submittedAt;
-        return format(subDate, 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd');
-      }).length,
-    }));
+  const recentSubmissions = useMemo(() => {
+    return submissions.slice(0, 5);
   }, [submissions]);
 
   const submissionsByType = useMemo(() => {
@@ -53,7 +59,6 @@ export default function DashboardClient() {
     return Object.entries(typeMap).map(([name, value]) => ({ name, submissions: value }));
   }, [submissions]);
   
-
   if (error) {
     return <div className="text-destructive">Error loading submissions: {error.message}</div>;
   }
@@ -69,29 +74,10 @@ export default function DashboardClient() {
 
       <div className="grid gap-8 md:grid-cols-2">
         <Card>
-          <CardHeader>
-            <CardTitle>Submissions Over Last 7 Days</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                 <BarChart data={chartData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                  <CartesianGrid vertical={false} />
-                  <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="submissions" fill="var(--color-submissions)" radius={4} />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Submissions by Type</CardTitle>
-          </CardHeader>
-          <CardContent>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-lg font-medium">Submissions by Type</CardTitle>
+            </CardHeader>
+            <CardContent>
             <div className="space-y-4">
               {submissionsByType.length > 0 ? (
                 (() => {
@@ -106,8 +92,11 @@ export default function DashboardClient() {
                   return submissionsByType
                     .sort((a, b) => b.submissions - a.submissions)
                     .map((item, index) => (
-                      <div key={item.name} className="grid grid-cols-[1fr_1fr_auto] items-center gap-4">
-                        <span className="truncate text-sm text-muted-foreground">{item.name}</span>
+                      <div key={item.name} className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
+                        <div className='flex items-center gap-3'>
+                            {getIconForServiceType(item.name, { className: "h-5 w-5 text-muted-foreground"})}
+                            <span className="truncate text-sm font-medium">{item.name}</span>
+                        </div>
                         <Progress
                           value={maxSubmissions > 0 ? (item.submissions / maxSubmissions) * 100 : 0}
                           className={`h-2 ${progressColorClasses[index % progressColorClasses.length]}`}
@@ -120,6 +109,36 @@ export default function DashboardClient() {
                 <div className="text-center text-muted-foreground pt-4">No submissions yet.</div>
               )}
             </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-lg font-medium">Recent Submissions</CardTitle>
+                <Clock className="h-5 w-5 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-6">
+                {recentSubmissions.length > 0 ? (
+                    recentSubmissions.map(submission => (
+                        <div key={submission.id} className="flex items-start gap-4">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
+                                {getIconForServiceType(submission.serviceType, { className: "h-5 w-5"})}
+                            </div>
+                            <div className="grid gap-0.5 flex-1">
+                                <p className="text-sm font-medium">{submission.clientName}</p>
+                                <p className="text-xs text-muted-foreground">{submission.clientEmail}</p>
+                                <p className="text-xs text-muted-foreground mt-1">{submission.serviceType}</p>
+                            </div>
+                            <div className="ml-auto text-xs text-muted-foreground whitespace-nowrap">
+                                {format(submission.submittedAt.toDate(), 'dd MMM yyyy, HH:mm')}
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="text-center text-muted-foreground pt-4">No recent submissions.</div>
+                )}
+                </div>
           </CardContent>
         </Card>
       </div>
