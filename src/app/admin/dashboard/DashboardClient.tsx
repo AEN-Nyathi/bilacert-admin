@@ -1,6 +1,6 @@
 'use client';
 
-import { BarChart, CreditCard, DollarSign, Package } from 'lucide-react';
+import { BarChart as BarChartIcon, CreditCard, DollarSign, Package } from 'lucide-react';
 import StatCard from '@/components/admin/StatCard';
 import { useSubmissions } from '@/hooks/useSubmissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,11 +8,9 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
   ChartConfig,
 } from '@/components/ui/chart';
-import { Bar, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useMemo } from 'react';
 import { format, subDays } from 'date-fns';
 import type { Submission } from '@/lib/types';
@@ -74,7 +72,7 @@ export default function DashboardClient() {
     <div className="space-y-8">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard title="Total Submissions" value={loading ? '...' : `${stats.total}`} icon={<Package className="h-4 w-4" />} />
-        <StatCard title="New Applications" value={loading ? '...' : `${stats.newCount}`} icon={<BarChart className="h-4 w-4" />} description="Awaiting review" />
+        <StatCard title="New Applications" value={loading ? '...' : `${stats.newCount}`} icon={<BarChartIcon className="h-4 w-4" />} description="Awaiting review" />
         <StatCard title="In Progress" value={loading ? '...' : `${stats.inProgress}`} icon={<CreditCard className="h-4 w-4" />} />
         <StatCard title="Total Revenue (Mock)" value={loading ? '...' : '$45,231.89'} icon={<DollarSign className="h-4 w-4" />} description="+20.1% from last month" />
       </div>
