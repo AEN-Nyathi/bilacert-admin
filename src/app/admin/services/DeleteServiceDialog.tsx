@@ -21,12 +21,14 @@ interface DeleteServiceDialogProps {
   isOpen: boolean;
   onClose: () => void;
   service: Service | null;
+  onDeleted?: () => void;
 }
 
 export default function DeleteServiceDialog({
   isOpen,
   onClose,
   service,
+  onDeleted,
 }: DeleteServiceDialogProps) {
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -47,7 +49,11 @@ export default function DeleteServiceDialog({
         title: 'Service deleted',
         description: `The service "${service.title}" has been successfully deleted.`,
       });
-      onClose();
+      if (onDeleted) {
+        onDeleted();
+      } else {
+        onClose();
+      }
     } catch (error: any) {
       toast({
         variant: 'destructive',

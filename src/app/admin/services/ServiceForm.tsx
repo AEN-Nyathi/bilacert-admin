@@ -7,13 +7,6 @@ import * as z from 'zod';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import {
   Form,
   FormControl,
   FormField,
@@ -28,7 +21,8 @@ import { useToast } from '@/hooks/use-toast';
 import type { Service } from '@/lib/types';
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const serviceSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -51,17 +45,12 @@ const serviceSchema = z.object({
 type ServiceFormValues = z.infer<typeof serviceSchema>;
 
 interface ServiceFormProps {
-  isOpen: boolean;
-  onClose: () => void;
   service?: Service | null;
 }
 
-export default function ServiceForm({
-  isOpen,
-  onClose,
-  service,
-}: ServiceFormProps) {
+export default function ServiceForm({ service }: ServiceFormProps) {
   const { toast } = useToast();
+  const router = useRouter();
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceSchema),
     defaultValues: {
@@ -80,6 +69,8 @@ export default function ServiceForm({
     reset,
     formState: { isSubmitting },
   } = form;
+
+  const isEditing = !!service;
 
   useEffect(() => {
     if (service) {
@@ -107,15 +98,19 @@ export default function ServiceForm({
 
   const onSubmit = async (values: ServiceFormValues) => {
     try {
+      const slug = values.title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+      const href = `/services/${slug}`;
+
       const serviceData = {
         title: values.title,
+        slug,
+        href,
         category: values.category,
         description: values.description,
         content: values.content,
         published: values.published,
         processing_time: values.processingTime,
         pricing: values.pricing ? JSON.parse(values.pricing) : null,
-        updated_at: new Date().toISOString(),
       };
 
       let response;
@@ -123,21 +118,26 @@ export default function ServiceForm({
         response = await supabase
           .from('services')
           .update(serviceData)
-          .eq('id', service.id);
+          .eq('id', service.id)
+          .select()
+          .single();
       } else {
         response = await supabase.from('services').insert([
-          { ...serviceData, created_at: new Date().toISOString() },
-        ]);
+          serviceData,
+        ]).select().single();
       }
 
       if (response.error) {
         throw response.error;
       }
+      
+      const newService = response.data;
 
       toast({
         title: `Service ${service ? 'updated' : 'created'} successfully!`,
       });
-      onClose();
+      router.push(`/admin/services`);
+      router.refresh();
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -148,135 +148,126 @@ export default function ServiceForm({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>{service ? 'Edit Service' : 'Add New Service'}</DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <ScrollArea className="max-h-[70vh] p-1">
-            <div className="space-y-6 p-6">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., ICASA Type Approvals" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., Licensing" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="A short description of the service."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Content</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Detailed content about the service (Markdown supported)."
-                        rows={8}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="processingTime"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Processing Time</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., 5-7 business days" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="pricing"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Pricing (JSON format)</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder='e.g., { "type": "flat", "amount": 1500 }'
-                        rows={4}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="published"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel>Published</FormLabel>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-          </ScrollArea>
-          <DialogFooter className="mt-6 px-6">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {service ? 'Save Changes' : 'Create Service'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <Form {...form}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="space-y-6">
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., ICASA Type Approvals" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Category</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., Licensing" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="A short description of the service."
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="content"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Content</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Detailed content about the service (Markdown supported)."
+                    rows={8}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="processingTime"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Processing Time</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., 5-7 business days" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="pricing"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Pricing (JSON format)</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder='e.g., { "type": "flat", "amount": 1500 }'
+                    rows={4}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="published"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel>Published</FormLabel>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="mt-8 flex justify-end gap-4">
+          <Button type="button" variant="outline" asChild>
+            <Link href="/admin/services">Cancel</Link>
+          </Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isEditing ? 'Save Changes' : 'Create Service'}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

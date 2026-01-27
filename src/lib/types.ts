@@ -22,6 +22,8 @@ export interface Submission {
 export interface Service {
   id: string;
   title: string;
+  slug: string;
+  href: string;
   category: string;
   description?: string;
   content?: string;
@@ -47,4 +49,3 @@ export interface BlogPost {
   published: boolean;
   createdAt: string;
 }
-
