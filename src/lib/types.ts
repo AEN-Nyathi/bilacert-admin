@@ -69,5 +69,4 @@ export interface Contact {
   phone?: string;
   company?: string;
   message?: string;
-  createdAt: string;
 }

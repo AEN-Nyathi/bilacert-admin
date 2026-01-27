@@ -3,7 +3,6 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { Contact } from "@/lib/types"
-import { format } from "date-fns"
 import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -43,7 +42,17 @@ export const columns = ({ onEdit, onDelete }: ColumnsOptions): ColumnDef<Contact
     },
     {
         accessorKey: "name",
-        header: "Name",
+        header: ({ column }) => {
+            return (
+              <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              >
+                Name
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            )
+        },
     },
     {
         accessorKey: "email",
@@ -58,26 +67,6 @@ export const columns = ({ onEdit, onDelete }: ColumnsOptions): ColumnDef<Contact
         accessorKey: "company",
         header: "Company",
         cell: ({ row }) => row.getValue("company") || "N/A",
-    },
-    {
-        accessorKey: "createdAt",
-        header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-              >
-                Created At
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-              </Button>
-            )
-          },
-        cell: ({ row }) => {
-            const date = row.getValue("createdAt") as string;
-            if (!date) return "N/A";
-            const formattedDate = format(new Date(date), "PP");
-            return <div className="font-medium">{formattedDate}</div>
-        }
     },
     {
         id: "actions",

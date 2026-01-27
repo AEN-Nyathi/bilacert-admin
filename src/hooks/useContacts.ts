@@ -21,7 +21,7 @@ export function useContacts() {
       const { data, error } = await supabase
         .from('contacts')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('name', { ascending: true });
 
       if (error) {
         setError(error);
@@ -34,7 +34,6 @@ export function useContacts() {
             phone: item.phone,
             company: item.company,
             message: item.message,
-            createdAt: item.created_at,
         })) as Contact[];
 
         setContacts(mappedData);
