@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import type { Submission } from '@/lib/types';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 export function useSubmissions() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -10,6 +10,11 @@ export function useSubmissions() {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+        setLoading(false);
+        return;
+    }
+      
     const fetchSubmissions = async () => {
       setLoading(true);
       const { data, error } = await supabase

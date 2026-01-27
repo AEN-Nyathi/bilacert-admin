@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -18,6 +18,7 @@ import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import SupabaseNotConfigured from '@/components/admin/SupabaseNotConfigured';
 
 export default function LoginPage() {
   const { toast } = useToast();
@@ -26,6 +27,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  if (!isSupabaseConfigured) {
+    return <SupabaseNotConfigured />;
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
