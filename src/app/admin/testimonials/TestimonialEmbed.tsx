@@ -25,7 +25,7 @@ export default function TestimonialEmbed({ postUrl }: TestimonialEmbedProps) {
   }, [postUrl]);
 
   return (
-    <div className="flex justify-center p-4 min-h-[250px]">
+    <div className="p-4 h-full w-full">
       <div
         key={postUrl} // Using key to help React remount the component on URL change
         className="fb-post"
