@@ -1,4 +1,5 @@
 
+
 export interface Submission {
   id?: string;
   formType: string;
@@ -23,6 +24,8 @@ export interface Service {
   id: string;
   title: string;
   category: string;
+  description?: string;
+  content?: string;
   published: boolean;
   createdAt: string;
 }

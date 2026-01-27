@@ -31,6 +31,8 @@ export function useServices() {
             id: item.id,
             title: item.title,
             category: item.category,
+            description: item.description,
+            content: item.content,
             published: item.published,
             createdAt: item.created_at,
         })) as Service[];
@@ -44,7 +46,7 @@ export function useServices() {
     fetchServices();
 
     const channel = supabase
-      .channel('services')
+      .channel('services-realtime')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'services' },

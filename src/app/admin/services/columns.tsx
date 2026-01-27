@@ -16,10 +16,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export const columns: ColumnDef<Service>[] = [
+interface ColumnsOptions {
+    onEdit: (service: Service) => void;
+    onDelete: (service: Service) => void;
+    onViewDetails: (service: Service) => void;
+}
+
+export const columns = ({ onEdit, onDelete, onViewDetails }: ColumnsOptions): ColumnDef<Service>[] => [
   {
     accessorKey: "title",
     header: "Title",
+    cell: ({ row }) => <div className="max-w-[300px] truncate font-medium">{row.getValue("title")}</div>,
   },
   {
     accessorKey: "category",
@@ -58,15 +65,19 @@ export const columns: ColumnDef<Service>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(service.id as string)}
-            >
-              Copy service ID
+            <DropdownMenuItem onClick={() => onViewDetails(service)}>
+              View details
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onEdit(service)}>
+              Edit
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-             <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">Delete</DropdownMenuItem>
+             <DropdownMenuItem 
+                className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                onClick={() => onDelete(service)}
+             >
+                Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
