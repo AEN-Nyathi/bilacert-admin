@@ -1,17 +1,20 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { Suspense } from 'react';
+import ServicesClient from './ServicesClient';
+import ServicesLoading from './loading';
+
+export const metadata = {
+    title: 'Services | Bilacert Admin Pro',
+    description: 'Manage regulatory services.',
+};
 
 export default function ServicesPage() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold tracking-tight mb-6">Services</h1>
-      <Card>
-        <CardHeader>
-          <CardTitle>Manage Regulatory Services</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>This is where the CRUD interface for managing regulatory service metadata will be implemented.</p>
-        </CardContent>
-      </Card>
+    <div className="space-y-6">
+        <h1 className="text-3xl font-bold tracking-tight">Services</h1>
+        <Suspense fallback={<ServicesLoading />}>
+            <ServicesClient />
+        </Suspense>
     </div>
   );
 }

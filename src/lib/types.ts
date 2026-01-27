@@ -19,19 +19,20 @@ export interface Submission {
 }
 
 
+export interface Service {
+  id: string;
+  title: string;
+  category: string;
+  published: boolean;
+  createdAt: string;
+}
+
 export interface Testimonial {
   id: string;
   author: string;
   company: string;
   text: string;
   createdAt: Date;
-}
-
-export interface Service {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
 }
 
 export interface Blog {
