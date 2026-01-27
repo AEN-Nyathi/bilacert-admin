@@ -16,27 +16,32 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 const statusVariantMap: { [key: string]: "default" | "secondary" | "destructive" | "outline" } = {
-    new: "default",
+    pending: "default",
     'in-progress': "secondary",
     completed: "outline",
     rejected: "destructive",
+    archived: "secondary"
 }
 
 export const columns: ColumnDef<Submission>[] = [
   {
-    accessorKey: "serviceType",
-    header: "Service Type",
+    accessorKey: "formType",
+    header: "Form Type",
   },
   {
-    accessorKey: "clientName",
+    accessorKey: "serviceName",
+    header: "Service Name",
+  },
+  {
+    accessorKey: "fullName",
     header: "Client Name",
   },
   {
-    accessorKey: "clientEmail",
+    accessorKey: "email",
     header: "Client Email",
   },
   {
-    accessorKey: "submittedAt",
+    accessorKey: "createdAt",
     header: ({ column }) => {
         return (
           <Button
@@ -49,9 +54,9 @@ export const columns: ColumnDef<Submission>[] = [
         )
       },
     cell: ({ row }) => {
-        const date = row.getValue("submittedAt") as any;
+        const date = row.getValue("createdAt") as string;
         if (!date) return "N/A";
-        const formattedDate = format(date.toDate(), "PPpp");
+        const formattedDate = format(new Date(date), "PPpp");
         return <div className="font-medium">{formattedDate}</div>
     }
   },

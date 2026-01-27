@@ -3,7 +3,6 @@
 import { useSubmissions } from '@/hooks/useSubmissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { columns } from './columns';
-import { DataTable } from './data-table';
 import { Submission } from '@/lib/types';
 
 export default function SubmissionsClient() {

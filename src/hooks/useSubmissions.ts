@@ -1,26 +1,69 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import type { Submission } from '@/lib/types';
-import { collection, query, orderBy } from 'firebase/firestore';
-import { useFirestore, useCollection } from '@/firebase';
+import { supabase } from '@/lib/supabase';
 
 export function useSubmissions() {
-  const firestore = useFirestore();
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-  const submissionsQuery = useMemo(() => {
-    if (!firestore) return null;
-    return query(
-      collection(firestore, 'form_submissions'),
-      orderBy('submittedAt', 'desc')
-    );
-  }, [firestore]);
+  useEffect(() => {
+    const fetchSubmissions = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('form_submissions')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-  const {
-    data: submissions,
-    loading,
-    error,
-  } = useCollection<Submission>(submissionsQuery as any);
+      if (error) {
+        setError(error);
+        setSubmissions([]);
+      } else {
+        const mappedData = data.map(item => ({
+            id: item.id,
+            formType: item.form_type,
+            status: item.status,
+            serviceId: item.service_id,
+            serviceName: item.service_name,
+            fullName: item.full_name,
+            email: item.email,
+            phone: item.phone,
+            company: item.company,
+            industry: item.industry,
+            details: item.details,
+            internalNotes: item.internal_notes,
+            assignedTo: item.assigned_to,
+            createdAt: item.created_at,
+            updatedAt: item.updated_at,
+            completedAt: item.completed_at,
+        })) as Submission[];
+
+        setSubmissions(mappedData);
+        setError(null);
+      }
+      setLoading(false);
+    };
+
+    fetchSubmissions();
+
+    const channel = supabase
+      .channel('form_submissions')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'form_submissions' },
+        (payload) => {
+          // Just refetch all for simplicity
+          fetchSubmissions();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   return { submissions, loading, error };
 }

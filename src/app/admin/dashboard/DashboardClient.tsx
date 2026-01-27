@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { useMemo } from 'react';
 import { format } from 'date-fns';
+import { Submission } from '@/lib/types';
 
 const serviceTypeToIconMap: Record<string, React.ElementType> = {
     'Class ECS/ECNS Licensing': Shield,
@@ -27,11 +28,12 @@ const serviceTypeToIconMap: Record<string, React.ElementType> = {
     'NRCS LOA Applications': FileText,
     'Radio Dealer Licensing': Radio,
     'Ski Boat VHF Licensing': Sailboat,
-    'Contact Form Submissions': MessageSquare,
+    'contact': MessageSquare,
     'default': Package,
 };
   
-const getIconForServiceType = (type: string, props?: { className: string }) => {
+const getIconForServiceType = (submission: Submission, props?: { className: string }) => {
+      const type = submission.serviceName || submission.formType;
       const Icon = serviceTypeToIconMap[type] || serviceTypeToIconMap.default;
       return <Icon {...props} />;
 };
@@ -41,7 +43,7 @@ export default function DashboardClient() {
 
   const stats = useMemo(() => {
     const total = submissions.length;
-    const newCount = submissions.filter(s => s.status === 'new').length;
+    const newCount = submissions.filter(s => s.status === 'pending').length;
     const inProgress = submissions.filter(s => s.status === 'in-progress').length;
     const completed = submissions.filter(s => s.status === 'completed').length;
     return { total, newCount, inProgress, completed };
@@ -53,7 +55,8 @@ export default function DashboardClient() {
 
   const submissionsByType = useMemo(() => {
     const typeMap = submissions.reduce((acc, sub) => {
-        acc[sub.serviceType] = (acc[sub.serviceType] || 0) + 1;
+        const key = sub.serviceName || sub.formType;
+        acc[key] = (acc[key] || 0) + 1;
         return acc;
     }, {} as Record<string, number>);
     return Object.entries(typeMap).map(([name, value]) => ({ name, submissions: value }));
@@ -94,7 +97,7 @@ export default function DashboardClient() {
                     .map((item, index) => (
                       <div key={item.name} className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
                         <div className='flex items-center gap-3'>
-                            {getIconForServiceType(item.name, { className: "h-5 w-5 text-muted-foreground"})}
+                            {getIconForServiceType({ formType: item.name, serviceName: item.name } as Submission, { className: "h-5 w-5 text-muted-foreground"})}
                             <span className="truncate text-sm font-medium">{item.name}</span>
                         </div>
                         <Progress
@@ -123,15 +126,15 @@ export default function DashboardClient() {
                     recentSubmissions.map(submission => (
                         <div key={submission.id} className="flex items-start gap-4">
                             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
-                                {getIconForServiceType(submission.serviceType, { className: "h-5 w-5"})}
+                                {getIconForServiceType(submission, { className: "h-5 w-5"})}
                             </div>
                             <div className="grid gap-0.5 flex-1">
-                                <p className="text-sm font-medium">{submission.clientName}</p>
-                                <p className="text-xs text-muted-foreground">{submission.clientEmail}</p>
-                                <p className="text-xs text-muted-foreground mt-1">{submission.serviceType}</p>
+                                <p className="text-sm font-medium">{submission.fullName}</p>
+                                <p className="text-xs text-muted-foreground">{submission.email}</p>
+                                <p className="text-xs text-muted-foreground mt-1">{submission.serviceName || submission.formType}</p>
                             </div>
                             <div className="ml-auto text-xs text-muted-foreground whitespace-nowrap">
-                                {format(submission.submittedAt.toDate(), 'dd MMM yyyy, HH:mm')}
+                                {format(new Date(submission.createdAt), 'dd MMM yyyy, HH:mm')}
                             </div>
                         </div>
                     ))

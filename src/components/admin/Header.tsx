@@ -1,7 +1,7 @@
 'use client';
 
-import { useUser, useAuth } from '@/firebase';
-import { signOut } from 'firebase/auth';
+import { useUser } from '@/hooks/useUser';
+import { supabase } from '@/lib/supabase';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { LogOut, User as UserIcon, ChevronDown } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
 function getTitleFromPathname(pathname: string): string {
@@ -25,15 +25,17 @@ function getTitleFromPathname(pathname: string): string {
 
 export default function AdminHeader() {
   const { user } = useUser();
-  const auth = useAuth();
   const { toast } = useToast();
+  const router = useRouter();
   const pathname = usePathname();
   const avatar = PlaceHolderImages.find((img) => img.id === 'user-avatar-1');
   const pageTitle = getTitleFromPathname(pathname);
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.push('/admin/login');
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -46,6 +48,10 @@ export default function AdminHeader() {
   const getInitials = (email: string) => {
     return email ? email.substring(0, 2).toUpperCase() : 'AD';
   };
+
+  const displayName = user?.user_metadata?.full_name || user?.email;
+  const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.profile_image || (avatar ? avatar.imageUrl : undefined);
+
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-card px-4 sm:px-6">
@@ -60,14 +66,14 @@ export default function AdminHeader() {
             <Button variant="ghost" className="flex items-center gap-2">
               <Avatar className="h-8 w-8">
                 <AvatarImage
-                  src={user.photoURL || (avatar ? avatar.imageUrl : undefined)}
-                  alt={user.displayName || user.email || 'Admin'}
+                  src={avatarUrl}
+                  alt={displayName || 'Admin'}
                 />
                 <AvatarFallback>{getInitials(user.email || '')}</AvatarFallback>
               </Avatar>
               <div className="hidden flex-col items-start text-left md:flex">
                 <span className="text-sm font-medium">
-                  {user.displayName || user.email}
+                  {displayName}
                 </span>
               </div>
               <ChevronDown className="h-4 w-4 text-muted-foreground" />
@@ -76,7 +82,7 @@ export default function AdminHeader() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>
               <div className="flex flex-col">
-                <span className="font-medium">{user.displayName || 'Admin'}</span>
+                <span className="font-medium">{displayName}</span>
                 <span className="text-xs text-muted-foreground">
                   {user.email}
                 </span>

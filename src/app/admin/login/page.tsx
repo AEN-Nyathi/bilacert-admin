@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -18,10 +17,11 @@ import { Logo } from '@/components/icons';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-  const auth = useAuth();
   const { toast } = useToast();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -31,19 +31,22 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // Redirect is handled by AdminLayout
-    } catch (err: any) {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
       setError('Failed to log in. Please check your credentials.');
       toast({
         variant: 'destructive',
         title: 'Login Failed',
-        description: err.message || 'Please check your credentials.',
+        description: error.message || 'Please check your credentials.',
       });
-    } finally {
-      setIsLoading(false);
+    } else {
+      router.push('/admin/dashboard');
     }
+    setIsLoading(false);
   };
 
   return (

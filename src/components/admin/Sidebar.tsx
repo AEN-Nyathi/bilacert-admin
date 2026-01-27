@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Sidebar,
   SidebarContent,
@@ -22,8 +22,7 @@ import {
   Users,
   FileSpreadsheet,
 } from 'lucide-react';
-import { useAuth } from '@/firebase';
-import { signOut } from 'firebase/auth';
+import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 
 const navItems = [
@@ -37,12 +36,14 @@ const navItems = [
 
 export default function AdminSidebar() {
   const pathname = usePathname();
-  const auth = useAuth();
+  const router = useRouter();
   const { toast } = useToast();
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.push('/admin/login');
     } catch (error: any) {
       toast({
         variant: 'destructive',

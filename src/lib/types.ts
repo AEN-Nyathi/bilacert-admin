@@ -1,14 +1,23 @@
-import type { Timestamp } from 'firebase/firestore';
 
 export interface Submission {
   id?: string;
-  serviceType: string;
-  clientName: string;
-  clientEmail: string;
-  submittedAt: Timestamp;
-  status: 'new' | 'in-progress' | 'completed' | 'rejected';
-  [key: string]: any;
+  formType: string;
+  status: 'pending' | 'in-progress' | 'completed' | 'rejected' | 'archived';
+  serviceId?: string;
+  serviceName?: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  industry?: string;
+  details?: any; // jsonb
+  internalNotes?: string;
+  assignedTo?: string;
+  createdAt: string; // timestamp
+  updatedAt: string; // timestamp
+  completedAt?: string; // timestamp
 }
+
 
 export interface Testimonial {
   id: string;
