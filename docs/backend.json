@@ -1,0 +1,112 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Represents a user's profile information.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "editor", "user"] },
+        "phone": { "type": "string" },
+        "company": { "type": "string" },
+        "profileImage": { "type": "string", "format": "uri" },
+        "bio": { "type": "string" },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["email", "role"]
+    },
+    "Service": {
+      "title": "Service",
+      "description": "A regulatory service offered.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "shortDescription": { "type": "string" },
+        "slug": { "type": "string" },
+        "icon": { "type": "string" },
+        "href": { "type": "string", "format": "uri" },
+        "category": { "type": "string" },
+        "content": { "type": "string" },
+        "features": { "type": "array", "items": { "type": "object" } },
+        "requirements": { "type": "array", "items": { "type": "object" } },
+        "processingTime": { "type": "string" },
+        "pricing": { "type": "object" },
+        "image": { "type": "string", "format": "uri" },
+        "published": { "type": "boolean" }
+      },
+      "required": ["title", "description", "slug", "href", "category"]
+    },
+    "BlogPost": {
+      "title": "Blog Post",
+      "description": "A single blog post.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "slug": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "content": { "type": "string" },
+        "category": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "featuredImage": { "type": "string", "format": "uri" },
+        "published": { "type": "boolean" },
+        "publishedAt": { "type": "string", "format": "date-time" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" }
+      },
+      "required": ["title", "slug", "content", "authorId"]
+    },
+    "Testimonial": {
+      "title": "Testimonial",
+      "description": "A customer testimonial.",
+      "type": "object",
+      "properties": {
+        "postUrl": { "type": "string", "format": "uri" },
+        "author": { "type": "string" },
+        "company": { "type": "string" },
+        "text": { "type": "string" }
+      },
+      "required": ["postUrl"]
+    },
+    "FormSubmission": {
+      "title": "Form Submission",
+      "description": "A submission from a user via a form.",
+      "type": "object",
+      "properties": {
+        "serviceType": { "type": "string" },
+        "status": { "type": "string", "enum": ["new", "in-progress", "completed", "rejected"] },
+        "clientName": { "type": "string" },
+        "clientEmail": { "type": "string", "format": "email" },
+        "submittedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["serviceType", "clientName", "clientEmail", "submittedAt", "status"]
+    }
+  },
+  "auth": {
+    "providers": ["email-password"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Stores public information about a user."
+    },
+    "/services/{serviceId}": {
+      "schema": { "$ref": "#/entities/Service" },
+      "description": "Stores details about regulatory services offered."
+    },
+    "/blog_posts/{blogPostId}": {
+      "schema": { "$ref": "#/entities/BlogPost" },
+      "description": "Stores blog post content."
+    },
+    "/testimonials/{testimonialId}": {
+      "schema": { "$ref": "#/entities/Testimonial" },
+      "description": "Stores customer testimonials."
+    },
+    "/form_submissions/{submissionId}": {
+      "schema": { "$ref": "#/entities/FormSubmission" },
+      "description": "Stores all form submissions from the website."
+    }
+  }
+}

@@ -12,9 +12,17 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/icons';
-import { LayoutDashboard, Briefcase, FileText, MessageSquare, LogOut, Settings } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
-import { Button } from '@/components/ui/button';
+import {
+  LayoutDashboard,
+  Briefcase,
+  FileText,
+  MessageSquare,
+  LogOut,
+  Settings,
+} from 'lucide-react';
+import { useAuth } from '@/firebase';
+import { signOut } from 'firebase/auth';
+import { useToast } from '@/hooks/use-toast';
 
 const navItems = [
   { href: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -25,14 +33,29 @@ const navItems = [
 
 export default function AdminSidebar() {
   const pathname = usePathname();
-  const { logout } = useAuth();
+  const auth = useAuth();
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Logout Failed',
+        description: error.message,
+      });
+    }
+  };
 
   return (
     <Sidebar>
       <SidebarHeader>
         <Link href="/admin/dashboard" className="flex items-center gap-2">
           <Logo className="h-8 w-8 text-sidebar-primary" />
-          <span className="text-lg font-semibold text-sidebar-foreground">Bilacert Admin</span>
+          <span className="text-lg font-semibold text-sidebar-foreground">
+            Bilacert Admin
+          </span>
         </Link>
       </SidebarHeader>
       <SidebarContent className="p-2">
@@ -57,15 +80,23 @@ export default function AdminSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-             <SidebarMenuButton asChild className="w-full justify-start" tooltip="Settings">
-               <Link href="#">
+            <SidebarMenuButton
+              asChild
+              className="w-full justify-start"
+              tooltip="Settings"
+            >
+              <Link href="#">
                 <Settings className="h-5 w-5" />
                 <span>Settings</span>
-               </Link>
-             </SidebarMenuButton>
+              </Link>
+            </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={logout} className="w-full justify-start" tooltip="Log out">
+            <SidebarMenuButton
+              onClick={handleLogout}
+              className="w-full justify-start"
+              tooltip="Log out"
+            >
               <LogOut className="h-5 w-5" />
               <span>Log Out</span>
             </SidebarMenuButton>

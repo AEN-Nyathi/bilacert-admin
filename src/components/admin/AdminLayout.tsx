@@ -2,16 +2,20 @@
 
 import React, { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
+import { useUser } from '@/firebase';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import AdminSidebar from '@/components/admin/Sidebar';
 import AdminHeader from '@/components/admin/Header';
 import { Loader2 } from 'lucide-react';
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading } = useUser();
 
   useEffect(() => {
     if (!loading) {
@@ -49,9 +53,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <AdminSidebar />
       <main className="flex min-h-svh flex-1 flex-col bg-background">
         <AdminHeader />
-        <div className="flex-1 p-4 sm:p-6 lg:p-8">
-          {children}
-        </div>
+        <div className="flex-1 p-4 sm:p-6 lg:p-8">{children}</div>
       </main>
     </SidebarProvider>
   );

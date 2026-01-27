@@ -1,6 +1,7 @@
 'use client';
 
-import { useAuth } from '@/context/AuthContext';
+import { useUser, useAuth } from '@/firebase';
+import { signOut } from 'firebase/auth';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,17 +16,32 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { LogOut, User as UserIcon, ChevronDown } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { usePathname } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 
 function getTitleFromPathname(pathname: string): string {
-    const segment = pathname.split('/').pop() || 'dashboard';
-    return segment.charAt(0).toUpperCase() + segment.slice(1);
+  const segment = pathname.split('/').pop() || 'dashboard';
+  return segment.charAt(0).toUpperCase() + segment.slice(1);
 }
 
 export default function AdminHeader() {
-  const { user, logout } = useAuth();
+  const { user } = useUser();
+  const auth = useAuth();
+  const { toast } = useToast();
   const pathname = usePathname();
-  const avatar = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
+  const avatar = PlaceHolderImages.find((img) => img.id === 'user-avatar-1');
   const pageTitle = getTitleFromPathname(pathname);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Logout failed',
+        description: error.message,
+      });
+    }
+  };
 
   const getInitials = (email: string) => {
     return email ? email.substring(0, 2).toUpperCase() : 'AD';
@@ -37,17 +53,22 @@ export default function AdminHeader() {
         <SidebarTrigger className="md:hidden" />
         <h1 className="hidden text-xl font-semibold md:block">{pageTitle}</h1>
       </div>
-      
+
       {user && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center gap-2">
               <Avatar className="h-8 w-8">
-                {avatar && <AvatarImage src={avatar.imageUrl} alt={user.displayName || user.email || 'Admin'} />}
+                <AvatarImage
+                  src={user.photoURL || (avatar ? avatar.imageUrl : undefined)}
+                  alt={user.displayName || user.email || 'Admin'}
+                />
                 <AvatarFallback>{getInitials(user.email || '')}</AvatarFallback>
               </Avatar>
               <div className="hidden flex-col items-start text-left md:flex">
-                  <span className="text-sm font-medium">{user.displayName || user.email}</span>
+                <span className="text-sm font-medium">
+                  {user.displayName || user.email}
+                </span>
               </div>
               <ChevronDown className="h-4 w-4 text-muted-foreground" />
             </Button>
@@ -56,7 +77,9 @@ export default function AdminHeader() {
             <DropdownMenuLabel>
               <div className="flex flex-col">
                 <span className="font-medium">{user.displayName || 'Admin'}</span>
-                <span className="text-xs text-muted-foreground">{user.email}</span>
+                <span className="text-xs text-muted-foreground">
+                  {user.email}
+                </span>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -65,7 +88,10 @@ export default function AdminHeader() {
               <span>Profile</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={logout} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+            >
               <LogOut className="mr-2 h-4 w-4" />
               <span>Log out</span>
             </DropdownMenuItem>
