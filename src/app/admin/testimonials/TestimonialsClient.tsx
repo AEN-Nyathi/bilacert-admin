@@ -59,9 +59,9 @@ export default function TestimonialsClient() {
             </div>
         )}
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div>
             {testimonials.map((testimonial) => (
-            <Card key={testimonial.id} className="flex flex-col">
+            <Card key={testimonial.id} className="flex flex-col mb-6">
                 <CardContent className="h-96 overflow-y-auto p-0">
                     <TestimonialEmbed postUrl={testimonial.postUrl} />
                 </CardContent>
