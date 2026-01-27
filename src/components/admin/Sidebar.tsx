@@ -39,16 +39,17 @@ export default function AdminSidebar() {
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href} legacyBehavior passHref>
-                <SidebarMenuButton
-                  isActive={pathname.startsWith(item.href)}
-                  className="w-full justify-start"
-                  tooltip={item.label}
-                >
+              <SidebarMenuButton
+                asChild
+                isActive={pathname.startsWith(item.href)}
+                className="w-full justify-start"
+                tooltip={item.label}
+              >
+                <Link href={item.href}>
                   <item.icon className="h-5 w-5" />
                   <span>{item.label}</span>
-                </SidebarMenuButton>
-              </Link>
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
@@ -56,12 +57,12 @@ export default function AdminSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Link href="#" legacyBehavior passHref>
-              <SidebarMenuButton className="w-full justify-start" tooltip="Settings">
+             <SidebarMenuButton asChild className="w-full justify-start" tooltip="Settings">
+               <Link href="#">
                 <Settings className="h-5 w-5" />
                 <span>Settings</span>
-              </SidebarMenuButton>
-            </Link>
+               </Link>
+             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton onClick={logout} className="w-full justify-start" tooltip="Log out">
