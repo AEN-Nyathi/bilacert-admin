@@ -6,7 +6,7 @@ import type {
   FirestoreError,
   QuerySnapshot,
 } from 'firebase/firestore';
-import { onSnapshot } from 'firebase/firestore';
+import { onSnapshot, queryEqual } from 'firebase/firestore';
 import { errorEmitter } from '../error-emitter';
 import { FirestorePermissionError } from '../errors';
 
@@ -19,7 +19,7 @@ export function useCollection<T = DocumentData>(query: Query<T> | null) {
 
   useEffect(() => {
     // Prevent re-running the effect if the query is the same
-    if (queryRef.current && query && queryRef.current.isEqual(query)) {
+    if (queryRef.current && query && queryEqual(queryRef.current, query)) {
       return;
     }
     queryRef.current = query;
@@ -47,6 +47,7 @@ export function useCollection<T = DocumentData>(query: Query<T> | null) {
         if (query && (query as any)._query?.path?.segments) {
             path = (query as any)._query.path.segments.join('/');
         }
+
 
         const permissionError = new FirestorePermissionError({
           path: path,
