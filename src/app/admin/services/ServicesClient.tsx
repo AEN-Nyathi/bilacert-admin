@@ -63,6 +63,13 @@ export default function ServicesClient() {
     setSelectedService(null);
   };
 
+  const getPriceDisplay = (pricing: any): string => {
+    if (!pricing) return "Not set";
+    if (typeof pricing === 'string') return pricing;
+    if (typeof pricing === 'number') return `R${pricing.toFixed(2)}`;
+    return typeof pricing === 'object' ? JSON.stringify(pricing) : String(pricing);
+  }
+
   if (error) {
     return <div className="text-destructive">Error loading services: {error.message}</div>;
   }
@@ -104,11 +111,17 @@ export default function ServicesClient() {
                       </Badge>
                     </div>
                     <div>
-                      <h4 className="text-xs font-medium uppercase text-muted-foreground">Created At</h4>
+                      <h4 className="text-xs font-medium uppercase text-muted-foreground">Processing Time</h4>
                       <p className="text-sm">
-                        {format(new Date(service.createdAt), 'PP')}
+                        {service.processingTime || 'N/A'}
                       </p>
                     </div>
+                    {service.pricing && (
+                        <div>
+                        <h4 className="text-xs font-medium uppercase text-muted-foreground">Pricing</h4>
+                        <p className="text-sm font-mono truncate">{getPriceDisplay(service.pricing)}</p>
+                        </div>
+                    )}
                   </CardContent>
                   <CardFooter className="flex justify-end">
                     <DropdownMenu>
@@ -169,3 +182,4 @@ export default function ServicesClient() {
     </>
   );
 }
+

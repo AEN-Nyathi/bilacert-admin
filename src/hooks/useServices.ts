@@ -35,6 +35,8 @@ export function useServices() {
             content: item.content,
             published: item.published,
             createdAt: item.created_at,
+            processingTime: item.processing_time,
+            pricing: item.pricing,
         })) as Service[];
 
         setServices(mappedData);
@@ -63,3 +65,4 @@ export function useServices() {
 
   return { services, loading, error };
 }
+

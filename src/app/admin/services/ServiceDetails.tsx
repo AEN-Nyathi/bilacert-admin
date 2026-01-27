@@ -55,6 +55,20 @@ export default function ServiceDetails({
                   </div>
               </div>
             )}
+            {service.processingTime && (
+                <div>
+                <h4 className="text-sm font-medium text-muted-foreground">Processing Time</h4>
+                <p className="text-sm text-card-foreground">{service.processingTime}</p>
+                </div>
+            )}
+            {service.pricing && (
+                <div>
+                <h4 className="text-sm font-medium text-muted-foreground">Pricing</h4>
+                <div className="prose prose-sm dark:prose-invert mt-1 text-card-foreground text-sm whitespace-pre-wrap">
+                    <pre className="bg-muted/50 p-2 rounded-md"><code>{JSON.stringify(service.pricing, null, 2)}</code></pre>
+                </div>
+                </div>
+            )}
             <div>
               <h4 className="text-sm font-medium text-muted-foreground">Created At</h4>
               <p className="text-sm text-card-foreground">{format(new Date(service.createdAt), 'PPpp')}</p>
@@ -65,3 +79,4 @@ export default function ServiceDetails({
     </Dialog>
   );
 }
+

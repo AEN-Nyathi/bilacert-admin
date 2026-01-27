@@ -27,6 +27,8 @@ export interface Service {
   content?: string;
   published: boolean;
   createdAt: string;
+  processingTime?: string;
+  pricing?: any;
 }
 
 export interface Testimonial {
@@ -45,3 +47,4 @@ export interface BlogPost {
   published: boolean;
   createdAt: string;
 }
+

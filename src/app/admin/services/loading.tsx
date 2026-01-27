@@ -32,6 +32,10 @@ export default function ServicesLoading() {
                                     <Skeleton className="h-4 w-1/4" />
                                     <Skeleton className="h-5 w-1/2" />
                                 </div>
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-1/4" />
+                                    <Skeleton className="h-5 w-2/3" />
+                                </div>
                             </CardContent>
                             <CardFooter className="flex justify-end">
                                 <Skeleton className="h-8 w-8" />
@@ -43,3 +47,4 @@ export default function ServicesLoading() {
         </Card>
     )
 }
+
