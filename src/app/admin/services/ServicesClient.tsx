@@ -3,15 +3,30 @@
 
 import { useState } from 'react';
 import { useServices } from '@/hooks/useServices';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { columns as createColumns } from './columns';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Service } from '@/lib/types';
-import { DataTable } from '@/app/admin/form_submissions/data-table';
 import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, MoreHorizontal } from 'lucide-react';
 import ServiceForm from './ServiceForm';
 import ServiceDetails from './ServiceDetails';
 import DeleteServiceDialog from './DeleteServiceDialog';
+import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function ServicesClient() {
   const { services, loading, error } = useServices();
@@ -48,12 +63,6 @@ export default function ServicesClient() {
     setSelectedService(null);
   };
 
-  const columns = createColumns({
-    onEdit: handleEdit,
-    onDelete: handleDelete,
-    onViewDetails: handleViewDetails,
-  });
-
   if (error) {
     return <div className="text-destructive">Error loading services: {error.message}</div>;
   }
@@ -69,7 +78,68 @@ export default function ServicesClient() {
           </Button>
         </CardHeader>
         <CardContent>
-          <DataTable columns={columns} data={services as Service[]} isLoading={loading} />
+          {services.length === 0 && !loading ? (
+             <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/30 py-24 text-center">
+                <h3 className="text-lg font-semibold tracking-tight">No Services Yet</h3>
+                <p className="text-sm text-muted-foreground">Click "Add Service" to get started.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {services.map((service) => (
+                <Card key={service.id} className="flex flex-col">
+                  <CardHeader>
+                    <CardTitle className="truncate">{service.title}</CardTitle>
+                    <CardDescription>{service.category || 'No Category'}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-grow space-y-4">
+                    {service.description && (
+                      <p className="text-sm text-muted-foreground line-clamp-3">
+                        {service.description}
+                      </p>
+                    )}
+                    <div>
+                      <h4 className="text-xs font-medium uppercase text-muted-foreground">Status</h4>
+                      <Badge variant={service.published ? 'default' : 'secondary'}>
+                        {service.published ? 'Published' : 'Draft'}
+                      </Badge>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-medium uppercase text-muted-foreground">Created At</h4>
+                      <p className="text-sm">
+                        {format(new Date(service.createdAt), 'PP')}
+                      </p>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-end">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => handleViewDetails(service)}>
+                          View details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleEdit(service)}>
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                          onClick={() => handleDelete(service)}
+                        >
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
       
