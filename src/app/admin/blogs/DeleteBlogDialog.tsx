@@ -21,12 +21,14 @@ interface DeleteBlogDialogProps {
   isOpen: boolean;
   onClose: () => void;
   blog: BlogPost | null;
+  onDeleted?: () => void;
 }
 
 export default function DeleteBlogDialog({
   isOpen,
   onClose,
   blog,
+  onDeleted,
 }: DeleteBlogDialogProps) {
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -47,7 +49,11 @@ export default function DeleteBlogDialog({
         title: 'Blog post deleted',
         description: `The post "${blog.title}" has been successfully deleted.`,
       });
-      onClose();
+      if (onDeleted) {
+        onDeleted();
+      } else {
+        onClose();
+      }
     } catch (error: any) {
       toast({
         variant: 'destructive',

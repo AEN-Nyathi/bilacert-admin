@@ -7,13 +7,6 @@ import * as z from 'zod';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import {
   Form,
   FormControl,
   FormField,
@@ -28,7 +21,8 @@ import { useToast } from '@/hooks/use-toast';
 import type { BlogPost } from '@/lib/types';
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const blogSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -42,8 +36,6 @@ const blogSchema = z.object({
 type BlogFormValues = z.infer<typeof blogSchema>;
 
 interface BlogFormProps {
-  isOpen: boolean;
-  onClose: () => void;
   blog?: BlogPost | null;
 }
 
@@ -55,8 +47,9 @@ const slugify = (str: string) =>
     .replace(/[\s_-]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
-export default function BlogForm({ isOpen, onClose, blog }: BlogFormProps) {
+export default function BlogForm({ blog }: BlogFormProps) {
   const { toast } = useToast();
+  const router = useRouter();
   const form = useForm<BlogFormValues>({
     resolver: zodResolver(blogSchema),
     defaultValues: {
@@ -139,7 +132,8 @@ export default function BlogForm({ isOpen, onClose, blog }: BlogFormProps) {
       toast({
         title: `Blog post ${blog ? 'updated' : 'created'} successfully!`,
       });
-      onClose();
+      router.push('/admin/blogs');
+      router.refresh();
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -150,118 +144,109 @@ export default function BlogForm({ isOpen, onClose, blog }: BlogFormProps) {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>{blog ? 'Edit Blog Post' : 'Add New Post'}</DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <ScrollArea className="max-h-[70vh] p-1">
-              <div className="space-y-6 p-6">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., My Awesome Blog Post" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="slug"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Slug</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., my-awesome-blog-post" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., Tech" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                 <FormField
-                  control={form.control}
-                  name="excerpt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Excerpt</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="A short summary of the post."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="content"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Content</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Write your blog post here. Markdown is supported."
-                          rows={12}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="published"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel>Published</FormLabel>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </ScrollArea>
-            <DialogFooter className="mt-6 px-6">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {blog ? 'Save Changes' : 'Create Post'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <Form {...form}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-6">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., My Awesome Blog Post" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="slug"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Slug</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., my-awesome-blog-post" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., Tech" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="excerpt"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Excerpt</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="A short summary of the post."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Content</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Write your blog post here. Markdown is supported."
+                      rows={12}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="published"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel>Published</FormLabel>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+        <div className="mt-8 flex justify-end gap-4">
+          <Button type="button" variant="outline" asChild>
+            <Link href="/admin/blogs">Cancel</Link>
+          </Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isEditing ? 'Save Changes' : 'Create Post'}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }
