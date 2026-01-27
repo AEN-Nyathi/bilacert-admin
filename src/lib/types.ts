@@ -1,6 +1,7 @@
 import type { Timestamp } from 'firebase/firestore';
 
 export interface Submission {
+  id?: string;
   serviceType: string;
   clientName: string;
   clientEmail: string;

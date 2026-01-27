@@ -82,6 +82,19 @@
         "submittedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["serviceType", "clientName", "clientEmail", "submittedAt", "status"]
+    },
+    "Contact": {
+        "title": "Contact",
+        "description": "A contact.",
+        "type": "object",
+        "properties": {
+            "name": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "company": { "type": "string" },
+            "role": { "type": "string" },
+            "phone": { "type": "string" }
+        },
+        "required": ["name", "email"]
     }
   },
   "auth": {
@@ -107,6 +120,10 @@
     "/form_submissions/{submissionId}": {
       "schema": { "$ref": "#/entities/FormSubmission" },
       "description": "Stores all form submissions from the website."
+    },
+    "/contacts/{contactId}": {
+      "schema": { "$ref": "#/entities/Contact" },
+      "description": "Stores contact information."
     }
   }
 }

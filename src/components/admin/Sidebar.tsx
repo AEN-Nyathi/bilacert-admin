@@ -19,6 +19,8 @@ import {
   MessageSquare,
   LogOut,
   Settings,
+  Users,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
@@ -29,6 +31,8 @@ const navItems = [
   { href: '/admin/services', icon: Briefcase, label: 'Services' },
   { href: '/admin/blogs', icon: FileText, label: 'Blogs' },
   { href: '/admin/testimonials', icon: MessageSquare, label: 'Testimonials' },
+  { href: '/admin/contacts', icon: Users, label: 'Contacts' },
+  { href: '/admin/form_submissions', icon: FileSpreadsheet, label: 'Submissions' },
 ];
 
 export default function AdminSidebar() {
