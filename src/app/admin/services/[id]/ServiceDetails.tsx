@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import DeleteServiceDialog from './DeleteServiceDialog';
+import DeleteServiceDialog from '../DeleteServiceDialog';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Icon from '@/components/Icon';
@@ -44,6 +44,17 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
         <div className="prose prose-sm dark:prose-invert mt-1 text-card-foreground text-sm whitespace-pre-wrap">
             <pre className="bg-muted/50 p-2 rounded-md"><code>{JSON.stringify(data, null, 2)}</code></pre>
         </div>
+    )
+  }
+
+  const renderStringArray = (data: string[] | undefined) => {
+    if (!data || data.length === 0) return <p className="text-sm text-card-foreground">Not set.</p>;
+    return (
+        <ul className="list-disc list-inside space-y-1 mt-1 text-sm text-card-foreground">
+            {data.map((item, index) => (
+                <li key={index}>{item}</li>
+            ))}
+        </ul>
     )
   }
 
@@ -110,18 +121,14 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
                                 </div>
                             </div>
                         )}
-                        {service.features && (
-                            <div>
-                                <h4 className="text-sm font-medium text-muted-foreground">Features</h4>
-                                {renderJson(service.features)}
-                            </div>
-                        )}
-                        {service.requirements && (
-                            <div>
-                                <h4 className="text-sm font-medium text-muted-foreground">Requirements</h4>
-                                {renderJson(service.requirements)}
-                            </div>
-                        )}
+                        <div>
+                            <h4 className="text-sm font-medium text-muted-foreground">Features</h4>
+                            {renderStringArray(service.features)}
+                        </div>
+                        <div>
+                            <h4 className="text-sm font-medium text-muted-foreground">Requirements</h4>
+                            {renderStringArray(service.requirements)}
+                        </div>
                     </div>
                     <div className="space-y-6">
                         {service.slug && (

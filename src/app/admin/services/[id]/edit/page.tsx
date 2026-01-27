@@ -1,6 +1,6 @@
 
 import { supabase } from '@/lib/supabase';
-import ServiceForm from '../../ServiceForm';
+import ServiceForm from '../../new/ServiceForm';
 import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import type { Service } from '@/lib/types';

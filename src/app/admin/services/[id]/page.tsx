@@ -1,6 +1,6 @@
 
 import { supabase } from '@/lib/supabase';
-import ServiceDetails from '../ServiceDetails';
+import ServiceDetails from './ServiceDetails';
 import { notFound } from 'next/navigation';
 import type { Service } from '@/lib/types';
 

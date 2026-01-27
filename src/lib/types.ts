@@ -30,8 +30,8 @@ export interface Service {
   category: string;
   orderIndex?: number;
   content?: string;
-  features?: any;
-  requirements?: any;
+  features?: string[];
+  requirements?: string[];
   processingTime?: string;
   pricing?: any;
   image?: string;

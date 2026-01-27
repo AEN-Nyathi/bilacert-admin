@@ -1,5 +1,5 @@
 
-import ServiceForm from '../ServiceForm';
+import ServiceForm from './ServiceForm';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';

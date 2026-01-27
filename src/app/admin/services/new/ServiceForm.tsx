@@ -13,6 +13,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -30,6 +31,8 @@ const serviceSchema = z.object({
   description: z.string().optional(),
   icon: z.string().optional(),
   content: z.string().optional(),
+  features: z.string().optional(),
+  requirements: z.string().optional(),
   published: z.boolean(),
   processingTime: z.string().optional(),
   pricing: z.string().optional().refine((val) => {
@@ -60,6 +63,8 @@ export default function ServiceForm({ service }: ServiceFormProps) {
       description: '',
       icon: '',
       content: '',
+      features: '',
+      requirements: '',
       published: false,
       processingTime: '',
       pricing: '',
@@ -82,6 +87,8 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         description: service.description || '',
         icon: service.icon || '',
         content: service.content || '',
+        features: service.features?.join('\n') || '',
+        requirements: service.requirements?.join('\n') || '',
         published: service.published,
         processingTime: service.processingTime || '',
         pricing: service.pricing ? JSON.stringify(service.pricing, null, 2) : '',
@@ -93,6 +100,8 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         description: '',
         icon: '',
         content: '',
+        features: '',
+        requirements: '',
         published: false,
         processingTime: '',
         pricing: '',
@@ -113,6 +122,8 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         description: values.description,
         icon: values.icon,
         content: values.content,
+        features: values.features ? values.features.split('\n').filter(s => s.trim() !== '') : [],
+        requirements: values.requirements ? values.requirements.split('\n').filter(s => s.trim() !== '') : [],
         published: values.published,
         processing_time: values.processingTime,
         pricing: values.pricing ? JSON.parse(values.pricing) : null,
@@ -224,6 +235,46 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                     {...field}
                   />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+           <FormField
+            control={form.control}
+            name="features"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Features</FormLabel>
+                 <FormControl>
+                  <Textarea
+                    placeholder="Enter one feature per line."
+                    rows={5}
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                    Each line will be treated as a separate feature.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+           <FormField
+            control={form.control}
+            name="requirements"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Requirements</FormLabel>
+                 <FormControl>
+                  <Textarea
+                    placeholder="Enter one requirement per line."
+                    rows={5}
+                    {...field}
+                  />
+                </FormControl>
+                 <FormDescription>
+                    Each line will be treated as a separate requirement.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
