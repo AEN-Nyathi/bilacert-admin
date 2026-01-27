@@ -1,16 +1,10 @@
+
 'use client';
 
 import {
-  BarChart as BarChartIcon,
   CreditCard,
   DollarSign,
-  Package,
-  Shield,
-  CheckSquare,
-  FileText,
-  Radio,
-  Sailboat,
-  MessageSquare,
+  BarChart as BarChartIcon,
   Clock,
 } from 'lucide-react';
 import StatCard from '@/components/admin/StatCard';
@@ -20,22 +14,23 @@ import { Progress } from '@/components/ui/progress';
 import { useMemo } from 'react';
 import { format } from 'date-fns';
 import { Submission } from '@/lib/types';
+import Icon from '@/components/Icon';
 
-const serviceTypeToIconMap: Record<string, React.ElementType> = {
-    'Class ECS/ECNS Licensing': Shield,
-    'ICASA Type Approvals': CheckSquare,
-    'License Exemptions': FileText,
-    'NRCS LOA Applications': FileText,
-    'Radio Dealer Licensing': Radio,
-    'Ski Boat VHF Licensing': Sailboat,
-    'contact': MessageSquare,
-    'default': Package,
+const serviceTypeToIconNameMap: Record<string, string> = {
+    'Class ECS/ECNS Licensing': 'Shield',
+    'ICASA Type Approvals': 'CheckSquare',
+    'License Exemptions': 'FileText',
+    'NRCS LOA Applications': 'FileText',
+    'Radio Dealer Licensing': 'Radio',
+    'Ski Boat VHF Licensing': 'Sailboat',
+    'contact': 'MessageSquare',
+    'default': 'Package',
 };
   
 const getIconForServiceType = (submission: Submission, props?: { className: string }) => {
       const type = submission.serviceName || submission.formType;
-      const Icon = serviceTypeToIconMap[type] || serviceTypeToIconMap.default;
-      return <Icon {...props} />;
+      const iconName = serviceTypeToIconNameMap[type] || serviceTypeToIconNameMap['default'];
+      return <Icon name={iconName} {...props} />;
 };
 
 export default function DashboardClient() {
@@ -69,7 +64,7 @@ export default function DashboardClient() {
   return (
     <div className="space-y-8">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Total Submissions" value={loading ? '...' : `${stats.total}`} icon={<Package className="h-4 w-4" />} />
+        <StatCard title="Total Submissions" value={loading ? '...' : `${stats.total}`} icon={<Icon name="Package" className="h-4 w-4" />} />
         <StatCard title="New Applications" value={loading ? '...' : `${stats.newCount}`} icon={<BarChartIcon className="h-4 w-4" />} description="Awaiting review" />
         <StatCard title="In Progress" value={loading ? '...' : `${stats.inProgress}`} icon={<CreditCard className="h-4 w-4" />} />
         <StatCard title="Total Revenue (Mock)" value={loading ? '...' : '$45,231.89'} icon={<DollarSign className="h-4 w-4" />} description="+20.1% from last month" />

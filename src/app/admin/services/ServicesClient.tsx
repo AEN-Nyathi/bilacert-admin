@@ -25,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
+import Icon from '@/components/Icon';
 
 export default function ServicesClient() {
   const { services, loading, error } = useServices();
@@ -79,8 +80,13 @@ export default function ServicesClient() {
             <Link href={`/admin/services/${service.id}`} key={service.id} className="group">
                 <Card className="flex flex-col h-full hover:shadow-lg hover:border-primary/50 transition-all">
                 <CardHeader>
-                    <CardTitle className="truncate">{service.title}</CardTitle>
-                    <CardDescription>{service.category || 'No Category'}</CardDescription>
+                    <div className="flex justify-between items-start gap-4">
+                        <div className='flex-1'>
+                            <CardTitle className="truncate">{service.title}</CardTitle>
+                            <CardDescription>{service.category || 'No Category'}</CardDescription>
+                        </div>
+                        {service.icon && <Icon name={service.icon} className="h-8 w-8 text-muted-foreground" />}
+                    </div>
                 </CardHeader>
                 <CardContent className="flex-grow space-y-4">
                     {service.description && (

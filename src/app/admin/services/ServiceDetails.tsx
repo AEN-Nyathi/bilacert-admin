@@ -12,6 +12,7 @@ import { useState } from 'react';
 import DeleteServiceDialog from './DeleteServiceDialog';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Icon from '@/components/Icon';
 
 interface ServiceDetailsProps {
   service: Service;
@@ -138,7 +139,10 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
                          {service.icon && (
                             <div>
                                 <h4 className="text-sm font-medium text-muted-foreground">Icon</h4>
-                                <p className="text-sm text-card-foreground">{service.icon}</p>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <Icon name={service.icon} className="h-5 w-5 text-accent" />
+                                    <p className="text-sm font-mono text-card-foreground">{service.icon}</p>
+                                </div>
                             </div>
                         )}
                         {service.orderIndex !== undefined && (

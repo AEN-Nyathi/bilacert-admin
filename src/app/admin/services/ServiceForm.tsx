@@ -28,6 +28,7 @@ const serviceSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   category: z.string().min(1, 'Category is required'),
   description: z.string().optional(),
+  icon: z.string().optional(),
   content: z.string().optional(),
   published: z.boolean(),
   processingTime: z.string().optional(),
@@ -57,6 +58,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
       title: '',
       category: '',
       description: '',
+      icon: '',
       content: '',
       published: false,
       processingTime: '',
@@ -78,6 +80,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         title: service.title,
         category: service.category,
         description: service.description || '',
+        icon: service.icon || '',
         content: service.content || '',
         published: service.published,
         processingTime: service.processingTime || '',
@@ -88,6 +91,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         title: '',
         category: '',
         description: '',
+        icon: '',
         content: '',
         published: false,
         processingTime: '',
@@ -107,6 +111,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         href,
         category: values.category,
         description: values.description,
+        icon: values.icon,
         content: values.content,
         published: values.published,
         processing_time: values.processingTime,
@@ -172,6 +177,19 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                 <FormLabel>Category</FormLabel>
                 <FormControl>
                   <Input placeholder="e.g., Licensing" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+           <FormField
+            control={form.control}
+            name="icon"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Icon Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., Shield" {...field} value={field.value || ''} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
