@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -92,6 +91,11 @@ export default function BlogsClient() {
                     <CardDescription>{blog.category || 'No Category'}</CardDescription>
                   </CardHeader>
                   <CardContent className="flex-grow space-y-4">
+                    {blog.excerpt && (
+                      <p className="text-sm text-muted-foreground line-clamp-3">
+                        {blog.excerpt}
+                      </p>
+                    )}
                     <div>
                       <h4 className="text-xs font-medium uppercase text-muted-foreground">Status</h4>
                       <Badge variant={blog.published ? 'default' : 'secondary'}>

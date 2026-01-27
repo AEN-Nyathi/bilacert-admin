@@ -23,6 +23,7 @@ export default function BlogsLoading() {
                                 <Skeleton className="h-4 w-1/2" />
                             </CardHeader>
                             <CardContent className="space-y-4">
+                                <Skeleton className="h-12 w-full" />
                                 <div className="space-y-2">
                                     <Skeleton className="h-4 w-1/4" />
                                     <Skeleton className="h-5 w-1/3" />
