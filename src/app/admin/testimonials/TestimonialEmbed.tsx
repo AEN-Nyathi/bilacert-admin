@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect } from 'react';
@@ -25,7 +26,7 @@ export default function TestimonialEmbed({ postUrl }: TestimonialEmbedProps) {
   }, [postUrl]);
 
   return (
-    <div className="p-4 h-full w-full">
+    <div className="p-4">
       <div
         key={postUrl} // Using key to help React remount the component on URL change
         className="fb-post"
