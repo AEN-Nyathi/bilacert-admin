@@ -1,9 +1,11 @@
+
 'use client';
 
 import { useSubmissions } from '@/hooks/useSubmissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { columns } from './columns';
 import { Submission } from '@/lib/types';
+import { DataTable } from './data-table';
 
 export default function SubmissionsClient() {
   const { submissions, loading, error } = useSubmissions();
