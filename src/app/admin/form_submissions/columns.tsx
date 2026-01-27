@@ -2,7 +2,6 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { Submission } from "@/lib/types"
-import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -14,16 +13,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import Link from 'next/link';
+import StatusUpdate from "./StatusUpdate"
 
-const statusVariantMap: { [key: string]: "default" | "secondary" | "destructive" | "outline" } = {
-    pending: "default",
-    'in-progress': "secondary",
-    completed: "outline",
+export const statusVariantMap: { [key: string]: "default" | "secondary" | "destructive" | "outline" } = {
+    pending: "secondary",
+    'in-progress': "outline",
+    completed: "default",
     rejected: "destructive",
     archived: "secondary"
 }
 
-export const columns: ColumnDef<Submission>[] = [
+interface ColumnsOptions {
+    onDelete: (submission: Submission) => void;
+}
+
+
+export const columns = ({ onDelete }: ColumnsOptions): ColumnDef<Submission>[] => [
   {
     accessorKey: "formType",
     header: "Form Type",
@@ -64,8 +70,7 @@ export const columns: ColumnDef<Submission>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-        const status = row.getValue("status") as string;
-        return <Badge variant={statusVariantMap[status] || "default"}>{status}</Badge>
+        return <StatusUpdate submission={row.original} />
     }
   },
   {
@@ -83,14 +88,19 @@ export const columns: ColumnDef<Submission>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(submission.id as string)}
-            >
-              Copy submission ID
+            <DropdownMenuItem asChild>
+                <Link href={`/admin/form_submissions/${submission.id}`}>View Details</Link>
+            </DropdownMenuItem>
+             <DropdownMenuItem asChild>
+                <Link href={`/admin/form_submissions/${submission.id}/edit`}>Edit</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>Update status</DropdownMenuItem>
+            <DropdownMenuItem
+                className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                onClick={() => onDelete(submission)}
+            >
+                Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
