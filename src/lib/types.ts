@@ -1,4 +1,5 @@
 
+
 export interface Submission {
   id?: string;
   formType: string;
@@ -58,5 +59,15 @@ export interface BlogPost {
   content?: string;
   category?: string;
   published: boolean;
+  createdAt: string;
+}
+
+export interface Contact {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  message?: string;
   createdAt: string;
 }

@@ -26,6 +26,16 @@ CREATE TABLE public.blog_posts (
   CONSTRAINT blog_posts_pkey PRIMARY KEY (id),
   CONSTRAINT blog_posts_author_id_fkey FOREIGN KEY (author_id) REFERENCES public.users(id)
 );
+CREATE TABLE public.contacts (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  email text NOT NULL,
+  name text,
+  phone text,
+  service text,
+  message text,
+  submitted_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT contacts_pkey PRIMARY KEY (id)
+);
 CREATE TABLE public.form_submissions (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   form_type character varying NOT NULL CHECK (form_type::text = ANY (ARRAY['service-inquiry'::character varying, 'contact'::character varying, 'class-ecs-ecns'::character varying, 'icasa-type-approvals'::character varying, 'license-exemptions'::character varying, 'nrcs-loa'::character varying, 'radio-dealer'::character varying, 'ski-boat-vhf'::character varying]::text[])),
