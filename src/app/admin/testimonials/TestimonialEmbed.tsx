@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect } from 'react';
@@ -32,6 +31,7 @@ export default function TestimonialEmbed({ postUrl }: TestimonialEmbedProps) {
         className="fb-post"
         data-href={postUrl}
         data-show-text="true"
+        data-adapt-container-width="true"
       />
     </div>
   );
