@@ -31,10 +31,8 @@ export interface Service {
 
 export interface Testimonial {
   id: string;
-  author: string;
-  company: string;
-  text: string;
-  createdAt: Date;
+  postUrl: string;
+  createdAt: string;
 }
 
 export interface BlogPost {

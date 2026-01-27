@@ -1,17 +1,20 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { Suspense } from 'react';
+import TestimonialsClient from './TestimonialsClient';
+import TestimonialsLoading from './loading';
+
+export const metadata = {
+    title: 'Testimonials | Bilacert Admin Pro',
+    description: 'Manage customer testimonials from social media.',
+};
 
 export default function TestimonialsPage() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold tracking-tight mb-6">Testimonials</h1>
-      <Card>
-        <CardHeader>
-          <CardTitle>Manage Testimonials</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>This is where the management interface for Supabase-hosted social proof will be implemented.</p>
-        </CardContent>
-      </Card>
+    <div className="space-y-6">
+        <h1 className="text-3xl font-bold tracking-tight">Testimonials</h1>
+        <Suspense fallback={<TestimonialsLoading />}>
+            <TestimonialsClient />
+        </Suspense>
     </div>
   );
 }
