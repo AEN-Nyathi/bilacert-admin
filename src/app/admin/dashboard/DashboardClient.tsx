@@ -14,6 +14,7 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContaine
 import { useMemo } from 'react';
 import { format, subDays } from 'date-fns';
 import type { Submission } from '@/lib/types';
+import { Progress } from '@/components/ui/progress';
 
 const chartConfig = {
   submissions: {
@@ -52,17 +53,6 @@ export default function DashboardClient() {
     return Object.entries(typeMap).map(([name, value]) => ({ name, submissions: value }));
   }, [submissions]);
   
-  const typeChartConfig = useMemo(() => {
-    const config: ChartConfig = {};
-    submissionsByType.forEach((item, index) => {
-      config[item.name] = {
-        label: item.name,
-        color: `hsl(var(--chart-${(index % 2) + 1}))`,
-      };
-    });
-    return config;
-  }, [submissionsByType]);
-
 
   if (error) {
     return <div className="text-destructive">Error loading submissions: {error.message}</div>;
@@ -98,22 +88,39 @@ export default function DashboardClient() {
         </Card>
         
         <Card>
-            <CardHeader>
-                <CardTitle>Submissions by Type</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <ChartContainer config={typeChartConfig} className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={submissionsByType} layout="vertical" margin={{ top: 20, right: 20, bottom: 20, left: 40 }}>
-                        <CartesianGrid horizontal={false} />
-                        <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} tickMargin={8} width={80}/>
-                        <XAxis type="number" allowDecimals={false} />
-                        <Tooltip cursor={{fill: 'hsl(var(--muted))'}} content={<ChartTooltipContent />} />
-                        <Bar dataKey="submissions" layout="vertical" fill="var(--color-submissions)" radius={4} />
-                    </BarChart>
-                </ResponsiveContainer>
-                </ChartContainer>
-            </CardContent>
+          <CardHeader>
+            <CardTitle>Submissions by Type</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {submissionsByType.length > 0 ? (
+                (() => {
+                  const maxSubmissions = Math.max(...submissionsByType.map((s) => s.submissions), 0);
+                  const progressColorClasses = [
+                    "[&>div]:bg-chart-1",
+                    "[&>div]:bg-chart-2",
+                    "[&>div]:bg-chart-3",
+                    "[&>div]:bg-chart-4",
+                    "[&>div]:bg-chart-5",
+                  ];
+                  return submissionsByType
+                    .sort((a, b) => b.submissions - a.submissions)
+                    .map((item, index) => (
+                      <div key={item.name} className="grid grid-cols-[1fr_1fr_auto] items-center gap-4">
+                        <span className="truncate text-sm text-muted-foreground">{item.name}</span>
+                        <Progress
+                          value={maxSubmissions > 0 ? (item.submissions / maxSubmissions) * 100 : 0}
+                          className={`h-2 ${progressColorClasses[index % progressColorClasses.length]}`}
+                        />
+                        <span className="font-mono text-sm font-medium">{item.submissions}</span>
+                      </div>
+                    ));
+                })()
+              ) : (
+                <div className="text-center text-muted-foreground pt-4">No submissions yet.</div>
+              )}
+            </div>
+          </CardContent>
         </Card>
       </div>
     </div>
