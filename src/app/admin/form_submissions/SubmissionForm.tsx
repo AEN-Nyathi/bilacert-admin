@@ -62,7 +62,18 @@ export default function SubmissionForm({ submission }: SubmissionFormProps) {
   const router = useRouter();
   const form = useForm<SubmissionFormValues>({
     resolver: zodResolver(submissionSchema),
-    defaultValues: {},
+    defaultValues: {
+      fullName: '',
+      email: '',
+      phone: '',
+      company: '',
+      industry: '',
+      serviceName: '',
+      status: 'pending',
+      details: '',
+      internalNotes: '',
+      assignedTo: '',
+    },
   });
 
   const {
