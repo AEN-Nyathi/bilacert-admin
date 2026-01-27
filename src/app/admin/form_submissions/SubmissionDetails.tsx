@@ -113,6 +113,12 @@ export default function SubmissionDetails({ submission }: SubmissionDetailsProps
                         )}
                     </div>
                      <div className="space-y-6">
+                        {submission.assignedTo && (
+                            <div>
+                                <h4 className="text-sm font-medium text-muted-foreground">Assigned To</h4>
+                                <p className="text-sm font-mono text-card-foreground">{submission.assignedTo}</p>
+                            </div>
+                        )}
                         <div>
                             <h4 className="text-sm font-medium text-muted-foreground">Submitted At</h4>
                             <p className="text-sm text-card-foreground">{format(new Date(submission.createdAt), 'PPpp')}</p>

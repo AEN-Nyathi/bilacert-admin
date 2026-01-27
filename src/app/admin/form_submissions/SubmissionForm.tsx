@@ -48,6 +48,7 @@ const submissionSchema = z.object({
     }
   }, { message: 'Details must be a valid JSON object.' }),
   internalNotes: z.string().optional(),
+  assignedTo: z.string().optional(),
 });
 
 type SubmissionFormValues = z.infer<typeof submissionSchema>;
@@ -82,6 +83,7 @@ export default function SubmissionForm({ submission }: SubmissionFormProps) {
         status: submission.status,
         details: submission.details ? JSON.stringify(submission.details, null, 2) : '',
         internalNotes: submission.internalNotes || '',
+        assignedTo: submission.assignedTo || '',
       });
     }
   }, [submission, reset]);
@@ -98,6 +100,7 @@ export default function SubmissionForm({ submission }: SubmissionFormProps) {
         status: values.status,
         details: values.details ? JSON.parse(values.details) : null,
         internal_notes: values.internalNotes,
+        assigned_to: values.assignedTo || null,
         updated_at: new Date().toISOString(),
       };
 
@@ -232,6 +235,19 @@ export default function SubmissionForm({ submission }: SubmissionFormProps) {
                       <FormMessage />
                     </FormItem>
                   )}
+                />
+                <FormField
+                    control={form.control}
+                    name="assignedTo"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Assigned To (User ID)</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Enter user UUID" {...field} value={field.value ?? ''} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
                 />
                 <FormField
                     control={form.control}
