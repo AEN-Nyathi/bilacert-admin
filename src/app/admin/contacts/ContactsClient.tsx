@@ -9,32 +9,26 @@ import { DataTable } from './data-table';
 import { Contact } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
-import ContactForm from './ContactForm';
 import DeleteContactDialog from './DeleteContactDialog';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function ContactsClient() {
   const { contacts, loading, error } = useContacts();
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const router = useRouter();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-
-  const handleAdd = () => {
-    setSelectedContact(null);
-    setIsFormOpen(true);
-  };
-
-  const handleEdit = (contact: Contact) => {
-    setSelectedContact(contact);
-    setIsFormOpen(true);
-  };
 
   const handleDelete = (contact: Contact) => {
     setSelectedContact(contact);
     setIsDeleteDialogOpen(true);
   };
+  
+  const handleEdit = (contact: Contact) => {
+    router.push(`/admin/contacts/${contact.id}/edit`);
+  };
 
   const handleCloseDialogs = () => {
-    setIsFormOpen(false);
     setIsDeleteDialogOpen(false);
     setSelectedContact(null);
   };
@@ -45,40 +39,41 @@ export default function ContactsClient() {
 
   return (
     <>
-        <Card>
-            <CardHeader>
-                <div className="flex items-center justify-between">
-                <CardTitle>All Contacts</CardTitle>
-                <Button onClick={handleAdd}>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>All Contacts</CardTitle>
+            <Button asChild>
+                <Link href="/admin/contacts/new">
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Add Contact
-                </Button>
+                </Link>
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+           {contacts.length === 0 && !loading ? (
+                <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/30 py-24 text-center">
+                    <h3 className="text-lg font-semibold tracking-tight">No Contacts Yet</h3>
+                    <p className="text-sm text-muted-foreground">Click "Add Contact" to get started.</p>
                 </div>
-            </CardHeader>
-            <CardContent>
+           ) : (
                 <DataTable 
                     columns={columns({ onEdit: handleEdit, onDelete: handleDelete })} 
                     data={contacts as Contact[]} 
                     isLoading={loading} 
                 />
-            </CardContent>
-        </Card>
-        
-        {isFormOpen && (
-            <ContactForm
-                isOpen={isFormOpen}
-                onClose={handleCloseDialogs}
-                contact={selectedContact}
-            />
-        )}
-
-        {isDeleteDialogOpen && (
-            <DeleteContactDialog
-                isOpen={isDeleteDialogOpen}
-                onClose={handleCloseDialogs}
-                contact={selectedContact}
-            />
-        )}
+           )}
+        </CardContent>
+      </Card>
+      
+      {isDeleteDialogOpen && (
+        <DeleteContactDialog
+          isOpen={isDeleteDialogOpen}
+          onClose={handleCloseDialogs}
+          contact={selectedContact}
+        />
+      )}
     </>
   );
 }

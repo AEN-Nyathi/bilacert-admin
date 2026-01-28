@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
+import Link from "next/link"
 
 interface ColumnsOptions {
     onEdit: (contact: Contact) => void;
@@ -83,6 +84,9 @@ export const columns = ({ onEdit, onDelete }: ColumnsOptions): ColumnDef<Contact
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                    <Link href={`/admin/contacts/${contact.id}`}>View Details</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onEdit(contact)}>
                   Edit
                 </DropdownMenuItem>

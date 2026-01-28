@@ -10,6 +10,7 @@ import {
   getSortedRowModel,
   SortingState,
   RowSelectionState,
+  Row,
 } from "@tanstack/react-table"
 
 import {
@@ -23,6 +24,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useRouter } from "next/navigation"
+import type { Contact } from "@/lib/types"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -37,6 +40,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([])
     const [rowSelection, setRowSelection] = useState({})
+    const router = useRouter();
 
   const table = useReactTable({
     data,
@@ -51,6 +55,13 @@ export function DataTable<TData, TValue>({
         rowSelection,
     }
   })
+
+  const handleRowClick = (row: Row<TData>) => {
+    const contact = row.original as Contact;
+    if (contact?.id) {
+        router.push(`/admin/contacts/${contact.id}`);
+    }
+  }
 
   return (
     <div>
@@ -90,9 +101,18 @@ export function DataTable<TData, TValue>({
                 <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
+                    className="cursor-pointer"
+                    onClick={() => handleRowClick(row)}
                 >
                     {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell 
+                        key={cell.id} 
+                        onClick={(e) => {
+                            if (cell.column.id === 'actions' || cell.column.id === 'select') {
+                                e.stopPropagation();
+                            }
+                        }}
+                    >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                     ))}
