@@ -1,6 +1,6 @@
 
 import 'server-only';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from './supabase/server';
 import type { Service } from './types';
 
 // This is a simplified example. In a real app, you'd handle errors more gracefully.
@@ -33,7 +33,7 @@ function mapToService(item: any): Service {
 }
 
 export async function getPublishedServices(): Promise<Service[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('services')
     .select('*')
@@ -49,7 +49,7 @@ export async function getPublishedServices(): Promise<Service[]> {
 }
 
 export async function getServiceBySlug(slug: string): Promise<Service | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('services')
     .select('*')
@@ -65,7 +65,7 @@ export async function getServiceBySlug(slug: string): Promise<Service | null> {
 }
 
 export async function getAllPublishedServiceSlugs(): Promise<{ slug: string }[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, error } = await supabase
       .from('services')
       .select('slug')
