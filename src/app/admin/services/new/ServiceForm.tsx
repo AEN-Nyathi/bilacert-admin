@@ -302,7 +302,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                             <FormField control={form.control} name={`pricingPlans.${index}.description`} render={({ field }) => ( <FormItem> <FormLabel>Description</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage/> </FormItem> )} />
                             <FormField control={form.control} name={`pricingPlans.${index}.price`} render={({ field }) => ( <FormItem> <FormLabel>Price</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage/> </FormItem> )} />
                             <FormField control={form.control} name={`pricingPlans.${index}.features`} render={({ field }) => ( <FormItem> <FormLabel>Features</FormLabel> <FormControl><Textarea placeholder="One feature per line" {...field} /></FormControl> <FormMessage/> </FormItem> )} />
-                             <FormField
+                            <FormField
                                 control={form.control}
                                 name={`pricingPlans.${index}.popular`}
                                 render={({ field }) => (
@@ -338,8 +338,42 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                         <FormField control={form.control} name="pricing" render={({ field }) => ( <FormItem> <FormLabel>Base Price (ZAR)</FormLabel> <FormControl> <Input type="number" step="0.01" placeholder="e.g., 1500.00" {...field} value={field.value ?? ''} /> </FormControl> <FormMessage /> </FormItem> )} />
                     </div>
                     <div className="space-y-4 pt-4">
-                        <FormField control={form.control} name="published" render={({ field }) => ( <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4"> <div className="space-y-0.5"> <FormLabel>Published</FormLabel> <FormDescription> Make this service visible on the public website. </FormDescription> </div> <FormControl> <Switch checked={field.value} onCheckedChange={field.onChange} /> </FormControl> </FormItem> )} />
-                        <FormField control={form.control} name="featured" render={({ field }) => ( <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4"> <div className="space-y-0.5"> <FormLabel>Featured</FormLabel> <FormDescription> Highlight this service on the homepage. </FormDescription> </div> <FormControl> <Switch checked={field.value} onCheckedChange={field.onChange} /> </FormControl> </FormItem> )} />
+                        <FormField
+                            control={form.control}
+                            name="published"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                    <div className="space-y-0.5">
+                                        <FormLabel>Published</FormLabel>
+                                        <FormDescription>Make this service visible on the public website.</FormDescription>
+                                    </div>
+                                    <FormControl>
+                                        <Switch
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="featured"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                    <div className="space-y-0.5">
+                                        <FormLabel>Featured</FormLabel>
+                                        <FormDescription>Highlight this service on the homepage.</FormDescription>
+                                    </div>
+                                    <FormControl>
+                                        <Switch
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
                     </div>
                 </CardContent>
             </Card>
