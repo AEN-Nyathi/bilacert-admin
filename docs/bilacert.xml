@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bilacert>
+  <metadata>
+    <generated_date>2026-01-23</generated_date>
+    <author>Senior Full-Stack Developer Analysis - Malalang Architecture</author>
+    <purpose>Comprehensive architecture documentation for bilacert monorepo (website + admin panel)</purpose>
+    <version>1.0</version>
+    <description>Technical architecture guide documenting tech stack, design patterns, integrations, development standards, and component analysis for bilacert regulatory services platform.</description>
+  </metadata>
+
+  <TechStack>
+    <summary>Modern full-stack architecture using Next.js 16 + React 19 for public website, Vite + React 18 for admin panel, with Firebase Firestore as primary database and Supabase for testimonials/real-time features.</summary>
+    
+    <website_stack>
+      <name>Bilacert Main Website (Next.js)</name>
+      <framework>
+        <name>Next.js</name>
+        <version>16.0.10</version>
+        <description>React meta-framework with App Router, server components, and Turbopack</description>
+      </framework>
+      <react>
+        <version>19.1.0</version>
+        <description>Latest React version with concurrent rendering and improved hooks</description>
+      </react>
+      <language>
+        <name>TypeScript</name>
+        <version>5.x</version>
+        <mode>strict</mode>
+      </language>
+      <build_tool>
+        <name>Turbopack</name>
+        <enabled_in>dev, build</enabled_in>
+        <benefit>Faster builds and development iteration</benefit>
+      </build_tool>
+      <styling>
+        <name>Tailwind CSS</name>
+        <version>4.x</version>
+        <preprocessor>PostCSS 8.x</preprocessor>
+        <approach>Mobile-first utility classes with custom theme configuration</approach>
+      </styling>
+      <fonts>
+        <provider>Google Fonts</provider>
+        <font>Inter</font>
+        <strategy>Preload for performance</strategy>
+      </fonts>
+      <key_dependencies>
+        <dependency>
+          <name>@next/mdx</name>
+          <version>latest</version>
+          <purpose>MDX support for blog content and markdown pages</purpose>
+        </dependency>
+        <dependency>
+          <name>firebase</name>
+          <version>12.3.0</version>
+          <purpose>Authentication, Firestore database, Storage</purpose>
+        </dependency>
+        <dependency>
+          <name>@supabase/supabase-js</name>
+          <version>2.45.4</version>
+          <purpose>Real-time data subscriptions, testimonials table access</purpose>
+        </dependency>
+        <dependency>
+          <name>lucide-react</name>
+          <version>0.542.0</version>
+          <purpose>SVG icon library for consistent iconography</purpose>
+        </dependency>
+        <dependency>
+          <name>@vercel/analytics</name>
+          <version>1.5.0</version>
+          <purpose>Website analytics and performance monitoring</purpose>
+        </dependency>
+        <dependency>
+          <name>@next/third-parties</name>
+          <version>16.0.1</version>
+          <purpose>Google Analytics and third-party script optimization</purpose>
+        </dependency>
+      </key_dependencies>
+      <package_manager>npm</package_manager>
+    </website_stack>
+
+    <admin_panel_stack>
+      <name>Bilacert Admin Panel (Vite + React)</name>
+      <framework>
+        <name>Vite</name>
+        <version>5.4.2</version>
+        <plugin>React 18 plugin</plugin>
+        <benefit>Rapid HMR (hot module replacement), faster builds than traditional Webpack</benefit>
+      </framework>
+      <react>
+        <version>18.3.1</version>
+        <description>Stable React 18 with hooks and concurrent features</description>
+      </react>
+      <language>
+        <name>TypeScript</name>
+        <version>5.5.3</version>
+        <mode>strict</mode>
+      </language>
+      <styling>
+        <name>Tailwind CSS</name>
+        <version>3.4.1</version>
+        <preprocessor>PostCSS 8.x</preprocessor>
+        <approach>Utility-first CSS with custom components</approach>
+      </styling>
+      <key_dependencies>
+        <dependency>
+          <name>firebase</name>
+          <version>12.3.0</version>
+          <purpose>Authentication, Firestore database access, admin operations</purpose>
+        </dependency>
+        <dependency>
+          <name>@supabase/supabase-js</name>
+          <version>2.57.4</version>
+          <purpose>Real-time data access for testimonials and other features</purpose>
+        </dependency>
+        <dependency>
+          <name>lucide-react</name>
+          <version>0.344.0</version>
+          <purpose>Consistent icon library for admin UI</purpose>
+        </dependency>
+      </key_dependencies>
+      <package_manager>npm</package_manager>
+    </admin_panel_stack>
+
+    <backend_services>
+      <firebase>
+        <project_id>bilacert-malalang</project_id>
+        <services>
+          <service>
+            <name>Firestore Database</name>
+            <purpose>Primary NoSQL database for form submissions, testimonials, and content</purpose>
+            <collections>7 collections (6 services + contacts)</collections>
+          </service>
+          <service>
+            <name>Firebase Authentication</name>
+            <method>Email/Password for admin panel</method>
+            <purpose>Secure admin login and user management</purpose>
+          </service>
+          <service>
+            <name>Firebase Storage</name>
+            <purpose>File uploads, asset storage, document management</purpose>
+          </service>
+        </services>
+        <measurement_id>G-6Q4YFS5D32</measurement_id>
+        <analytics>Google Analytics 4 integration</analytics>
+      </firebase>
+
+      <supabase>
+        <purpose>Real-time data synchronization and testimonials storage</purpose>
+        <configuration>Browser and server clients with separate environment variables</configuration>
+        <tables>
+          <table>
+            <name>testimonials</name>
+            <purpose>Store and manage social media testimonials and reviews</purpose>
+          </table>
+        </tables>
+      </supabase>
+    </backend_services>
+  </TechStack>
+
+  <ArchitectureStyle>
+    <summary>Monorepo architecture with clear separation between customer-facing website (Next.js) and internal management dashboard (Vite SPA). Service-oriented design with 6 regulatory offerings. Real-time data synchronization via Firestore listeners.</summary>
+
+    <folder_structure>
+      <website>
+        <path>bilacert/</path>
+        <root_level>eslint.config.mjs, next.config.js, next.config.ts, package.json, postcss.config.mjs, tsconfig.json, .gitignore</root_level>
+        <app_structure>
+          <path>src/app/</path>
+          <contains>Next.js App Router pages and layouts with dynamic routes</contains>
+          <pages>
+            <page>page.tsx - Home page (hero, services, testimonials)</page>
+            <page>layout.tsx - Root layout with Header, Footer, Providers, Analytics</page>
+            <page>robots.ts - SEO search engine crawler directives</page>
+            <page>sitemap.ts - Dynamic XML sitemap generation</page>
+            <page>about/page.tsx - Company information and team</page>
+            <page>blog/page.tsx - Blog listing with MDX posts</page>
+            <page>blog/[slug]/page.tsx - Individual blog post with dynamic routing</page>
+            <page>services/page.tsx - Overview of 6 services</page>
+            <page>services/[service]/page.tsx - Individual service detail pages (6 variants)</page>
+            <page>forms/[service]/page.tsx - Service-specific form submissions (6 variants)</page>
+            <page>contact/page.tsx - Contact form page</page>
+            <page>faq/page.tsx - FAQ section with FAQContent component</page>
+          </pages>
+        </app_structure>
+        <components_structure>
+          <path>src/components/</path>
+          <contains>Reusable React components</contains>
+          <components>
+            <component>Header.tsx - Sticky navigation bar, mobile menu, contact CTA</component>
+            <component>Footer.tsx - 4-column grid (services, links, contact, newsletter)</component>
+            <component>StructuredData.tsx - JSON-LD Schema.org markup for SEO</component>
+            <component>Testimonials.tsx - Facebook Graph API integration</component>
+            <component>WhatsAppButton.tsx - Floating WhatsApp direct message button</component>
+            <component>ContactForm.tsx - Contact form with validation</component>
+          </components>
+        </components_structure>
+        <lib_structure>
+          <path>src/lib/</path>
+          <contains>Utilities, API clients, configuration</contains>
+          <files>
+            <file>firebase.ts - Firebase SDK initialization, Firestore client</file>
+            <file>seo.ts - SEO metadata helpers, canonical URL generation</file>
+            <file>blog-data.ts - Static array of blog posts with metadata</file>
+            <file>supabase/client.ts - Browser-side Supabase client</file>
+            <file>supabase/server.ts - Server-side Supabase client with cookies</file>
+          </files>
+        </lib_structure>
+      </website>
+
+      <admin_panel>
+        <path>bilacert-Admin-panel/</path>
+        <root_level>eslint.config.js, package.json, postcss.config.js, tailwind.config.js, tsconfig.json, vite.config.ts, index.html</root_level>
+        <pages_structure>
+          <path>src/pages/</path>
+          <contains>Main SPA page components</contains>
+          <pages>
+            <page>Dashboard.tsx - Main hub combining stats and submissions list</page>
+            <page>Login.tsx - Email/password authentication interface</page>
+            <page>Services.tsx - Service management interface</page>
+            <page>Blogs.tsx - Blog content management (CRUD)</page>
+            <page>Testimonials.tsx - Testimonials management from Supabase</page>
+          </pages>
+        </pages_structure>
+        <components_structure>
+          <path>src/components/</path>
+          <contains>Admin UI components</contains>
+          <components>
+            <component>DashboardHome.tsx - Stats overview, metrics cards, charts</component>
+            <component>SubmissionsList.tsx - Table view with search, filter, pagination</component>
+            <component>SubmissionDetailModal.tsx - Modal for submission detail viewing/editing</component>
+            <component>Header.tsx - Admin header with user info, notifications, logout</component>
+            <component>Sidebar.tsx - Fixed navigation with collapsible mobile version</component>
+            <component>ProtectedRoute.tsx - Auth guard wrapper for protected pages</component>
+          </components>
+        </components_structure>
+        <hooks_structure>
+          <path>src/hooks/</path>
+          <contains>Custom React hooks for state management</contains>
+          <hooks>
+            <hook>useDashboardStats.ts - Aggregates real-time stats from all 7 collections</hook>
+            <hook>useSubmissions.ts - Firestore listener for collection data</hook>
+            <hook>useNotifications.ts - Toast notification state management</hook>
+          </hooks>
+        </hooks_structure>
+        <context_structure>
+          <path>src/contexts/</path>
+          <contains>React Context API providers</contains>
+          <contexts>
+            <context>AuthContext.tsx - Firebase authentication state and functions</context>
+          </contexts>
+        </context_structure>
+      </admin_panel>
+    </folder_structure>
+
+    <design_patterns>
+      <pattern>
+        <name>Component-Based Architecture</name>
+        <description>All UI built from modular, single-responsibility components</description>
+        <benefit>Reusability, testability, maintainability</benefit>
+      </pattern>
+      <pattern>
+        <name>Hooks-Based State Management</name>
+        <description>Custom hooks encapsulate stateful logic and side effects</description>
+        <examples>useDashboardStats, useSubmissions, useNotifications</examples>
+      </pattern>
+      <pattern>
+        <name>Real-Time Data Synchronization</name>
+        <description>Firestore onSnapshot() listeners for live updates</description>
+        <benefit>Dashboard always reflects current data without polling</benefit>
+      </pattern>
+      <pattern>
+        <name>Service-Oriented Design</name>
+        <description>6 distinct regulatory services with dedicated pages, forms, and collections</description>
+        <services>ICASA Type Approvals, NRCS LOA, Radio Dealer Licensing, Class ECS/ECNS, License Exemptions, Ski Boat VHF</services>
+      </pattern>
+      <pattern>
+        <name>Type-Safe Data Access</name>
+        <description>Explicit TypeScript interfaces for all Firestore data structures</description>
+        <benefit>Compile-time error checking, IDE autocompletion</benefit>
+      </pattern>
+      <pattern>
+        <name>SEO-First Content Strategy</name>
+        <description>Dynamic metadata, JSON-LD structured data, robots.ts, sitemap.ts</description>
+        <benefit>Improved search engine visibility and ranking</benefit>
+      </pattern>
+    </design_patterns>
+  </ArchitectureStyle>
+
+  <Integrations>
+    <summary>Tight integration between website and admin panel through shared Firebase/Firestore backend. Real-time data flows enable live dashboard updates when forms are submitted. Environment-based configuration allows single codebase deployment across different environments.</summary>
+
+    <data_flow>
+      <flow>
+        <step>1</step>
+        <action>User submits service form on website</action>
+      </flow>
+      <flow>
+        <step>2</step>
+        <action>Form data validated and sent to Firestore collection</action>
+        <target>Firestore collection matching service type</target>
+      </flow>
+      <flow>
+        <step>3</step>
+        <action>Firebase Cloud Functions triggered (email notifications)</action>
+      </flow>
+      <flow>
+        <step>4</step>
+        <action>Admin panel real-time listener detects new submission</action>
+        <mechanism>Firestore onSnapshot() listener</mechanism>
+      </flow>
+      <flow>
+        <step>5</step>
+        <action>Dashboard updates in real-time with new stats</action>
+      </flow>
+      <flow>
+        <step>6</step>
+        <action>Admin reviews and updates submission status</action>
+        <result>Status change triggers notification to user</result>
+      </flow>
+    </data_flow>
+
+    <shared_infrastructure>
+      <firebase_project>
+        <id>bilacert-malalang</id>
+        <access>Both website and admin panel authenticated to same project</access>
+        <firestore_collections>
+          <collection>icasa-type-approvals</collection>
+          <collection>nrcs-loa-applications</collection>
+          <collection>radio-dealer-licensing</collection>
+          <collection>class-ecs-ecns-licensing</collection>
+          <collection>license-exemptions</collection>
+          <collection>ski-boat-vhf-licensing</collection>
+          <collection>contacts</collection>
+        </firestore_collections>
+      </firebase_project>
+      <supabase_integration>
+        <table>testimonials</table>
+        <purpose>Store and retrieve social media testimonials</purpose>
+        <website_usage>Testimonials.tsx component displays testimonials</website_usage>
+        <admin_usage>Testimonials.tsx page allows management/moderation</admin_usage>
+      </supabase_integration>
+    </shared_infrastructure>
+
+    <communication_patterns>
+      <pattern>
+        <name>Real-Time Listeners</name>
+        <implementation>Firestore onSnapshot() in custom hooks</implementation>
+        <advantage>Instant updates via WebSocket connection</advantage>
+        <usage>Dashboard stats auto-update on new submissions</usage>
+      </pattern>
+      <pattern>
+        <name>Status-Based Workflow</name>
+        <implementation>Submission status field tracks lifecycle</implementation>
+        <states>new, in-progress, completed, archived</states>
+      </pattern>
+      <pattern>
+        <name>Collection-Specific Routing</name>
+        <implementation>Each service has dedicated Firestore collection</implementation>
+        <advantage>Data organized logically, easier querying</advantage>
+      </pattern>
+    </communication_patterns>
+  </Integrations>
+
+  <DevelopmentStandards>
+    <summary>Malalang follows modern full-stack TypeScript development with strict type safety, functional React patterns, performance-first optimizations, and SEO best practices. Code organization emphasizes modularity, reusability, and maintainability.</summary>
+
+    <typescript_standards>
+      <strict_mode>
+        <enabled>true</enabled>
+        <benefit>Catches type errors at compile-time, prevents runtime bugs</benefit>
+      </strict_mode>
+      <type_definitions>
+        <approach>Explicit TypeScript interfaces for all data types</approach>
+        <benefit>Self-documenting code, IDE autocompletion</benefit>
+      </type_definitions>
+      <firestore_typing>
+        <pattern>Type-safe Firestore queries with converter functions</pattern>
+        <benefit>Ensures documents match TypeScript interfaces</benefit>
+      </firestore_typing>
+    </typescript_standards>
+
+    <component_development>
+      <philosophy>Functional components as default; minimal use of class components</philosophy>
+      <patterns>
+        <pattern>
+          <name>Functional Components with Hooks</name>
+          <benefit>Modern React best practices, better performance</benefit>
+        </pattern>
+        <pattern>
+          <name>'use client' Directives (Next.js)</name>
+          <usage>Interactive components explicitly marked with 'use client'</usage>
+          <benefit>Server-side rendering where possible</benefit>
+        </pattern>
+        <pattern>
+          <name>Composition over Inheritance</name>
+          <example>Components composed from smaller, reusable components</example>
+        </pattern>
+        <pattern>
+          <name>React Context for Global State</name>
+          <usage>AuthContext provides authentication to entire app</usage>
+          <benefit>Avoids prop drilling</benefit>
+        </pattern>
+      </patterns>
+
+      <naming_conventions>
+        <files>PascalCase for components, camelCase for utilities/hooks</files>
+        <functions>camelCase for functions, PascalCase for React component names</functions>
+        <types>PascalCase for interfaces, UPPER_CASE for constants</types>
+      </naming_conventions>
+    </component_development>
+
+    <optimization_standards>
+      <next_js_optimizations>
+        <optimization>Image Optimization - next/image with format array (WebP, AVIF)</optimization>
+        <optimization>Code Splitting - Dynamic imports for heavy components</optimization>
+        <optimization>Metadata Preloading - Preload critical fonts and resources</optimization>
+      </next_js_optimizations>
+
+      <build_tool_choice>
+        <website>Turbopack for faster compilation in dev and build</website>
+        <admin_panel>Vite for rapid HMR during development</admin_panel>
+      </build_tool_choice>
+
+      <icon_library>
+        <library>Lucide React</library>
+        <benefit>Consistent SVG icons, scalable, performant</benefit>
+      </icon_library>
+
+      <css_approach>
+        <framework>Tailwind CSS</framework>
+        <strategy>Utility-first CSS with custom configuration</strategy>
+        <responsive>Mobile-first breakpoints (sm, md, lg, xl, 2xl)</responsive>
+      </css_approach>
+    </optimization_standards>
+
+    <seo_practices>
+      <dynamic_metadata>
+        <implementation>Metadata export in each page file</implementation>
+        <content>Title, description, Open Graph tags, Twitter cards</content>
+      </dynamic_metadata>
+
+      <structured_data>
+        <format>JSON-LD (Schema.org)</format>
+        <component>StructuredData.tsx</component>
+        <schemas>Organization, Service, FAQ, BreadcrumbList</schemas>
+        <benefit>Rich snippets in search results</benefit>
+      </structured_data>
+
+      <automation>
+        <robots_txt>robots.ts - Dynamically generated crawler directives</robots_txt>
+        <sitemap>sitemap.ts - Dynamically generated XML sitemap</sitemap>
+        <benefit>Search engines automatically discover all pages</benefit>
+      </automation>
+
+      <analytics>
+        <tool>Google Analytics 4</tool>
+        <measurement_id>G-6Q4YFS5D32</measurement_id>
+        <implementation>@next/third-parties for optimized script injection</implementation>
+      </analytics>
+    </seo_practices>
+
+    <code_organization>
+      <folder_structure_rationale>
+        <folder name="src/app">Page components and routing (Next.js App Router)</folder>
+        <folder name="src/components">Reusable UI components</folder>
+        <folder name="src/lib">Configuration and API clients</folder>
+        <folder name="src/hooks">Custom React hooks with state logic</folder>
+        <folder name="src/contexts">React Context providers</folder>
+        <folder name="src/types">TypeScript interface definitions</folder>
+        <folder name="src/utils">Helper functions and utilities</folder>
+      </folder_structure_rationale>
+
+      <import_organization>
+        <pattern>Absolute imports using @ alias for src/</pattern>
+        <example>import { Header } from '@/components/Header'</example>
+        <benefit>Clean imports, easier refactoring</benefit>
+      </import_organization>
+    </code_organization>
+  </DevelopmentStandards>
+
+  <ComponentAnalysis>
+    <summary>Detailed breakdown of key components in both website and admin panel, including their responsibilities, integration points, and implementation patterns.</summary>
+
+    <website_components>
+      <component>
+        <name>Header.tsx</name>
+        <type>Navigation Component</type>
+        <features>Sticky positioning, responsive mobile menu, top contact bar, service dropdown</features>
+        <state>Mobile menu open/closed toggle</state>
+      </component>
+
+      <component>
+        <name>Footer.tsx</name>
+        <type>Layout Component</type>
+        <features>4-column grid (Services, Links, Contact, Newsletter), responsive design</features>
+      </component>
+
+      <component>
+        <name>StructuredData.tsx</name>
+        <type>SEO Component</type>
+        <schemas>Organization, Service, FAQ, BreadcrumbList</schemas>
+        <benefit>Enables rich snippets in search results</benefit>
+      </component>
+
+      <component>
+        <name>Testimonials.tsx</name>
+        <type>Social Component</type>
+        <features>Facebook Graph API integration, dynamic SDK loading, carousel display</features>
+        <data_source>Facebook Page testimonials</data_source>
+      </component>
+
+      <component>
+        <name>WhatsAppButton.tsx</name>
+        <type>CTA Component</type>
+        <features>Floating button with preset message, mobile-optimized direct link</features>
+      </component>
+
+      <service_forms>
+        <name>Service-Specific Form Pages (6 variants)</name>
+        <locations>
+          <form>/forms/icasa-type-approvals/page.tsx</form>
+          <form>/forms/nrcs-loa-applications/page.tsx</form>
+          <form>/forms/radio-dealer-licensing/page.tsx</form>
+          <form>/forms/class-ecs-ecns-licensing/page.tsx</form>
+          <form>/forms/license-exemptions/page.tsx</form>
+          <form>/forms/ski-boat-vhf-licensing/page.tsx</form>
+        </locations>
+        <pattern>Form fields tailored to each service, submission to service-specific Firestore collection</pattern>
+      </service_forms>
+
+      <page_structure>
+        <page>page.tsx (Home) - Hero, services showcase, testimonials, FAQ, newsletter</page>
+        <page>layout.tsx (Root) - Global metadata, Header, Footer, Analytics, CSS</page>
+        <page>blog/page.tsx - Blog listing with pagination</page>
+        <page>blog/[slug]/page.tsx - Individual blog posts with MDX rendering</page>
+        <page>services/page.tsx - Services overview grid</page>
+        <page>services/[service]/page.tsx - Individual service details (6 variants)</page>
+        <page>about/page.tsx - Company history, mission, team</page>
+        <page>faq/page.tsx - FAQ section with accordion</page>
+        <page>contact/page.tsx - Contact form with validation</page>
+      </page_structure>
+    </website_components>
+
+    <admin_components>
+      <component>
+        <name>DashboardHome.tsx</name>
+        <type>Dashboard Overview</type>
+        <features>4-column stats grid, real-time count aggregation, charts, quick filters</features>
+        <data_source>useDashboardStats hook</data_source>
+      </component>
+
+      <component>
+        <name>SubmissionsList.tsx</name>
+        <type>Data Table</type>
+        <features>Sortable columns, status filter, search, pagination, inline actions</features>
+        <data_source>useSubmissions hook</data_source>
+      </component>
+
+      <component>
+        <name>SubmissionDetailModal.tsx</name>
+        <type>Modal Dialog</type>
+        <features>Full submission display, status dropdown, notes field, delete button</features>
+      </component>
+
+      <component>
+        <name>Header.tsx (Admin)</name>
+        <type>Top Navigation</type>
+        <features>Breadcrumb navigation, user profile info, logout, notifications bell</features>
+      </component>
+
+      <component>
+        <name>Sidebar.tsx</name>
+        <type>Navigation Menu</type>
+        <features>Fixed sidebar with collapsible mobile version, active page indicator, service icons</features>
+      </component>
+
+      <component>
+        <name>ProtectedRoute.tsx</name>
+        <type>Auth Guard</type>
+        <purpose>Wraps protected pages, checks auth status, redirects to login if needed</purpose>
+      </component>
+    </admin_components>
+
+    <admin_hooks>
+      <hook>
+        <name>useDashboardStats</name>
+        <responsibility>Real-time aggregation from all 7 Firestore collections</responsibility>
+        <returns>Stats object with counts by status and service, loading state, error state</returns>
+      </hook>
+
+      <hook>
+        <name>useSubmissions</name>
+        <responsibility>Fetch and listen to submissions from specific collection</responsibility>
+        <parameters>collectionName (string), optional filters</parameters>
+        <returns>Submissions array, loading state, error state</returns>
+      </hook>
+
+      <hook>
+        <name>useNotifications</name>
+        <responsibility>Toast notification state management</responsibility>
+        <returns>Active notifications array, functions to show/hide/clear</returns>
+      </hook>
+    </admin_hooks>
+
+    <shared_utilities>
+      <utility>
+        <name>formatters.ts</name>
+        <functions>
+          <function>formatDate - Convert Firestore timestamp to readable format</function>
+          <function>getCollectionTitle - Transform collection name to display title</function>
+          <function>getStatusColor - Return Tailwind color class for status</function>
+          <function>getStatusLabel - Return human-readable status label</function>
+        </functions>
+      </utility>
+
+      <utility>
+        <name>firebase.ts (Website)</name>
+        <exports>db (Firestore instance), auth (Firebase auth), form submission helpers</exports>
+      </utility>
+
+      <utility>
+        <name>firebase.ts (Admin)</name>
+        <exports>auth (Firebase auth), db (Firestore), collection references and queries</exports>
+      </utility>
+
+      <utility>
+        <name>blog-data.ts</name>
+        <content>Static array of blog posts with frontmatter (title, date, slug, excerpt, content)</content>
+      </utility>
+
+      <utility>
+        <name>seo.ts</name>
+        <functions>
+          <function>generateCanonical - Create canonical URLs</function>
+          <function>generateMetadata - Create Next.js Metadata objects with OG tags</function>
+        </functions>
+      </utility>
+    </shared_utilities>
+
+    <data_management>
+      <firestore_schema>
+        <description>All 7 collections follow consistent base schema with service-specific extensions</description>
+        <base_fields>
+          <field name="id">Auto-generated document ID</field>
+          <field name="name">Applicant name</field>
+          <field name="email">Contact email</field>
+          <field name="phone">Contact phone number</field>
+          <field name="timestamp">Firestore server timestamp</field>
+          <field name="status">pending | in-progress | completed | archived</field>
+          <field name="adminNotes">Admin annotations</field>
+        </base_fields>
+        <service_specific>Each service has custom fields (deviceType, manufacturer, boatName, etc.)</service_specific>
+      </firestore_schema>
+
+      <data_flow_lifecycle>
+        <stage>1. Collection - User submits form, document created in service-specific collection</stage>
+        <stage>2. Notification - Cloud Function triggers email to admin and user</stage>
+        <stage>3. Real-Time Update - Dashboard listener detects new document, stats update</stage>
+        <stage>4. Review - Admin opens submission detail modal</stage>
+        <stage>5. Status Update - Admin changes status (approved/rejected)</stage>
+        <stage>6. Notification - Cloud Function triggers email with status update to user</stage>
+      </data_flow_lifecycle>
+
+      <real_time_synchronization>
+        <mechanism>Firestore onSnapshot() listeners in custom hooks</mechanism>
+        <advantage>Instant updates across all connected clients, no polling needed</advantage>
+        <example>Multiple admins see same data, updates reflected within 100ms</example>
+      </real_time_synchronization>
+    </data_management>
+  </ComponentAnalysis>
+
+  <observations>
+    <strengths>
+      <strength>
+        <title>Clear Architectural Separation</title>
+        <benefit>Website (marketing/forms) and admin panel (management) are completely separate projects with distinct responsibilities</benefit>
+      </strength>
+
+      <strength>
+        <title>Type Safety Throughout</title>
+        <benefit>TypeScript strict mode enables compile-time error checking, prevents runtime bugs, excellent IDE support</benefit>
+      </strength>
+
+      <strength>
+        <title>Real-Time Capabilities</title>
+        <benefit>Firestore listeners provide instant dashboard updates without polling or manual refresh</benefit>
+      </strength>
+
+      <strength>
+        <title>Modern Tooling Stack</title>
+        <benefit>Next.js 16 + Turbopack, Vite 5, React 19 provide fast development and build experience</benefit>
+      </strength>
+
+      <strength>
+        <title>SEO Optimization</title>
+        <benefit>Dynamic metadata, JSON-LD, robots.ts, sitemap.ts ensure excellent search visibility</benefit>
+      </strength>
+
+      <strength>
+        <title>Monorepo Organization</title>
+        <benefit>Two projects in single repository with clear separation, independent configs, simplified deployment</benefit>
+      </strength>
+
+      <strength>
+        <title>Service-Oriented Design</title>
+        <benefit>6 distinct services with dedicated pages, forms, collections - modular, scalable architecture</benefit>
+      </strength>
+    </strengths>
+
+    <data_model>
+      <collections>7 Firestore collections</collections>
+      <structure>
+        <base_schema>All submissions have: id, name, email, phone, timestamp, status, adminNotes</base_schema>
+        <variations>Each service adds custom fields relevant to that regulatory domain</variations>
+      </structure>
+      <status_lifecycle>pending → (in-progress | completed | archived)</status_lifecycle>
+      <timestamp_handling>Firestore server timestamps prevent client-side manipulation</timestamp_handling>
+      <scalability>Firestore indexed queries for fast filtering by status/date</scalability>
+    </data_model>
+
+    <gaps_and_opportunities>
+      <gap>
+        <area>Backend API Documentation</area>
+        <observation>Cloud Functions for email notifications are not visible in codebase</observation>
+        <opportunity>Document all Cloud Functions; consider exposing as HTTP functions</opportunity>
+      </gap>
+
+      <gap>
+        <area>Form Validation</area>
+        <observation>No validation library visible (e.g., React Hook Form, Zod)</observation>
+        <opportunity>Implement structured validation with TypeScript schemas</opportunity>
+      </gap>
+
+      <gap>
+        <area>Authentication</area>
+        <observation>Only email/password auth for admin; no OAuth or MFA</observation>
+        <opportunity>Add OAuth2 providers (Google, Microsoft) and MFA for security</opportunity>
+      </gap>
+
+      <gap>
+        <area>Testing Framework</area>
+        <observation>No testing framework visible in package.json</observation>
+        <opportunity>Add Jest + React Testing Library for unit tests, Playwright for E2E</opportunity>
+      </gap>
+
+      <gap>
+        <area>Error Tracking</area>
+        <observation>Only Vercel Analytics; no structured error monitoring</observation>
+        <opportunity>Add Sentry or similar for error tracking and performance monitoring</opportunity>
+      </gap>
+
+      <opportunity>
+        <title>Client Portal</title>
+        <description>Allow applicants to track submission status in real-time</description>
+        <benefit>Improved customer satisfaction, reduced support inquiries</benefit>
+      </opportunity>
+
+      <opportunity>
+        <title>Automated Workflows</title>
+        <description>Build workflow automation for common admin tasks</description>
+        <benefit>Reduce manual work, faster response times</benefit>
+      </opportunity>
+
+      <opportunity>
+        <title>Form Analytics</title>
+        <description>Track form abandonment and field-level error rates</description>
+        <benefit>Optimize forms based on user behavior, improve conversion</benefit>
+      </opportunity>
+    </gaps_and_opportunities>
+  </observations>
+</bilacert>
