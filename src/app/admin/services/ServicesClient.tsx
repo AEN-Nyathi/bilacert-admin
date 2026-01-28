@@ -3,19 +3,10 @@
 
 import { useState } from 'react';
 import { useServices } from '@/hooks/useServices';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { Service } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, MoreHorizontal } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, ArrowRight } from 'lucide-react';
 import DeleteServiceDialog from './DeleteServiceDialog';
-import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 import Icon from '@/components/Icon';
+import { Badge } from '@/components/ui/badge';
 
 export default function ServicesClient() {
   const { services, loading, error } = useServices();
@@ -42,12 +34,9 @@ export default function ServicesClient() {
     setIsDeleteDialogOpen(false);
     setSelectedService(null);
   };
-
-  const getPriceDisplay = (pricing: number | null | undefined): string => {
-    if (pricing === null || pricing === undefined) {
-      return "Not set";
-    }
-    return `R${Number(pricing).toFixed(2)}`;
+  
+  const onDeleted = () => {
+      handleCloseDialogs();
   }
 
   if (error) {
@@ -75,75 +64,55 @@ export default function ServicesClient() {
             <p className="text-sm text-muted-foreground">Click "Add Service" to get started.</p>
             </div>
         ) : (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {services.map((service) => (
-            <Link href={`/admin/services/${service.id}`} key={service.id} className="group">
-                <Card className="flex flex-col h-full hover:shadow-lg hover:border-primary/50 transition-all">
-                <CardHeader>
-                    <div className="flex justify-between items-start gap-4">
-                        <div className='flex-1'>
-                            <CardTitle className="truncate">{service.title}</CardTitle>
-                            <CardDescription>{service.category || 'No Category'}</CardDescription>
+            <div key={service.id} className="group relative bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-2">
+                <div className="absolute top-4 right-4">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                             <DropdownMenuItem asChild>
+                                <Link href={`/admin/services/${service.id}`}>View Details</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link href={`/admin/services/${service.id}/edit`}>Edit</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                            className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                            onClick={() => handleDelete(service)}
+                            >
+                            Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+                
+                <Link href={`/admin/services/${service.id}`} className="flex flex-col h-full">
+                    <div className="flex-grow">
+                         <div className="text-accent mb-4 group-hover:scale-110 transition-transform duration-200">
+                            {service.icon && <Icon name={service.icon} className="h-8 w-8" />}
                         </div>
-                        {service.icon && <Icon name={service.icon} className="h-8 w-8 text-muted-foreground" />}
+                        <h3 className="text-xl font-semibold text-primary mb-3">{service.title}</h3>
+                        <p className="text-gray-600 mb-4 text-sm line-clamp-3">{service.shortDescription || service.description}</p>
                     </div>
-                </CardHeader>
-                <CardContent className="flex-grow space-y-4">
-                    {service.description && (
-                    <p className="text-sm text-muted-foreground line-clamp-3">
-                        {service.description}
-                    </p>
-                    )}
-                    <div>
-                      <h4 className="text-xs font-medium uppercase text-muted-foreground">Status</h4>
+                    <div className="mt-auto flex items-center justify-between">
+                         <div className="flex items-center text-accent font-medium text-sm">
+                            Details
+                            <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
+                        </div>
                         <Badge variant={service.published ? 'default' : 'secondary'}>
                             {service.published ? 'Published' : 'Draft'}
                         </Badge>
-                        {service.featured && (
-                            <Badge variant="outline" className="ml-2">
-                                Featured
-                            </Badge>
-                        )}
                     </div>
-                    <div>
-                    <h4 className="text-xs font-medium uppercase text-muted-foreground">Processing Time</h4>
-                    <p className="text-sm">
-                        {service.processingTime || 'N/A'}
-                    </p>
-                    </div>
-                    <div>
-                        <h4 className="text-xs font-medium uppercase text-muted-foreground">Pricing</h4>
-                        <p className="text-sm font-mono truncate">{getPriceDisplay(service.pricing)}</p>
-                    </div>
-                </CardContent>
-                <CardFooter className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                    <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem asChild>
-                            <Link href={`/admin/services/${service.id}/edit`}>Edit</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                        className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            handleDelete(service)
-                        }}
-                        >
-                        Delete
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                    </DropdownMenu>
-                </CardFooter>
-                </Card>
-            </Link>
+                </Link>
+            </div>
             ))}
         </div>
         )}
@@ -154,6 +123,7 @@ export default function ServicesClient() {
             isOpen={isDeleteDialogOpen}
             onClose={handleCloseDialogs}
             service={selectedService}
+            onDeleted={onDeleted}
         />
       )}
     </>
