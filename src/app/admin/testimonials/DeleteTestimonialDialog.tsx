@@ -21,12 +21,14 @@ interface DeleteTestimonialDialogProps {
   isOpen: boolean;
   onClose: () => void;
   testimonial: Testimonial | null;
+  onDeleted?: () => void;
 }
 
 export default function DeleteTestimonialDialog({
   isOpen,
   onClose,
   testimonial,
+  onDeleted,
 }: DeleteTestimonialDialogProps) {
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -47,7 +49,11 @@ export default function DeleteTestimonialDialog({
         title: 'Testimonial deleted',
         description: 'The testimonial has been successfully deleted.',
       });
-      onClose();
+      if (onDeleted) {
+        onDeleted();
+      } else {
+        onClose();
+      }
     } catch (error: any) {
       toast({
         variant: 'destructive',

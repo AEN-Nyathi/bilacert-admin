@@ -7,13 +7,6 @@ import * as z from 'zod';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import {
   Form,
   FormControl,
   FormField,
@@ -26,6 +19,8 @@ import { useToast } from '@/hooks/use-toast';
 import type { Testimonial } from '@/lib/types';
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const testimonialSchema = z.object({
   postUrl: z.string().url('Please enter a valid Facebook post URL'),
@@ -34,13 +29,14 @@ const testimonialSchema = z.object({
 type TestimonialFormValues = z.infer<typeof testimonialSchema>;
 
 interface TestimonialFormProps {
-  isOpen: boolean;
-  onClose: () => void;
   testimonial?: Testimonial | null;
 }
 
-export default function TestimonialForm({ isOpen, onClose, testimonial }: TestimonialFormProps) {
+export default function TestimonialForm({ testimonial }: TestimonialFormProps) {
   const { toast } = useToast();
+  const router = useRouter();
+  const isEditing = !!testimonial;
+  
   const form = useForm<TestimonialFormValues>({
     resolver: zodResolver(testimonialSchema),
     defaultValues: {
@@ -48,17 +44,19 @@ export default function TestimonialForm({ isOpen, onClose, testimonial }: Testim
     },
   });
 
+  const { handleSubmit, reset, formState: { isSubmitting } } = form;
+
   useEffect(() => {
     if (testimonial) {
-      form.reset({
+      reset({
         postUrl: testimonial.postUrl,
       });
     } else {
-      form.reset({
+      reset({
         postUrl: '',
       });
     }
-  }, [testimonial, form.reset]);
+  }, [testimonial, reset]);
 
   const onSubmit = async (values: TestimonialFormValues) => {
     try {
@@ -85,7 +83,9 @@ export default function TestimonialForm({ isOpen, onClose, testimonial }: Testim
       toast({
         title: `Testimonial ${testimonial ? 'updated' : 'added'} successfully!`,
       });
-      onClose();
+      router.push('/admin/testimonials');
+      router.refresh();
+
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -96,38 +96,31 @@ export default function TestimonialForm({ isOpen, onClose, testimonial }: Testim
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>{testimonial ? 'Edit Testimonial' : 'Add New Testimonial'}</DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 py-4">
-            <FormField
-              control={form.control}
-              name="postUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Facebook Post URL</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://www.facebook.com/..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {testimonial ? 'Save Changes' : 'Add Testimonial'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <Form {...form}>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <FormField
+          control={form.control}
+          name="postUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Facebook Post URL</FormLabel>
+              <FormControl>
+                <Input placeholder="https://www.facebook.com/..." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex justify-end gap-4">
+          <Button type="button" variant="outline" asChild>
+            <Link href="/admin/testimonials">Cancel</Link>
+          </Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isEditing ? 'Save Changes' : 'Add Testimonial'}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }
