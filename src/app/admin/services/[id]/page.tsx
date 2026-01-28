@@ -28,6 +28,7 @@ async function getService(id: string): Promise<Service | null> {
         content: data.content,
         features: data.features,
         requirements: data.requirements,
+        includes: data.includes,
         published: data.published,
         featured: data.featured,
         createdAt: data.created_at,

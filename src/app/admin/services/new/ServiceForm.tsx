@@ -44,6 +44,7 @@ const serviceSchema = z.object({
   content: z.string().optional(),
   features: z.string().optional(),
   requirements: z.string().optional(),
+  includes: z.string().optional(),
   published: z.boolean(),
   featured: z.boolean(),
   processingTime: z.string().optional(),
@@ -79,6 +80,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
       content: '',
       features: '',
       requirements: '',
+      includes: '',
       published: false,
       featured: false,
       processingTime: '',
@@ -120,6 +122,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         content: service.content || '',
         features: service.features?.join('\n') || '',
         requirements: service.requirements?.join('\n') || '',
+        includes: service.includes?.join('\n') || '',
         published: service.published,
         featured: service.featured || false,
         processingTime: service.processingTime || '',
@@ -150,6 +153,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         content: values.content,
         features: values.features ? values.features.split('\n').filter(s => s.trim() !== '') : [],
         requirements: values.requirements ? values.requirements.split('\n').filter(s => s.trim() !== '') : [],
+        includes: values.includes ? values.includes.split('\n').filter(s => s.trim() !== '') : [],
         published: values.published,
         featured: values.featured,
         processing_time: values.processingTime,
@@ -368,6 +372,23 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                    <FormControl>
                     <Textarea
                       placeholder="Enter one requirement per line."
+                      rows={4}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="includes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Includes</FormLabel>
+                   <FormControl>
+                    <Textarea
+                      placeholder="Enter one item per line."
                       rows={4}
                       {...field}
                     />

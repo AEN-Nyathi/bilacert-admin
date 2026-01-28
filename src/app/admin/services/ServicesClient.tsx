@@ -101,6 +101,19 @@ export default function ServicesClient() {
                         </div>
                         <h3 className="text-xl font-semibold text-primary mb-3">{service.title}</h3>
                         <p className="text-gray-600 mb-4 text-sm line-clamp-3">{service.shortDescription || service.description}</p>
+                        {service.includes && service.includes.length > 0 && (
+                            <div className="mb-4">
+                                <ul className="space-y-1">
+                                    {service.includes.slice(0, 2).map((item, index) => (
+                                    <li key={index} className="flex items-center text-xs text-muted-foreground">
+                                        <Icon name="Check" className="h-4 w-4 mr-2 text-primary" />
+                                        {item}
+                                    </li>
+                                    ))}
+                                    {service.includes.length > 2 && <li className="text-xs text-muted-foreground ml-6">...and more</li>}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                     <div className="mt-auto flex items-center justify-between">
                          <div className="flex items-center text-accent font-medium text-sm">

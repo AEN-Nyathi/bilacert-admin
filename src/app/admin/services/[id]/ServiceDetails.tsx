@@ -120,6 +120,10 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
                             <h4 className="text-sm font-medium text-muted-foreground">Requirements</h4>
                             {renderStringArray(service.requirements)}
                         </div>
+                        <div>
+                            <h4 className="text-sm font-medium text-muted-foreground">Includes</h4>
+                            {renderStringArray(service.includes)}
+                        </div>
                     </div>
                     <div className="space-y-6">
                         {service.slug && (

@@ -23,6 +23,7 @@ import {
   BarChart,
   Clock,
   Book,
+  Check,
 } from 'lucide-react';
 
 export const iconMap: { [key: string]: LucideIcon } = {
@@ -44,6 +45,7 @@ export const iconMap: { [key: string]: LucideIcon } = {
   BarChart,
   Clock,
   Book,
+  Check,
 };
 
 interface IconProps extends LucideProps {

@@ -33,6 +33,10 @@ export interface Service {
   content?: string;
   features?: string[];
   requirements?: string[];
+  includes?: string[];
+  published: boolean;
+  featured: boolean;
+  createdAt: string;
   processingTime?: string;
   pricing?: number;
   image?: string;
@@ -40,9 +44,6 @@ export interface Service {
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string;
-  published: boolean;
-  featured: boolean;
-  createdAt: string;
 }
 
 export interface Testimonial {

@@ -40,6 +40,7 @@ export function useServices() {
             content: item.content,
             features: item.features,
             requirements: item.requirements,
+            includes: item.includes,
             published: item.published,
             featured: item.featured,
             createdAt: item.created_at,
@@ -78,4 +79,3 @@ export function useServices() {
 
   return { services, loading, error };
 }
-
