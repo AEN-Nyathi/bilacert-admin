@@ -9,11 +9,11 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -25,20 +25,36 @@ import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+const slugify = (str: string) =>
+  str
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
 const serviceSchema = z.object({
   title: z.string().min(1, 'Title is required'),
+  slug: z.string().min(1, 'Slug is required'),
   category: z.string().min(1, 'Category is required'),
   description: z.string().optional(),
+  shortDescription: z.string().optional(),
   icon: z.string().optional(),
   content: z.string().optional(),
   features: z.string().optional(),
   requirements: z.string().optional(),
   published: z.boolean(),
+  featured: z.boolean(),
   processingTime: z.string().optional(),
   pricing: z.preprocess(
     (val) => (val === '' ? undefined : val),
     z.coerce.number({ invalid_type_error: "Pricing must be a number" }).optional()
   ),
+  image: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
+  thumbnail: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
+  seoTitle: z.string().optional(),
+  seoDescription: z.string().optional(),
+  seoKeywords: z.string().optional(),
 });
 
 type ServiceFormValues = z.infer<typeof serviceSchema>;
@@ -54,74 +70,94 @@ export default function ServiceForm({ service }: ServiceFormProps) {
     resolver: zodResolver(serviceSchema),
     defaultValues: {
       title: '',
+      slug: '',
       category: '',
       description: '',
+      shortDescription: '',
       icon: '',
       content: '',
       features: '',
       requirements: '',
       published: false,
+      featured: false,
       processingTime: '',
       pricing: undefined,
+      image: '',
+      thumbnail: '',
+      seoTitle: '',
+      seoDescription: '',
+      seoKeywords: '',
     },
   });
 
   const {
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { isSubmitting },
   } = form;
 
   const isEditing = !!service;
+  const title = watch('title');
+
+  useEffect(() => {
+    if (!isEditing && title) {
+      setValue('slug', slugify(title));
+    }
+  }, [title, isEditing, setValue]);
 
   useEffect(() => {
     if (service) {
       reset({
         title: service.title,
+        slug: service.slug,
         category: service.category,
         description: service.description || '',
+        shortDescription: service.shortDescription || '',
         icon: service.icon || '',
         content: service.content || '',
         features: service.features?.join('\n') || '',
         requirements: service.requirements?.join('\n') || '',
         published: service.published,
+        featured: service.featured || false,
         processingTime: service.processingTime || '',
         pricing: service.pricing ?? undefined,
+        image: service.image || '',
+        thumbnail: service.thumbnail || '',
+        seoTitle: service.seoTitle || '',
+        seoDescription: service.seoDescription || '',
+        seoKeywords: service.seoKeywords || '',
       });
     } else {
-      reset({
-        title: '',
-        category: '',
-        description: '',
-        icon: '',
-        content: '',
-        features: '',
-        requirements: '',
-        published: false,
-        processingTime: '',
-        pricing: undefined,
-      });
+      reset();
     }
   }, [service, reset]);
 
   const onSubmit = async (values: ServiceFormValues) => {
     try {
-      const slug = values.title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-      const href = `/services/${slug}`;
+      const href = `/services/${values.slug}`;
 
       const serviceData = {
         title: values.title,
-        slug,
+        slug: values.slug,
         href,
         category: values.category,
         description: values.description,
+        short_description: values.shortDescription,
         icon: values.icon,
         content: values.content,
         features: values.features ? values.features.split('\n').filter(s => s.trim() !== '') : [],
         requirements: values.requirements ? values.requirements.split('\n').filter(s => s.trim() !== '') : [],
         published: values.published,
+        featured: values.featured,
         processing_time: values.processingTime,
         pricing: values.pricing,
+        image: values.image,
+        thumbnail: values.thumbnail,
+        seo_title: values.seoTitle,
+        seo_description: values.seoDescription,
+        seo_keywords: values.seoKeywords,
       };
 
       let response;
@@ -142,8 +178,6 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         throw response.error;
       }
       
-      const newService = response.data;
-
       toast({
         title: `Service ${service ? 'updated' : 'created'} successfully!`,
       });
@@ -161,172 +195,295 @@ export default function ServiceForm({ service }: ServiceFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="space-y-6">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., ICASA Type Approvals" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="category"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Category</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Licensing" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-           <FormField
-            control={form.control}
-            name="icon"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Icon Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Shield" {...field} value={field.value || ''} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="A short description of the service."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="content"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Content</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Detailed content about the service (Markdown supported)."
-                    rows={8}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-           <FormField
-            control={form.control}
-            name="features"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Features</FormLabel>
-                 <FormControl>
-                  <Textarea
-                    placeholder="Enter one feature per line."
-                    rows={5}
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                    Each line will be treated as a separate feature.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-           <FormField
-            control={form.control}
-            name="requirements"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Requirements</FormLabel>
-                 <FormControl>
-                  <Textarea
-                    placeholder="Enter one requirement per line."
-                    rows={5}
-                    {...field}
-                  />
-                </FormControl>
-                 <FormDescription>
-                    Each line will be treated as a separate requirement.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="processingTime"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Processing Time</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., 5-7 business days" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="pricing"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Pricing</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    placeholder="e.g., 1500.00"
-                    {...field}
-                    value={field.value ?? ''}
-                  />
-                </FormControl>
-                <FormDescription>
-                    Enter the price for the service.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="published"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel>Published</FormLabel>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+        <div className="grid md:grid-cols-2 gap-x-8 gap-y-6">
+          {/* Column 1 */}
+          <div className="space-y-6">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., ICASA Type Approvals" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="slug"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Slug</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., icasa-type-approvals" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., Licensing" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="icon"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Icon Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., Shield" {...field} value={field.value || ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="A detailed description of the service."
+                      rows={3}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="shortDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Short Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="A brief summary for card views."
+                      rows={2}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Content</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Main content for the service page..."
+                      rows={6}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Column 2 */}
+          <div className="space-y-6">
+             <FormField
+              control={form.control}
+              name="features"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Features</FormLabel>
+                   <FormControl>
+                    <Textarea
+                      placeholder="Enter one feature per line."
+                      rows={4}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="requirements"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Requirements</FormLabel>
+                   <FormControl>
+                    <Textarea
+                      placeholder="Enter one requirement per line."
+                      rows={4}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Image URL</FormLabel>
+                    <FormControl>
+                        <Input placeholder="https://example.com/image.jpg" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+            />
+             <FormField
+                control={form.control}
+                name="thumbnail"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Thumbnail URL</FormLabel>
+                    <FormControl>
+                        <Input placeholder="https://example.com/thumb.jpg" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <div className="grid grid-cols-2 gap-6">
+                <FormField
+                    control={form.control}
+                    name="processingTime"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Processing Time</FormLabel>
+                        <FormControl>
+                        <Input placeholder="e.g., 5-7 business days" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="pricing"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Pricing (ZAR)</FormLabel>
+                        <FormControl>
+                        <Input
+                            type="number"
+                            step="0.01"
+                            placeholder="e.g., 1500.00"
+                            {...field}
+                            value={field.value ?? ''}
+                        />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+            </div>
+            <div className="space-y-4">
+                <FormField
+                    control={form.control}
+                    name="published"
+                    render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                        <FormLabel>Published</FormLabel>
+                        </div>
+                        <FormControl>
+                        <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                        />
+                        </FormControl>
+                    </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="featured"
+                    render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                        <FormLabel>Featured</FormLabel>
+                        </div>
+                        <FormControl>
+                        <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                        />
+                        </FormControl>
+                    </FormItem>
+                    )}
+                />
+            </div>
+          </div>
         </div>
+
+        {/* SEO Section */}
+        <div className="mt-8 pt-6 border-t">
+            <h3 className="text-lg font-medium">SEO Settings</h3>
+            <div className="grid md:grid-cols-2 gap-x-8 gap-y-6 mt-4">
+                 <FormField
+                    control={form.control}
+                    name="seoTitle"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>SEO Title</FormLabel>
+                        <FormControl>
+                        <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="seoKeywords"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>SEO Keywords</FormLabel>
+                        <FormControl>
+                        <Input placeholder="keyword1, keyword2, keyword3" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="seoDescription"
+                    render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                        <FormLabel>SEO Description</FormLabel>
+                        <FormControl>
+                        <Textarea rows={3} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+            </div>
+        </div>
+
         <div className="mt-8 flex justify-end gap-4">
           <Button type="button" variant="outline" asChild>
             <Link href="/admin/services">Cancel</Link>

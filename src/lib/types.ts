@@ -41,7 +41,7 @@ export interface Service {
   seoDescription?: string;
   seoKeywords?: string;
   published: boolean;
-  featured?: boolean;
+  featured: boolean;
   createdAt: string;
 }
 
