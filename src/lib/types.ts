@@ -1,5 +1,26 @@
 
 
+export interface PricingPlan {
+  title: string;
+  description: string;
+  features: string[];
+  price: string;
+  popular: boolean;
+}
+
+export interface ProcessStep {
+  step: string;
+  title: string;
+  description: string;
+}
+
+export interface SuccessStory {
+  scenario: string;
+  challenge: string;
+  solution: string;
+  result: string;
+}
+
 export interface Submission {
   id?: string;
   formType: string;
@@ -44,6 +65,9 @@ export interface Service {
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string;
+  pricingPlans?: PricingPlan[];
+  processSteps?: ProcessStep[];
+  successStory?: SuccessStory;
 }
 
 export interface Testimonial {

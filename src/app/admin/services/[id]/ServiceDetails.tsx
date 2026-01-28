@@ -49,6 +49,15 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
     )
   }
 
+  const renderJson = (data: any) => {
+    if (!data) return <p className="text-sm text-card-foreground">Not set.</p>;
+    return (
+        <div className="prose prose-sm dark:prose-invert mt-1 text-card-foreground text-sm whitespace-pre-wrap">
+            <pre className="bg-muted/50 p-2 rounded-md"><code>{JSON.stringify(data, null, 2)}</code></pre>
+        </div>
+    )
+  }
+
   return (
     <>
       <div className="space-y-6">
@@ -216,6 +225,19 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
                         </div>
                     </div>
                  )}
+
+                <div className="mt-6 border-t pt-6">
+                    <h3 className="text-lg font-medium mb-4">Pricing Plans</h3>
+                    {renderJson(service.pricingPlans)}
+                </div>
+                 <div className="mt-6 border-t pt-6">
+                    <h3 className="text-lg font-medium mb-4">Process Steps</h3>
+                    {renderJson(service.processSteps)}
+                </div>
+                 <div className="mt-6 border-t pt-6">
+                    <h3 className="text-lg font-medium mb-4">Success Story</h3>
+                    {renderJson(service.successStory)}
+                </div>
 
             </CardContent>
         </Card>

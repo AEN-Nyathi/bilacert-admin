@@ -4,8 +4,6 @@ import { createClient as createServerClient } from '@/lib/supabase/server';
 import { createClient as createGenericClient } from '@supabase/supabase-js';
 import type { Service } from './types';
 
-// This is a simplified example. In a real app, you'd handle errors more gracefully.
-
 function mapToService(item: any): Service {
     return {
         id: item.id,
@@ -20,6 +18,7 @@ function mapToService(item: any): Service {
         content: item.content,
         features: item.features,
         requirements: item.requirements,
+        includes: item.includes,
         published: item.published,
         featured: item.featured,
         createdAt: item.created_at,
@@ -30,6 +29,9 @@ function mapToService(item: any): Service {
         seoTitle: item.seo_title,
         seoDescription: item.seo_description,
         seoKeywords: item.seo_keywords,
+        pricingPlans: item.pricing_plans,
+        processSteps: item.process_steps,
+        successStory: item.success_story,
     };
 }
 
@@ -66,8 +68,6 @@ export async function getServiceBySlug(slug: string): Promise<Service | null> {
 }
 
 export async function getAllPublishedServiceSlugs(): Promise<{ slug: string }[]> {
-    // For build-time fetching, we cannot use a client that depends on cookies.
-    // We use the generic client for public data.
     const supabase = createGenericClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!

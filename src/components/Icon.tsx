@@ -24,6 +24,9 @@ import {
   Clock,
   Book,
   Check,
+  Award,
+  Headphones,
+  Ship,
 } from 'lucide-react';
 
 export const iconMap: { [key: string]: LucideIcon } = {
@@ -32,6 +35,7 @@ export const iconMap: { [key: string]: LucideIcon } = {
   FileText,
   Radio,
   Sailboat,
+  Ship,
   Package,
   LayoutDashboard,
   Briefcase,
@@ -46,6 +50,8 @@ export const iconMap: { [key: string]: LucideIcon } = {
   Clock,
   Book,
   Check,
+  Award,
+  Headphones,
 };
 
 interface IconProps extends LucideProps {

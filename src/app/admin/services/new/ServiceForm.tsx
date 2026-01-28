@@ -33,6 +33,16 @@ const slugify = (str: string) =>
     .replace(/[^\w\s-]/g, '')
     .replace(/[\s_-]+/g, '-')
     .replace(/^-+|-+$/g, '');
+    
+const isJson = (val: string | undefined) => {
+    if (!val || val.trim() === '') return true;
+    try {
+      JSON.parse(val);
+      return true;
+    } catch (e) {
+      return false;
+    }
+};
 
 const serviceSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -57,6 +67,9 @@ const serviceSchema = z.object({
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),
   seoKeywords: z.string().optional(),
+  pricingPlans: z.string().refine(isJson, { message: "Pricing Plans must be valid JSON." }).optional(),
+  processSteps: z.string().refine(isJson, { message: "Process Steps must be valid JSON." }).optional(),
+  successStory: z.string().refine(isJson, { message: "Success Story must be valid JSON." }).optional(),
 });
 
 type ServiceFormValues = z.infer<typeof serviceSchema>;
@@ -90,6 +103,9 @@ export default function ServiceForm({ service }: ServiceFormProps) {
       seoTitle: '',
       seoDescription: '',
       seoKeywords: '',
+      pricingPlans: '',
+      processSteps: '',
+      successStory: '',
     },
   });
 
@@ -132,6 +148,9 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         seoTitle: service.seoTitle || '',
         seoDescription: service.seoDescription || '',
         seoKeywords: service.seoKeywords || '',
+        pricingPlans: service.pricingPlans ? JSON.stringify(service.pricingPlans, null, 2) : '',
+        processSteps: service.processSteps ? JSON.stringify(service.processSteps, null, 2) : '',
+        successStory: service.successStory ? JSON.stringify(service.successStory, null, 2) : '',
       });
     } else {
       reset();
@@ -163,6 +182,9 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         seo_title: values.seoTitle,
         seo_description: values.seoDescription,
         seo_keywords: values.seoKeywords,
+        pricing_plans: values.pricingPlans ? JSON.parse(values.pricingPlans) : null,
+        process_steps: values.processSteps ? JSON.parse(values.processSteps) : null,
+        success_story: values.successStory ? JSON.parse(values.successStory) : null,
       };
 
       let response;
@@ -342,6 +364,23 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="successStory"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Success Story (JSON)</FormLabel>
+                   <FormControl>
+                    <Textarea
+                      placeholder='{ "scenario": "...", "challenge": "...", "solution": "...", "result": "..." }'
+                      rows={8}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           {/* Column 2 */}
@@ -390,6 +429,40 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                     <Textarea
                       placeholder="Enter one item per line."
                       rows={4}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="pricingPlans"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Pricing Plans (JSON)</FormLabel>
+                   <FormControl>
+                    <Textarea
+                      placeholder='[ { "title": "Basic", "description": "...", "features": ["..."], "price": "...", "popular": false } ]'
+                      rows={8}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="processSteps"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Process Steps (JSON)</FormLabel>
+                   <FormControl>
+                    <Textarea
+                      placeholder='[ { "step": "1", "title": "...", "description": "..." } ]'
+                      rows={8}
                       {...field}
                     />
                   </FormControl>
