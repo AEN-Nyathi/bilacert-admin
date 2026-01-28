@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Phone } from 'lucide-react';
 import { useState } from 'react';
 import DeleteSubmissionDialog from './DeleteSubmissionDialog';
 import { useRouter } from 'next/navigation';
@@ -44,6 +44,11 @@ export default function SubmissionDetails({ submission }: SubmissionDetailsProps
             <pre className="bg-muted/50 p-2 rounded-md"><code>{JSON.stringify(data, null, 2)}</code></pre>
         </div>
     )
+  }
+
+  const formatPhoneNumberForWhatsApp = (phone: string) => {
+    // Remove all non-digit characters
+    return phone.replace(/\D/g, '');
   }
 
   return (
@@ -96,7 +101,15 @@ export default function SubmissionDetails({ submission }: SubmissionDetailsProps
                          {submission.phone && (
                             <div>
                                 <h4 className="text-sm font-medium text-muted-foreground">Phone</h4>
-                                <p className="text-sm text-card-foreground">{submission.phone}</p>
+                                <a 
+                                    href={`https://wa.me/${formatPhoneNumberForWhatsApp(submission.phone)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 text-sm text-primary transition-colors hover:underline"
+                                >
+                                    <Phone className="h-4 w-4" />
+                                    {submission.phone}
+                                </a>
                             </div>
                         )}
                          {submission.company && (
