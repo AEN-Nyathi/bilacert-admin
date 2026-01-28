@@ -1,4 +1,3 @@
-
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getServiceBySlug, getAllPublishedServiceSlugs } from '@/lib/services';
@@ -8,6 +7,8 @@ import { PricingPlans } from '@/components/service/PricingPlans';
 import { ProcessSteps } from '@/components/service/ProcessSteps';
 import { CTASection } from '@/components/service/CTASection';
 import { SuccessStory } from '@/components/service/SuccessStory';
+import { ServicesGrid } from '@/components/service/ServicesGrid';
+import { Service } from '@/lib/types';
 
 interface ServicePageProps {
 	params: {
@@ -26,17 +27,17 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 
 	return {
 		title: service.seoTitle || service.title,
-		description: service.seoDescription || service.description,
+		description: service.seoDescription || service.shortDescription,
 		keywords: service.seoKeywords ? service.seoKeywords.split(',').map(k => k.trim()) : [service.title],
 		openGraph: {
 			title: `${service.seoTitle || service.title} - Bilacert`,
-			description: service.seoDescription || service.description,
-			url: service.href,
+			description: service.seoDescription || service.shortDescription,
+			url: `https://bilacert.co.za/services/${service.slug}`,
 			type: 'website',
             images: service.image ? [{ url: service.image }] : [],
 		},
 		alternates: {
-			canonical: service.href,
+			canonical: `https://bilacert.co.za/services/${service.slug}`,
 		},
 	};
 }
@@ -49,28 +50,51 @@ export async function generateStaticParams() {
 }
 
 export default async function ServicePage({ params }: ServicePageProps) {
-	const service = await getServiceBySlug(params.slug);
+	const service: Service | null = await getServiceBySlug(params.slug);
 
 	if (!service) {
 		notFound();
 	}
 
+    // For services with additional offerings
+	const serviceOfferings = (service.pricingPlans || []).slice(0, 3).map(plan => ({
+        icon: 'CheckCircle',
+        title: plan.title,
+        description: plan.description,
+    }));
+    if (serviceOfferings.length < 4) {
+        serviceOfferings.push({
+            icon: 'Award',
+			title: 'Ongoing Support',
+			description: 'Comprehensive support throughout your entire journey with us',
+        });
+    }
+
 	return (
 		<div className='min-h-screen'>
 			<ServiceHero
 				title={service.title}
-				subtitle={service.shortDescription || service.description}
+				subtitle={service.shortDescription || service.description || ""}
 				iconName={service.icon || 'Shield'}
 				imageSrc={service.image || '/herosetion/Services.jpg'}
                 processingTime={service.processingTime || 'N/A'}
-				formPath={service.href.replace('/services/', '/forms/')}
+				formPath={`/forms/${service.slug}`}
 			/>
 
-			<WhatIsSection
-				title={`What is ${service.title}?`}
-				content={service.content || service.description}
-				checkpoints={service.features || []}
-				benefits={service.requirements || []}
+			{service.content && (
+				<WhatIsSection
+					title={`What is ${service.title}?`}
+					content={service.content}
+					checkpoints={service.features || []}
+					benefits={service.requirements || []}
+				/>
+			)}
+            
+            <ServicesGrid
+				title={`Our ${service.title} Services`}
+				subtitle={`We offer a full-service approach to obtaining and maintaining your ${service.title.toLowerCase()}`}
+				items={serviceOfferings}
+				bgColor='bg-secondary-gray'
 			/>
             
 			{service.pricingPlans && service.pricingPlans.length > 0 && (
@@ -78,19 +102,19 @@ export default async function ServicePage({ params }: ServicePageProps) {
                     title='Pricing Plans'
                     subtitle='Flexible plans to suit businesses of all sizes'
                     plans={service.pricingPlans}
-                    formPath={service.href.replace('/services/', '/forms/')}
+                    formPath={`/forms/${service.slug}`}
                 />
             )}
             
             {service.processSteps && service.processSteps.length > 0 && (
                 <ProcessSteps
-                    title='Our 5-Step Process'
-                    subtitle={`A proven process for ${service.title.toLowerCase()} approval`}
+                    title='Our Process'
+                    subtitle={`A proven ${service.processSteps.length}-step process for ${service.title.toLowerCase()} approval`}
                     steps={service.processSteps}
                 />
             )}
 
-            {service.successStory && (
+            {service.successStory && service.successStory.scenario && (
                 <SuccessStory
                     scenario={service.successStory.scenario}
                     challenge={service.successStory.challenge}
@@ -104,7 +128,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
 				description={`Ensure your business stays compliant. Let us handle the process so you can focus on delivering exceptional services.`}
 				primaryCTA={{
 					label: 'Get Free Consultation',
-					href: service.href.replace('/services/', '/forms/'),
+					href: `/forms/${service.slug}`,
 				}}
 				secondaryCTA={{
 					label: `Call 075 430 4433`,

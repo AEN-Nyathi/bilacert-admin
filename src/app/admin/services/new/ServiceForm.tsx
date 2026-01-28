@@ -149,10 +149,10 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         { title: 'Premium', description: '', price: '', features: '', popular: false },
       ];
 
-      const servicePricingPlans = service.pricingPlans?.map(p => ({
+      const servicePricingPlans = (service.pricingPlans || []).map(p => ({
         ...p,
         features: Array.isArray(p.features) ? p.features.join('\n') : p.features || '',
-      })) || [];
+      }));
       
       const populatedPlans = defaultPricingPlans.map((defaultPlan, index) => {
           return servicePricingPlans[index] || defaultPlan;
@@ -291,15 +291,26 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                           <FormField control={form.control} name={`pricingPlans.${index}.description`} render={({ field }) => (<FormItem><FormLabel>Plan Description</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                           <FormField control={form.control} name={`pricingPlans.${index}.price`} render={({ field }) => (<FormItem><FormLabel>Price</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
                           <FormField control={form.control} name={`pricingPlans.${index}.features`} render={({ field }) => (<FormItem><FormLabel>Features (one per line)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>)} />
-                          <FormField control={form.control} name={`pricingPlans.${index}.popular`} render={({ field }) => (
-                            <FormItem className="flex flex-row items-center justify-between rounded-lg border bg-background p-3 shadow-sm">
-                              <div className="space-y-0.5">
-                                <FormLabel>Most Popular</FormLabel>
-                                <FormDescription>Highlight this plan.</FormDescription>
-                              </div>
-                              <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-                            </FormItem>
-                          )}/>
+                          <FormField
+                            control={form.control}
+                            name={`pricingPlans.${index}.popular`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <div className="flex flex-row items-center justify-between rounded-lg border bg-background p-3 shadow-sm">
+                                  <div className="space-y-0.5">
+                                    <FormLabel>Most Popular</FormLabel>
+                                    <FormDescription>Highlight this plan.</FormDescription>
+                                  </div>
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                </div>
+                              </FormItem>
+                            )}
+                          />
                         </CardContent>
                     </Card>
                     ))}
@@ -386,5 +397,3 @@ export default function ServiceForm({ service }: ServiceFormProps) {
     </Form>
   );
 }
-
-    
