@@ -23,6 +23,7 @@ import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import ImageUpload from '@/components/ui/ImageUpload';
 
 const blogSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -183,9 +184,14 @@ export default function BlogForm({ blog }: BlogFormProps) {
               name="image"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Image URL</FormLabel>
+                  <FormLabel>Image</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://example.com/image.jpg" {...field} />
+                    <ImageUpload 
+                        bucket='blogs'
+                        initialUrl={field.value}
+                        onUpload={(url) => field.onChange(url)}
+                        onRemove={() => field.onChange('')}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

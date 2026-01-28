@@ -24,6 +24,7 @@ import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import ImageUpload from '@/components/ui/ImageUpload';
 
 const slugify = (str: string) =>
   str
@@ -301,6 +302,42 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                 </FormItem>
               )}
             />
+             <FormField
+              control={form.control}
+              name="image"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Image</FormLabel>
+                  <FormControl>
+                    <ImageUpload 
+                        bucket='services'
+                        initialUrl={field.value}
+                        onUpload={(url) => field.onChange(url)}
+                        onRemove={() => field.onChange('')}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="thumbnail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Thumbnail</FormLabel>
+                  <FormControl>
+                    <ImageUpload 
+                        bucket='services'
+                        initialUrl={field.value}
+                        onUpload={(url) => field.onChange(url)}
+                        onRemove={() => field.onChange('')}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           {/* Column 2 */}
@@ -339,32 +376,6 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                 </FormItem>
               )}
             />
-             <FormField
-                control={form.control}
-                name="image"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Image URL</FormLabel>
-                    <FormControl>
-                        <Input placeholder="https://example.com/image.jpg" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-            />
-             <FormField
-                control={form.control}
-                name="thumbnail"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Thumbnail URL</FormLabel>
-                    <FormControl>
-                        <Input placeholder="https://example.com/thumb.jpg" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-            />
             <div className="grid grid-cols-2 gap-6">
                 <FormField
                     control={form.control}
@@ -373,7 +384,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                     <FormItem>
                         <FormLabel>Processing Time</FormLabel>
                         <FormControl>
-                        <Input placeholder="e.g., 5-7 business days" {...field} />
+                        <Input placeholder="e.g., 5-7 business days" {...field} value={field.value || ''} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -407,6 +418,9 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
                         <FormLabel>Published</FormLabel>
+                        <FormDescription>
+                            Make this service visible on the public website.
+                        </FormDescription>
                         </div>
                         <FormControl>
                         <Switch
@@ -424,6 +438,9 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
                         <FormLabel>Featured</FormLabel>
+                         <FormDescription>
+                            Highlight this service on the homepage.
+                        </FormDescription>
                         </div>
                         <FormControl>
                         <Switch
@@ -435,53 +452,52 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                     )}
                 />
             </div>
-          </div>
-        </div>
-
-        {/* SEO Section */}
-        <div className="mt-8 pt-6 border-t">
-            <h3 className="text-lg font-medium">SEO Settings</h3>
-            <div className="grid md:grid-cols-2 gap-x-8 gap-y-6 mt-4">
-                 <FormField
-                    control={form.control}
-                    name="seoTitle"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>SEO Title</FormLabel>
-                        <FormControl>
-                        <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-                 <FormField
-                    control={form.control}
-                    name="seoKeywords"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>SEO Keywords</FormLabel>
-                        <FormControl>
-                        <Input placeholder="keyword1, keyword2, keyword3" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-                 <FormField
-                    control={form.control}
-                    name="seoDescription"
-                    render={({ field }) => (
-                    <FormItem className="md:col-span-2">
-                        <FormLabel>SEO Description</FormLabel>
-                        <FormControl>
-                        <Textarea rows={3} {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
+             {/* SEO Section */}
+            <div className="pt-6 border-t">
+                <h3 className="text-lg font-medium">SEO Settings</h3>
+                <div className="space-y-6 mt-4">
+                    <FormField
+                        control={form.control}
+                        name="seoTitle"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>SEO Title</FormLabel>
+                            <FormControl>
+                            <Input {...field} value={field.value || ''}/>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="seoKeywords"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>SEO Keywords</FormLabel>
+                            <FormControl>
+                            <Input placeholder="keyword1, keyword2, keyword3" {...field} value={field.value || ''} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="seoDescription"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>SEO Description</FormLabel>
+                            <FormControl>
+                            <Textarea rows={3} {...field} value={field.value || ''} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                </div>
             </div>
+          </div>
         </div>
 
         <div className="mt-8 flex justify-end gap-4">
