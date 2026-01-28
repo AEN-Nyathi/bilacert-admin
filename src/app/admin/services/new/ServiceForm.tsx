@@ -19,12 +19,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import type { Service } from '@/lib/types';
+import type { Service, PricingPlan, ProcessStep, SuccessStory } from '@/lib/types';
 import { useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ImageUpload from '@/components/ui/ImageUpload';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const slugify = (str: string) =>
   str
@@ -78,6 +80,117 @@ interface ServiceFormProps {
   service?: Service | null;
 }
 
+const PreviewPricingPlans = ({ jsonString }: { jsonString?: string }) => {
+    let plans: PricingPlan[];
+    try {
+        if (!jsonString) return null;
+        plans = JSON.parse(jsonString);
+        if (!Array.isArray(plans)) return <p className="text-sm text-destructive mt-2">Invalid format: must be an array of plans.</p>;
+    } catch (e) {
+        return <p className="text-sm text-destructive mt-2">Invalid JSON format for Pricing Plans.</p>;
+    }
+
+    return (
+        <div className="mt-4 space-y-2">
+            <h4 className="font-medium text-sm text-muted-foreground">Preview</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-md bg-muted/50">
+                {plans.map((plan, index) => (
+                    <Card key={index} className="flex flex-col bg-card">
+                        <CardHeader>
+                            <div className="flex justify-between items-start">
+                                <CardTitle className="text-base">{plan.title}</CardTitle>
+                                {plan.popular && <Badge>Popular</Badge>}
+                            </div>
+                            <CardDescription className="text-xs">{plan.description}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-grow space-y-2">
+                            <p className="text-xl font-bold">{plan.price}</p>
+                            <ul className="space-y-1 text-xs text-muted-foreground">
+                                {(plan.features || []).map((feature, i) => (
+                                    <li key={i} className="flex items-start">
+                                        <CheckCircle className="h-3 w-3 mr-2 mt-0.5 text-green-500 shrink-0" />
+                                        <span>{feature}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+const PreviewProcessSteps = ({ jsonString }: { jsonString?: string }) => {
+    let steps: ProcessStep[];
+    try {
+        if (!jsonString) return null;
+        steps = JSON.parse(jsonString);
+        if (!Array.isArray(steps)) return <p className="text-sm text-destructive mt-2">Invalid format: must be an array of steps.</p>;
+    } catch (e) {
+        return <p className="text-sm text-destructive mt-2">Invalid JSON format for Process Steps.</p>;
+    }
+    return (
+        <div className="mt-4 space-y-2">
+            <h4 className="font-medium text-sm text-muted-foreground">Preview</h4>
+            <div className="p-4 border rounded-md bg-muted/50">
+                <div className="relative pl-6">
+                    <div className="absolute left-0 top-0 bottom-0 w-px bg-border -translate-x-1/2 ml-3"></div>
+                    <div className="space-y-6">
+                    {(steps || []).map((step, index) => (
+                        <div key={index} className="relative flex items-start gap-3">
+                            <div className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-xs z-10">
+                                {step.step}
+                            </div>
+                            <div className="flex-grow">
+                                <h5 className="font-semibold text-sm text-card-foreground">{step.title}</h5>
+                                <p className="text-xs text-muted-foreground">{step.description}</p>
+                            </div>
+                        </div>
+                    ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const PreviewSuccessStory = ({ jsonString }: { jsonString?: string }) => {
+    let story: SuccessStory;
+    try {
+        if (!jsonString) return null;
+        story = JSON.parse(jsonString);
+        if (typeof story !== 'object' || story === null) return <p className="text-sm text-destructive mt-2">Invalid format: must be an object.</p>;
+    } catch (e) {
+        return <p className="text-sm text-destructive mt-2">Invalid JSON format for Success Story.</p>;
+    }
+    return (
+        <div className="mt-4 space-y-2">
+            <h4 className="font-medium text-sm text-muted-foreground">Preview</h4>
+             <Card className="bg-muted/50">
+                <CardContent className="p-4 space-y-3 text-xs">
+                    {story.scenario && <div>
+                        <h5 className="font-semibold text-muted-foreground uppercase tracking-wider">Scenario</h5>
+                        <p className="text-card-foreground">{story.scenario}</p>
+                    </div>}
+                    {story.challenge && <div>
+                        <h5 className="font-semibold text-muted-foreground uppercase tracking-wider">Challenge</h5>
+                        <p className="text-card-foreground">{story.challenge}</p>
+                    </div>}
+                    {story.solution && <div>
+                        <h5 className="font-semibold text-muted-foreground uppercase tracking-wider">Solution</h5>
+                        <p className="text-card-foreground">{story.solution}</p>
+                    </div>}
+                    {story.result && <div>
+                        <h5 className="font-semibold text-muted-foreground uppercase tracking-wider">Result</h5>
+                        <p className="text-card-foreground font-medium">{story.result}</p>
+                    </div>}
+                </CardContent>
+            </Card>
+        </div>
+    );
+};
+
 export default function ServiceForm({ service }: ServiceFormProps) {
   const { toast } = useToast();
   const router = useRouter();
@@ -119,6 +232,10 @@ export default function ServiceForm({ service }: ServiceFormProps) {
 
   const isEditing = !!service;
   const title = watch('title');
+  const pricingPlansJson = watch('pricingPlans');
+  const processStepsJson = watch('processSteps');
+  const successStoryJson = watch('successStory');
+
 
   useEffect(() => {
     if (!isEditing && title) {
@@ -378,6 +495,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                     />
                   </FormControl>
                   <FormMessage />
+                  <PreviewSuccessStory jsonString={successStoryJson} />
                 </FormItem>
               )}
             />
@@ -450,6 +568,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                     />
                   </FormControl>
                   <FormMessage />
+                  <PreviewPricingPlans jsonString={pricingPlansJson} />
                 </FormItem>
               )}
             />
@@ -467,6 +586,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                     />
                   </FormControl>
                   <FormMessage />
+                  <PreviewProcessSteps jsonString={processStepsJson} />
                 </FormItem>
               )}
             />
