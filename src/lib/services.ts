@@ -1,6 +1,7 @@
 
 import 'server-only';
-import { createClient } from '@/lib/supabase/server';
+import { createClient as createServerClient } from '@/lib/supabase/server';
+import { createClient as createGenericClient } from '@supabase/supabase-js';
 import type { Service } from './types';
 
 // This is a simplified example. In a real app, you'd handle errors more gracefully.
@@ -33,7 +34,7 @@ function mapToService(item: any): Service {
 }
 
 export async function getPublishedServices(): Promise<Service[]> {
-  const supabase = await createClient();
+  const supabase = await createServerClient();
   const { data, error } = await supabase
     .from('services')
     .select('*')
@@ -49,7 +50,7 @@ export async function getPublishedServices(): Promise<Service[]> {
 }
 
 export async function getServiceBySlug(slug: string): Promise<Service | null> {
-  const supabase = await createClient();
+  const supabase = await createServerClient();
   const { data, error } = await supabase
     .from('services')
     .select('*')
@@ -65,7 +66,12 @@ export async function getServiceBySlug(slug: string): Promise<Service | null> {
 }
 
 export async function getAllPublishedServiceSlugs(): Promise<{ slug: string }[]> {
-    const supabase = await createClient();
+    // For build-time fetching, we cannot use a client that depends on cookies.
+    // We use the generic client for public data.
+    const supabase = createGenericClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
     const { data, error } = await supabase
       .from('services')
       .select('slug')
