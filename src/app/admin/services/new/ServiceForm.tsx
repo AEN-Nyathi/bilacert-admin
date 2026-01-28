@@ -146,7 +146,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
 
   useEffect(() => {
     if (service) {
-        const defaultPlan = { title: '', description: '', features: [], price: '', popular: false };
+        const defaultPlan = { title: '', description: '', features: '', price: '', popular: false };
         const plans = (service.pricingPlans || []).concat(
           Array.from({ length: Math.max(0, 3 - (service.pricingPlans?.length || 0)) }, () => defaultPlan)
         ).slice(0, 3);
@@ -253,7 +253,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                     <CardTitle>Core Details</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <FormField control={form.control} name="title" render={({ field }) => ( <FormItem> <FormLabel>Title</FormLabel> <FormControl> <Input placeholder="e.g., ICASA Type Approvals" {...field} /> </FormControl> <FormMessage /> </FormItem> )} />
+                    <FormField control={form.control} name="title" render={({ field }) => ( <FormItem> <FormLabel>Title</FormLabel> <FormControl><Input placeholder="e.g., ICASA Type Approvals" {...field} /></FormControl> <FormMessage /> </FormItem> )} />
                     <FormField control={form.control} name="slug" render={({ field }) => ( <FormItem> <FormLabel>Slug</FormLabel> <FormControl> <Input placeholder="e.g., icasa-type-approvals" {...field} /> </FormControl> <FormMessage /> </FormItem> )} />
                     <FormField control={form.control} name="category" render={({ field }) => ( <FormItem> <FormLabel>Category</FormLabel> <FormControl> <Input placeholder="e.g., Licensing" {...field} /> </FormControl> <FormMessage /> </FormItem> )} />
                     <FormField control={form.control} name="icon" render={({ field }) => ( <FormItem> <FormLabel>Icon Name</FormLabel> <FormControl> <Input placeholder="e.g., Shield" {...field} value={field.value || ''} /> </FormControl> <FormMessage /> </FormItem> )} />
@@ -293,6 +293,9 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                                         <div className="space-y-0.5">
                                             <FormLabel>Most Popular?</FormLabel>
+                                            <FormDescription>
+                                                Highlight this plan.
+                                            </FormDescription>
                                         </div>
                                         <FormControl>
                                             <Switch
@@ -398,3 +401,4 @@ export default function ServiceForm({ service }: ServiceFormProps) {
     </Form>
   );
 }
+
