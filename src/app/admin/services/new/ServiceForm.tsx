@@ -19,13 +19,13 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import type { Service, PricingPlan, ProcessStep, SuccessStory } from '@/lib/types';
+import type { Service } from '@/lib/types';
 import { useEffect } from 'react';
 import { Loader2, PlusCircle, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ImageUpload from '@/components/ui/ImageUpload';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const slugify = (str: string) =>
   str
@@ -152,8 +152,14 @@ export default function ServiceForm({ service }: ServiceFormProps) {
   useEffect(() => {
     if (service) {
         const defaultPlan = { title: '', description: '', features: '', price: '', popular: false };
-        const plans = (service.pricingPlans || []).concat(
-          Array.from({ length: Math.max(0, 3 - (service.pricingPlans?.length || 0)) }, () => defaultPlan)
+        
+        const servicePricingPlans = (service.pricingPlans || []).map(p => ({
+            ...p,
+            features: (p.features || []).join('\n')
+        }));
+
+        const plans = servicePricingPlans.concat(
+          Array.from({ length: Math.max(0, 3 - servicePricingPlans.length) }, () => defaultPlan)
         ).slice(0, 3);
         
         reset({
@@ -176,7 +182,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
             seoTitle: service.seoTitle || '',
             seoDescription: service.seoDescription || '',
             seoKeywords: service.seoKeywords || '',
-            pricingPlans: plans.map(p => ({ ...p, features: (p.features || []).join('\n') })),
+            pricingPlans: plans,
             processSteps: service.processSteps || [],
             successStory: service.successStory || { scenario: '', challenge: '', solution: '', result: '' },
         });
@@ -300,19 +306,17 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                                 control={form.control}
                                 name={`pricingPlans.${index}.popular`}
                                 render={({ field }) => (
-                                    <FormItem>
-                                        <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                            <div className="space-y-0.5">
-                                                <FormLabel>Most Popular?</FormLabel>
-                                                <FormDescription>Highlight this plan.</FormDescription>
-                                            </div>
-                                            <FormControl>
-                                                <Switch
-                                                    checked={field.value}
-                                                    onCheckedChange={field.onChange}
-                                                />
-                                            </FormControl>
+                                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                        <div className="space-y-0.5">
+                                            <FormLabel>Most Popular?</FormLabel>
+                                            <FormDescription>Highlight this plan.</FormDescription>
                                         </div>
+                                        <FormControl>
+                                            <Switch
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                            />
+                                        </FormControl>
                                     </FormItem>
                                 )}
                             />
