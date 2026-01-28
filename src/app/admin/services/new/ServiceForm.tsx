@@ -129,6 +129,11 @@ export default function ServiceForm({ service }: ServiceFormProps) {
     control,
     formState: { isSubmitting },
   } = form;
+  
+  const { fields: pricingPlanFields } = useFieldArray({
+    control,
+    name: "pricingPlans"
+  });
 
   const { fields: processStepFields, append: appendProcessStep, remove: removeProcessStep } = useFieldArray({
     control,
@@ -279,8 +284,8 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                     <CardTitle>Pricing Plans</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    {[0, 1, 2].map((index) => (
-                        <div key={index} className="space-y-4 rounded-md border p-4">
+                    {pricingPlanFields.map((field, index) => (
+                        <div key={field.id} className="space-y-4 rounded-md border p-4">
                              <h4 className="font-medium">Plan {index + 1}</h4>
                             <FormField control={form.control} name={`pricingPlans.${index}.title`} render={({ field }) => ( <FormItem> <FormLabel>Title</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage/> </FormItem> )} />
                             <FormField control={form.control} name={`pricingPlans.${index}.description`} render={({ field }) => ( <FormItem> <FormLabel>Description</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage/> </FormItem> )} />
@@ -401,4 +406,3 @@ export default function ServiceForm({ service }: ServiceFormProps) {
     </Form>
   );
 }
-
