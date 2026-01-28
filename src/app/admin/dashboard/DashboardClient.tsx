@@ -15,6 +15,7 @@ import { useMemo } from 'react';
 import { format } from 'date-fns';
 import { Submission } from '@/lib/types';
 import Icon from '@/components/Icon';
+import Link from 'next/link';
 
 const serviceTypeToIconNameMap: Record<string, string> = {
     'Class ECS/ECNS Licensing': 'Shield',
@@ -116,22 +117,28 @@ export default function DashboardClient() {
                 <Clock className="h-5 w-5 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-                <div className="space-y-6">
+                <div className="space-y-2">
                 {recentSubmissions.length > 0 ? (
                     recentSubmissions.map(submission => (
-                        <div key={submission.id} className="flex items-start gap-4">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
-                                {getIconForServiceType(submission, { className: "h-5 w-5"})}
+                        <Link 
+                            key={submission.id}
+                            href={`/admin/form_submissions/${submission.id}`}
+                            className="block rounded-lg transition-colors hover:bg-muted/50"
+                        >
+                            <div className="flex items-start gap-4 p-3">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
+                                    {getIconForServiceType(submission, { className: "h-5 w-5"})}
+                                </div>
+                                <div className="grid gap-0.5 flex-1">
+                                    <p className="text-sm font-medium">{submission.fullName}</p>
+                                    <p className="text-xs text-muted-foreground">{submission.email}</p>
+                                    <p className="text-xs text-muted-foreground mt-1">{submission.serviceName || submission.formType}</p>
+                                </div>
+                                <div className="ml-auto text-xs text-muted-foreground whitespace-nowrap">
+                                    {format(new Date(submission.createdAt), 'dd MMM yyyy, HH:mm')}
+                                </div>
                             </div>
-                            <div className="grid gap-0.5 flex-1">
-                                <p className="text-sm font-medium">{submission.fullName}</p>
-                                <p className="text-xs text-muted-foreground">{submission.email}</p>
-                                <p className="text-xs text-muted-foreground mt-1">{submission.serviceName || submission.formType}</p>
-                            </div>
-                            <div className="ml-auto text-xs text-muted-foreground whitespace-nowrap">
-                                {format(new Date(submission.createdAt), 'dd MMM yyyy, HH:mm')}
-                            </div>
-                        </div>
+                        </Link>
                     ))
                 ) : (
                     <div className="text-center text-muted-foreground pt-4">No recent submissions.</div>

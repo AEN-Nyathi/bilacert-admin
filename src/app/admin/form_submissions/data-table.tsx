@@ -1,3 +1,4 @@
+
 "use client"
 
 import {
@@ -8,6 +9,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
+  Row,
 } from "@tanstack/react-table"
 
 import {
@@ -21,6 +23,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useRouter } from "next/navigation"
+import type { Submission } from "@/lib/types"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -34,6 +38,7 @@ export function DataTable<TData, TValue>({
   isLoading = false
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([])
+    const router = useRouter();
 
   const table = useReactTable({
     data,
@@ -46,6 +51,13 @@ export function DataTable<TData, TValue>({
         sorting,
     }
   })
+
+  const handleRowClick = (row: Row<TData>) => {
+    const submission = row.original as Submission;
+    if (submission?.id) {
+        router.push(`/admin/form_submissions/${submission.id}`);
+    }
+  }
 
   return (
     <div>
@@ -85,9 +97,18 @@ export function DataTable<TData, TValue>({
                 <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
+                    className="cursor-pointer"
+                    onClick={() => handleRowClick(row)}
                 >
                     {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell 
+                        key={cell.id} 
+                        onClick={(e) => {
+                            if (cell.column.id === 'actions') {
+                                e.stopPropagation();
+                            }
+                        }}
+                    >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                     ))}
