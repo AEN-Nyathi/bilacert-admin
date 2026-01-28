@@ -1,6 +1,6 @@
 
 import 'server-only';
-import { createClient } from './supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import type { Service } from './types';
 
 // This is a simplified example. In a real app, you'd handle errors more gracefully.
