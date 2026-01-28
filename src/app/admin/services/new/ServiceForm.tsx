@@ -181,9 +181,14 @@ export default function ServiceForm({ service }: ServiceFormProps) {
             successStory: service.successStory || { scenario: '', challenge: '', solution: '', result: '' },
         });
     } else {
-      reset();
+      reset({
+        ...form.getValues(),
+        pricingPlans: Array.from({ length: 3 }, () => ({ title: '', description: '', features: '', price: '', popular: false })),
+        processSteps: [],
+        successStory: { scenario: '', challenge: '', solution: '', result: '' },
+      });
     }
-  }, [service, reset]);
+  }, [service, reset, form]);
 
   const onSubmit = async (values: ServiceFormValues) => {
     try {
@@ -291,23 +296,23 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                             <FormField control={form.control} name={`pricingPlans.${index}.description`} render={({ field }) => ( <FormItem> <FormLabel>Description</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage/> </FormItem> )} />
                             <FormField control={form.control} name={`pricingPlans.${index}.price`} render={({ field }) => ( <FormItem> <FormLabel>Price</FormLabel> <FormControl><Input {...field} /></FormControl> <FormMessage/> </FormItem> )} />
                             <FormField control={form.control} name={`pricingPlans.${index}.features`} render={({ field }) => ( <FormItem> <FormLabel>Features</FormLabel> <FormControl><Textarea placeholder="One feature per line" {...field} /></FormControl> <FormMessage/> </FormItem> )} />
-                            <FormField
+                             <FormField
                                 control={form.control}
                                 name={`pricingPlans.${index}.popular`}
                                 render={({ field }) => (
-                                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                        <div className="space-y-0.5">
-                                            <FormLabel>Most Popular?</FormLabel>
-                                            <FormDescription>
-                                                Highlight this plan.
-                                            </FormDescription>
+                                    <FormItem>
+                                        <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                            <div className="space-y-0.5">
+                                                <FormLabel>Most Popular?</FormLabel>
+                                                <FormDescription>Highlight this plan.</FormDescription>
+                                            </div>
+                                            <FormControl>
+                                                <Switch
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
                                         </div>
-                                        <FormControl>
-                                            <Switch
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                            />
-                                        </FormControl>
                                     </FormItem>
                                 )}
                             />
