@@ -1,39 +1,17 @@
+import type { ProcessStep } from '@/lib/types';
 
 interface ProcessStepsProps {
 	title: string;
 	subtitle: string;
+    steps: ProcessStep[];
 	bgColor?: string;
 }
 
-export function ProcessSteps({ title, subtitle, bgColor = 'bg-secondary-gray' }: ProcessStepsProps) {
-	const steps = [
-        {
-            step: '1',
-            title: 'Consultation & Pre-Assessment',
-            description: 'We evaluate your product and determine the most efficient approval pathway.',
-        },
-        {
-            step: '2',
-            title: 'Documentation',
-            description: 'We compile and review all required documentation for accuracy and completeness.',
-        },
-        {
-            step: '3',
-            title: 'Testing & Submission',
-            description: 'We coordinate testing if needed and submit the application to the regulatory body.',
-        },
-        {
-            step: '4',
-            title: 'Liaison & Tracking',
-            description: 'We manage all communications and track the progress of your application.',
-        },
-        {
-            step: '5',
-            title: 'Approval & Support',
-            description: 'We ensure timely approval and provide ongoing compliance support.',
-        },
-    ];
-
+export function ProcessSteps({ title, subtitle, steps, bgColor = 'bg-secondary-gray' }: ProcessStepsProps) {
+	if (!steps || steps.length === 0) {
+        return null;
+    }
+    
 	return (
 		<section className={`py-20 ${bgColor}`}>
 			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
