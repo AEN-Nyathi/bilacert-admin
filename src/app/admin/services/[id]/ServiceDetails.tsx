@@ -2,12 +2,12 @@
 'use client';
 
 import { Badge } from '@/components/ui/badge';
-import type { Service } from '@/lib/types';
+import type { Service, PricingPlan, ProcessStep, SuccessStory } from '@/lib/types';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Phone, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 import DeleteServiceDialog from '../DeleteServiceDialog';
 import { useRouter } from 'next/navigation';
@@ -49,14 +49,84 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
     )
   }
 
-  const renderJson = (data: any) => {
-    if (!data) return <p className="text-sm text-card-foreground">Not set.</p>;
+  const renderPricingPlans = (plans: PricingPlan[] | undefined) => {
+    if (!plans || plans.length === 0) return <p className="text-sm text-card-foreground">No pricing plans defined.</p>;
     return (
-        <div className="prose prose-sm dark:prose-invert mt-1 text-card-foreground text-sm whitespace-pre-wrap">
-            <pre className="bg-muted/50 p-2 rounded-md"><code>{JSON.stringify(data, null, 2)}</code></pre>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+            {plans.map((plan, index) => (
+                <Card key={index} className="flex flex-col">
+                    <CardHeader>
+                        <div className="flex justify-between items-start">
+                            <CardTitle className="text-lg">{plan.title}</CardTitle>
+                            {plan.popular && <Badge variant="default">Popular</Badge>}
+                        </div>
+                        <CardDescription>{plan.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex-grow space-y-4">
+                        <p className="text-2xl font-bold">{plan.price}</p>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                            {plan.features.map((feature, i) => (
+                                <li key={i} className="flex items-start">
+                                    <CheckCircle className="h-4 w-4 mr-2 mt-1 text-green-500 shrink-0" />
+                                    <span>{feature}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </CardContent>
+                </Card>
+            ))}
         </div>
     )
-  }
+  };
+
+  const renderProcessSteps = (steps: ProcessStep[] | undefined) => {
+    if (!steps || steps.length === 0) return <p className="text-sm text-card-foreground">No process steps defined.</p>;
+    return (
+        <div className="relative mt-4 pl-6">
+            <div className="absolute left-0 top-0 bottom-0 w-px bg-border -translate-x-1/2 ml-3"></div>
+            <div className="space-y-8">
+            {steps.map((step, index) => (
+                <div key={index} className="relative flex items-start gap-4">
+                    <div className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-xs z-10">
+                        {step.step}
+                    </div>
+                    <div className="flex-grow">
+                        <h5 className="font-semibold text-card-foreground">{step.title}</h5>
+                        <p className="text-sm text-muted-foreground">{step.description}</p>
+                    </div>
+                </div>
+              ))}
+            </div>
+        </div>
+    )
+  };
+
+  const renderSuccessStory = (story: SuccessStory | undefined) => {
+    if (!story) return <p className="text-sm text-card-foreground">No success story defined.</p>;
+    return (
+         <Card className="mt-2 bg-muted/50">
+            <CardContent className="p-6 space-y-4">
+                <div>
+                    <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Scenario</h5>
+                    <p className="text-sm text-card-foreground">{story.scenario}</p>
+                </div>
+                 <div>
+                    <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Challenge</h5>
+                    <p className="text-sm text-card-foreground">{story.challenge}</p>
+                </div>
+                 <div>
+                    <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Solution</h5>
+                    <p className="text-sm text-card-foreground">{story.solution}</p>
+                </div>
+                 <div>
+                    <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Result</h5>
+                    <p className="text-sm text-card-foreground font-medium">{story.result}</p>
+                </div>
+            </CardContent>
+         </Card>
+    )
+  };
+
 
   return (
     <>
@@ -228,15 +298,15 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
 
                 <div className="mt-6 border-t pt-6">
                     <h3 className="text-lg font-medium mb-4">Pricing Plans</h3>
-                    {renderJson(service.pricingPlans)}
+                    {renderPricingPlans(service.pricingPlans)}
                 </div>
                  <div className="mt-6 border-t pt-6">
                     <h3 className="text-lg font-medium mb-4">Process Steps</h3>
-                    {renderJson(service.processSteps)}
+                    {renderProcessSteps(service.processSteps)}
                 </div>
                  <div className="mt-6 border-t pt-6">
                     <h3 className="text-lg font-medium mb-4">Success Story</h3>
-                    {renderJson(service.successStory)}
+                    {renderSuccessStory(service.successStory)}
                 </div>
 
             </CardContent>
