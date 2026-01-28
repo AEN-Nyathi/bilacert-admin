@@ -38,7 +38,7 @@ export async function getPublishedServices(): Promise<Service[]> {
     .from('services')
     .select('*')
     .eq('published', true)
-    .order('orderIndex', { ascending: true });
+    .order('created_at', { ascending: false });
 
   if (error) {
     console.error('Error fetching services:', error);
