@@ -43,11 +43,11 @@ export default function ServicesClient() {
     setSelectedService(null);
   };
 
-  const getPriceDisplay = (pricing: any): string => {
-    if (!pricing) return "Not set";
-    if (typeof pricing === 'string') return pricing;
-    if (typeof pricing === 'number') return `R${pricing.toFixed(2)}`;
-    return typeof pricing === 'object' ? JSON.stringify(pricing) : String(pricing);
+  const getPriceDisplay = (pricing: number | null | undefined): string => {
+    if (pricing === null || pricing === undefined) {
+      return "Not set";
+    }
+    return `R${Number(pricing).toFixed(2)}`;
   }
 
   if (error) {
@@ -111,12 +111,10 @@ export default function ServicesClient() {
                         {service.processingTime || 'N/A'}
                     </p>
                     </div>
-                    {service.pricing && (
-                        <div>
+                    <div>
                         <h4 className="text-xs font-medium uppercase text-muted-foreground">Pricing</h4>
                         <p className="text-sm font-mono truncate">{getPriceDisplay(service.pricing)}</p>
-                        </div>
-                    )}
+                    </div>
                 </CardContent>
                 <CardFooter className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
                     <DropdownMenu>

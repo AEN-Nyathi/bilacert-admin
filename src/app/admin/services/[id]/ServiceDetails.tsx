@@ -38,15 +38,6 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
     router.refresh();
   }
 
-  const renderJson = (data: any) => {
-    if (!data) return null;
-    return (
-        <div className="prose prose-sm dark:prose-invert mt-1 text-card-foreground text-sm whitespace-pre-wrap">
-            <pre className="bg-muted/50 p-2 rounded-md"><code>{JSON.stringify(data, null, 2)}</code></pre>
-        </div>
-    )
-  }
-
   const renderStringArray = (data: string[] | undefined) => {
     if (!data || data.length === 0) return <p className="text-sm text-card-foreground">Not set.</p>;
     return (
@@ -164,10 +155,10 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
                                 <p className="text-sm text-card-foreground">{service.processingTime}</p>
                             </div>
                         )}
-                        {service.pricing && (
+                        {service.pricing !== null && service.pricing !== undefined && (
                             <div>
                                 <h4 className="text-sm font-medium text-muted-foreground">Pricing</h4>
-                                {renderJson(service.pricing)}
+                                <p className="text-sm font-mono text-card-foreground">R{Number(service.pricing).toFixed(2)}</p>
                             </div>
                         )}
                          <div>

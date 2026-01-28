@@ -70,7 +70,6 @@ CREATE TABLE public.services (
   features jsonb DEFAULT '[]'::jsonb,
   requirements jsonb DEFAULT '[]'::jsonb,
   processing_time character varying,
-  pricing jsonb,
   image character varying,
   thumbnail character varying,
   seo_title character varying,
@@ -79,6 +78,7 @@ CREATE TABLE public.services (
   published boolean DEFAULT true,
   featured boolean DEFAULT false,
   created_at timestamp without time zone DEFAULT now(),
+  pricing numeric,
   CONSTRAINT services_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.testimonials (

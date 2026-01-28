@@ -34,7 +34,7 @@ export interface Service {
   features?: string[];
   requirements?: string[];
   processingTime?: string;
-  pricing?: any;
+  pricing?: number;
   image?: string;
   thumbnail?: string;
   seoTitle?: string;

@@ -35,15 +35,10 @@ const serviceSchema = z.object({
   requirements: z.string().optional(),
   published: z.boolean(),
   processingTime: z.string().optional(),
-  pricing: z.string().optional().refine((val) => {
-    if (!val || val.trim() === '') return true;
-    try {
-      JSON.parse(val);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }, { message: 'Pricing must be a valid JSON object.' }),
+  pricing: z.preprocess(
+    (val) => (val === '' ? undefined : val),
+    z.coerce.number({ invalid_type_error: "Pricing must be a number" }).optional()
+  ),
 });
 
 type ServiceFormValues = z.infer<typeof serviceSchema>;
@@ -67,7 +62,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
       requirements: '',
       published: false,
       processingTime: '',
-      pricing: '',
+      pricing: undefined,
     },
   });
 
@@ -91,7 +86,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         requirements: service.requirements?.join('\n') || '',
         published: service.published,
         processingTime: service.processingTime || '',
-        pricing: service.pricing ? JSON.stringify(service.pricing, null, 2) : '',
+        pricing: service.pricing ?? undefined,
       });
     } else {
       reset({
@@ -104,7 +99,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         requirements: '',
         published: false,
         processingTime: '',
-        pricing: '',
+        pricing: undefined,
       });
     }
   }, [service, reset]);
@@ -126,7 +121,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         requirements: values.requirements ? values.requirements.split('\n').filter(s => s.trim() !== '') : [],
         published: values.published,
         processing_time: values.processingTime,
-        pricing: values.pricing ? JSON.parse(values.pricing) : null,
+        pricing: values.pricing,
       };
 
       let response;
@@ -297,14 +292,19 @@ export default function ServiceForm({ service }: ServiceFormProps) {
             name="pricing"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Pricing (JSON format)</FormLabel>
+                <FormLabel>Pricing</FormLabel>
                 <FormControl>
-                  <Textarea
-                    placeholder='e.g., { "type": "flat", "amount": 1500 }'
-                    rows={4}
+                  <Input
+                    type="number"
+                    step="0.01"
+                    placeholder="e.g., 1500.00"
                     {...field}
+                    value={field.value ?? ''}
                   />
                 </FormControl>
+                <FormDescription>
+                    Enter the price for the service.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
