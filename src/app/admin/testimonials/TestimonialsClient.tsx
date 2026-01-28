@@ -3,13 +3,12 @@
 
 import { useState } from 'react';
 import { useTestimonials } from '@/hooks/useTestimonials';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Edit, Trash2, MessageSquare, MoreHorizontal } from 'lucide-react';
+import { PlusCircle, MoreHorizontal } from 'lucide-react';
 import type { Testimonial } from '@/lib/types';
 import DeleteTestimonialDialog from './DeleteTestimonialDialog';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import {
   DropdownMenu,
@@ -19,10 +18,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import TestimonialEmbed from './TestimonialEmbed';
 
 export default function TestimonialsClient() {
   const { testimonials, loading, error } = useTestimonials();
-  const router = useRouter();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedTestimonial, setSelectedTestimonial] = useState<Testimonial | null>(null);
 
@@ -65,48 +64,43 @@ export default function TestimonialsClient() {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((testimonial) => (
-            <Link href={`/admin/testimonials/${testimonial.id}`} key={testimonial.id} className="group">
-                <Card className="flex flex-col h-full hover:shadow-lg hover:border-primary/50 transition-all">
-                    <CardHeader>
-                        <CardTitle className="truncate text-base">{testimonial.postUrl}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-grow flex items-center justify-center p-6 bg-muted/20">
-                        <div className='text-center'>
-                            <MessageSquare className="mx-auto h-12 w-12 text-muted-foreground" />
-                            <p className="mt-4 text-xs text-muted-foreground">
+                <Card key={testimonial.id} className="flex flex-col h-full hover:shadow-lg hover:border-primary/50 transition-all">
+                    <CardHeader className="flex-row items-center justify-between">
+                        <div>
+                            <CardTitle className="text-base">Testimonial</CardTitle>
+                            <CardDescription className="text-xs">
                                 Added on {format(new Date(testimonial.createdAt), 'PP')}
-                            </p>
+                            </CardDescription>
                         </div>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem asChild>
+                                <Link href={`/admin/testimonials/${testimonial.id}`}>View</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link href={`/admin/testimonials/${testimonial.id}/edit`}>Edit</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                                onClick={() => handleDelete(testimonial)}
+                            >
+                                Delete
+                            </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </CardHeader>
+                    <CardContent className="flex-grow p-0 overflow-hidden">
+                        <TestimonialEmbed postUrl={testimonial.postUrl} />
                     </CardContent>
-                    <CardFooter className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem asChild>
-                              <Link href={`/admin/testimonials/${testimonial.id}/edit`} onClick={(e) => e.stopPropagation()}>Edit</Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleDelete(testimonial);
-                            }}
-                          >
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </CardFooter>
                 </Card>
-            </Link>
             ))}
         </div>
       </div>
