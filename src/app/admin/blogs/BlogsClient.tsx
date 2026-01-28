@@ -3,17 +3,9 @@
 
 import { useState } from 'react';
 import { useBlogs } from '@/hooks/useBlogs';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { BlogPost } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal, Calendar } from 'lucide-react';
 import DeleteBlogDialog from './DeleteBlogDialog';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
@@ -26,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function BlogsClient() {
   const { blogs, loading, error } = useBlogs();
@@ -56,43 +49,25 @@ export default function BlogsClient() {
               <p className="text-sm text-muted-foreground">Click "Add Post" to get started.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {blogs.map((blog) => (
-              <Link href={`/admin/blogs/${blog.id}`} key={blog.id} className="group">
-                <Card className="flex flex-col h-full hover:shadow-lg hover:border-primary/50 transition-all">
-                  <CardHeader>
-                    <CardTitle className="truncate">{blog.title}</CardTitle>
-                    <CardDescription>{blog.category || 'No Category'}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-grow space-y-4">
-                    {blog.excerpt && (
-                      <p className="text-sm text-muted-foreground line-clamp-3">
-                        {blog.excerpt}
-                      </p>
-                    )}
-                    <div>
-                      <h4 className="text-xs font-medium uppercase text-muted-foreground">Status</h4>
-                      <Badge variant={blog.published ? 'default' : 'secondary'}>
-                        {blog.published ? 'Published' : 'Draft'}
-                      </Badge>
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-medium uppercase text-muted-foreground">Created At</h4>
-                      <p className="text-sm">
-                        {format(new Date(blog.createdAt), 'PP')}
-                      </p>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+              <div key={blog.id} className="group relative flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
+                <Link href={`/admin/blogs/${blog.id}`} className="absolute inset-0 z-10" aria-label={`View ${blog.title}`}>
+                  <span className="sr-only">View Details</span>
+                </Link>
+                <div className="absolute top-4 right-4 z-20">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-background/60 backdrop-blur-sm hover:bg-background">
                           <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                         <DropdownMenuItem asChild>
+                            <Link href={`/admin/blogs/${blog.id}`}>View</Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                             <Link href={`/admin/blogs/${blog.id}/edit`}>Edit</Link>
                         </DropdownMenuItem>
@@ -108,9 +83,35 @@ export default function BlogsClient() {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </CardFooter>
-                </Card>
-              </Link>
+                </div>
+
+                <div className="relative h-48 w-full">
+                    <Image
+                        src={blog.image || `https://picsum.photos/seed/${blog.id}/600/400`}
+                        alt={blog.title}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                     <div className="absolute bottom-4 left-4">
+                        {blog.category && <Badge variant="secondary">{blog.category}</Badge>}
+                    </div>
+                </div>
+
+                <div className="flex flex-col flex-grow p-6">
+                    <h3 className="mb-2 text-xl font-semibold text-primary line-clamp-2">{blog.title}</h3>
+                    <p className="mb-4 text-sm text-muted-foreground line-clamp-3 flex-grow">{blog.excerpt}</p>
+                    <div className="mt-auto flex items-center justify-between text-xs text-muted-foreground">
+                        <Badge variant={blog.published ? "default" : "outline"}>
+                            {blog.published ? "Published" : "Draft"}
+                        </Badge>
+                        <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4" />
+                            <span>{format(new Date(blog.createdAt), 'PP')}</span>
+                        </div>
+                    </div>
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -121,6 +122,7 @@ export default function BlogsClient() {
             isOpen={isDeleteDialogOpen}
             onClose={handleCloseDialogs}
             blog={selectedBlog}
+            onDeleted={handleCloseDialogs}
         />
       )}
     </>

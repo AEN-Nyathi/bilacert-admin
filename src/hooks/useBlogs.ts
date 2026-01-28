@@ -36,6 +36,7 @@ export function useBlogs() {
             category: item.category,
             published: item.published,
             createdAt: item.created_at,
+            image: item.image,
         })) as BlogPost[];
 
         setBlogs(mappedData);

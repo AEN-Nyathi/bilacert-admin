@@ -60,6 +60,7 @@ export interface BlogPost {
   category?: string;
   published: boolean;
   createdAt: string;
+  image?: string;
 }
 
 export interface Contact {

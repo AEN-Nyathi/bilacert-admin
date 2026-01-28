@@ -11,6 +11,7 @@ import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import DeleteBlogDialog from './DeleteBlogDialog';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface BlogDetailsProps {
   blog: BlogPost;
@@ -57,6 +58,12 @@ export default function BlogDetails({ blog }: BlogDetailsProps) {
                 </Button>
             </div>
         </div>
+        
+        {blog.image && (
+            <div className="relative h-64 w-full overflow-hidden rounded-lg">
+                <Image src={blog.image} alt={blog.title} fill className="object-cover" />
+            </div>
+        )}
 
         <Card>
             <CardHeader>

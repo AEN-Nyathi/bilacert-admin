@@ -31,6 +31,7 @@ const blogSchema = z.object({
   excerpt: z.string().optional(),
   content: z.string().optional(),
   published: z.boolean(),
+  image: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
 });
 
 type BlogFormValues = z.infer<typeof blogSchema>;
@@ -59,6 +60,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
       excerpt: '',
       content: '',
       published: false,
+      image: '',
     },
   });
 
@@ -88,6 +90,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
         excerpt: blog.excerpt || '',
         content: blog.content || '',
         published: blog.published,
+        image: blog.image || '',
       });
     } else {
       reset({
@@ -97,6 +100,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
         excerpt: '',
         content: '',
         published: false,
+        image: '',
       });
     }
   }, [blog, reset]);
@@ -110,6 +114,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
         excerpt: values.excerpt,
         content: values.content,
         published: values.published,
+        image: values.image,
         updated_at: new Date().toISOString(),
       };
 
@@ -168,6 +173,19 @@ export default function BlogForm({ blog }: BlogFormProps) {
                   <FormLabel>Slug</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g., my-awesome-blog-post" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Image URL</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://example.com/image.jpg" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

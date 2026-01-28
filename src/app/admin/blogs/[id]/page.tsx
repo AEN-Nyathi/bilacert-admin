@@ -24,6 +24,7 @@ async function getBlog(id: string): Promise<BlogPost | null> {
         category: data.category,
         published: data.published,
         createdAt: data.created_at,
+        image: data.image,
     } as BlogPost;
 }
 
