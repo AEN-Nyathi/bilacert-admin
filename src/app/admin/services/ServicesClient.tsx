@@ -96,8 +96,8 @@ export default function ServicesClient() {
                 
                 <Link href={`/admin/services/${service.id}`} className="flex flex-col h-full">
                     <div className="flex-grow">
-                         <div className="text-accent mb-4 group-hover:scale-110 transition-transform duration-200">
-                            {service.icon && <Icon name={service.icon} className="h-8 w-8" />}
+                        <div className='bg-accent/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors'>
+                            <Icon name={service.icon || 'Shield'} className="h-6 w-6 text-accent" />
                         </div>
                         <h3 className="text-xl font-semibold text-primary mb-3">{service.title}</h3>
                         <p className="text-gray-600 mb-4 text-sm line-clamp-3">{service.shortDescription || service.description}</p>
