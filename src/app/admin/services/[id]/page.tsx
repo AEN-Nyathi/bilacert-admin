@@ -39,6 +39,9 @@ async function getService(id: string): Promise<Service | null> {
         seoTitle: data.seo_title,
         seoDescription: data.seo_description,
         seoKeywords: data.seo_keywords,
+        pricingPlans: data.pricing_plans,
+        processSteps: data.process_steps,
+        successStory: data.success_story,
     } as Service;
 }
 
