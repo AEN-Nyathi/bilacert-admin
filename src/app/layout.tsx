@@ -5,8 +5,12 @@ import { Toaster } from '@/components/ui/toaster';
 import FacebookSDKInitializer from '@/components/FacebookSDKInitializer';
 
 export const metadata: Metadata = {
-  title: 'Bilacert Admin Pro',
-  description: 'Admin Panel for Bilacert',
+  title: {
+    default: 'Bilacert - Your Compliance Partner | ICASA & NRCS Approvals',
+    template: '%s | Bilacert',
+  },
+  description: 'Bilacert simplifies ICASA and NRCS LOA compliance for South African businesses. Expert guidance for type approvals, licensing, and regulatory compliance. Get your approvals faster with our streamlined process.',
+  keywords: 'ICASA, NRCS, compliance, South Africa, regulatory approval, type approval, licensing',
 };
 
 export default function RootLayout({
@@ -28,7 +32,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="font-body antialiased">
+      <body className="font-body antialiased bg-background text-foreground">
         <FacebookSDKInitializer />
         {children}
         <Toaster />

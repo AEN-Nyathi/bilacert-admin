@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect } from 'react';
@@ -18,8 +19,6 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
 
-  // The login page is not wrapped by this main layout structure, so it has its own check.
-  // For all other admin pages, we check for Supabase config first.
   if (pathname !== '/admin/login' && !isSupabaseConfigured) {
     return <SupabaseNotConfigured />;
   }
@@ -37,7 +36,7 @@ export default function AdminLayout({
     }
   }, [user, loading, pathname, router]);
 
-  if (loading) {
+  if (loading && pathname !== '/admin/login') {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -46,19 +45,17 @@ export default function AdminLayout({
   }
 
   if (!user && pathname !== '/admin/login') {
-    return null; // Redirecting...
+    return null; 
   }
 
   if (user && pathname === '/admin/login') {
-    return null; // Redirecting...
+    return null;
   }
   
-  // Render the login page without the admin sidebar/header
   if (pathname === '/admin/login') {
     return <>{children}</>;
   }
 
-  // Render the main admin layout for an authenticated user
   return (
     <SidebarProvider>
       <AdminSidebar />
