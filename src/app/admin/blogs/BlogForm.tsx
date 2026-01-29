@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,6 +25,7 @@ import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ImageUpload from '@/components/ui/ImageUpload';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 const blogSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -250,6 +252,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel>Published</FormLabel>
+                    <FormDescription>Make this post visible to the public.</FormDescription>
                   </div>
                   <FormControl>
                     <Switch
@@ -274,3 +277,4 @@ export default function BlogForm({ blog }: BlogFormProps) {
     </Form>
   );
 }
+    

@@ -148,7 +148,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         { title: 'Standard', description: '', price: '', features: '', popular: true },
         { title: 'Premium', description: '', price: '', features: '', popular: false },
       ];
-
+      
       const servicePricingPlans = (service.pricingPlans || []).map(p => ({
         ...p,
         features: Array.isArray(p.features) ? p.features.join('\n') : p.features || '',
@@ -157,7 +157,6 @@ export default function ServiceForm({ service }: ServiceFormProps) {
       const populatedPlans = defaultPricingPlans.map((defaultPlan, index) => {
           return servicePricingPlans[index] || defaultPlan;
       });
-
 
       reset({
         title: service.title || '',
@@ -295,22 +294,17 @@ export default function ServiceForm({ service }: ServiceFormProps) {
                             control={form.control}
                             name={`pricingPlans.${index}.popular`}
                             render={({ field }) => (
-                              <FormItem>
-                                <div className="flex flex-row items-center justify-between rounded-lg border bg-background p-3 shadow-sm">
-                                  <div className="space-y-0.5">
-                                    <FormLabel>Most Popular</FormLabel>
-                                    <FormDescription>Highlight this plan.</FormDescription>
-                                  </div>
-                                  <FormControl>
-                                    <Switch
-                                      checked={field.value}
-                                      onCheckedChange={field.onChange}
-                                    />
-                                  </FormControl>
-                                </div>
-                              </FormItem>
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border bg-card p-4">
+                                    <div className="space-y-0.5">
+                                        <FormLabel className="text-base">Most Popular</FormLabel>
+                                        <FormDescription>Highlight this plan.</FormDescription>
+                                    </div>
+                                    <FormControl>
+                                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                    </FormControl>
+                                </FormItem>
                             )}
-                          />
+                            />
                         </CardContent>
                     </Card>
                     ))}
@@ -397,3 +391,5 @@ export default function ServiceForm({ service }: ServiceFormProps) {
     </Form>
   );
 }
+
+    
