@@ -41,7 +41,10 @@ export async function getPublishedBlogPosts(limit?: number): Promise<BlogPost[]>
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-    const supabase = await createServerClient();
+    const supabase = createGenericClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
     const { data, error } = await supabase
       .from('blog_posts')
       .select('*')
