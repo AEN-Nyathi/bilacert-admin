@@ -1,14 +1,22 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
 import type { Testimonial } from '@/lib/types';
+import { supabase } from '@/lib/supabase';
 import { Card, CardContent } from '@/components/ui/card';
+
+declare global {
+    interface Window {
+        FB?: {
+            XFBML: {
+                parse: () => void;
+            };
+        };
+    }
+}
 
 export default function Testimonials() {
     const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-    const supabase = createClient();
 
     useEffect(() => {
         const fetchTestimonials = async () => {
@@ -23,7 +31,7 @@ export default function Testimonials() {
         };
 
         fetchTestimonials();
-    }, [supabase]);
+    }, []);
 
     useEffect(() => {
         if (testimonials.length > 0 && typeof window !== 'undefined' && window.FB) {

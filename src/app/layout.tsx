@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import FacebookSDKInitializer from '@/components/FacebookSDKInitializer';
 
 
 export const metadata: Metadata = {
@@ -35,6 +36,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased bg-background text-foreground">
+        <FacebookSDKInitializer />
         <Header />
         <main>{children}</main>
         <Footer />
