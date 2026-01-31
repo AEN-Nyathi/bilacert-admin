@@ -9,7 +9,7 @@ import { CheckCircle, ArrowLeft } from 'lucide-react';
 import Icon from '@/components/Icon';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { PricingPlan, ProcessStep, SuccessStory } from '@/lib/types';
-
+import { Badge } from '@/components/ui/badge';
 
 interface ServicePageProps {
 	params: {
