@@ -67,8 +67,8 @@ export default async function ServicesPage() {
 							<Link
 								key={service.id}
 								href={service.href}
-								className='group flex flex-col'>
-								<div className='bg-white p-8 rounded-xl shadow-sm border border-gray-200 hover:border-accent hover:shadow-lg transition-all duration-300 h-full flex flex-col'>
+								className='group block'>
+								<div className='bg-white p-8 rounded-xl shadow-sm border border-gray-200 hover:border-accent hover:shadow-lg transition-all duration-300 h-full'>
 									<div className='bg-accent/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors text-accent'>
 										<Icon name={service.icon || 'Shield'} className="h-6 w-6" />
 									</div>
@@ -77,9 +77,9 @@ export default async function ServicesPage() {
 										{service.title}
 									</h3>
 
-									<p className='text-gray-600 mb-6 text-sm flex-grow'>{service.shortDescription}</p>
+									<p className='text-gray-600 mb-6 text-sm'>{service.shortDescription}</p>
 
-									<div className='flex items-center text-accent font-semibold group-hover:translate-x-1 transition-transform mt-auto'>
+									<div className='flex items-center text-accent font-semibold group-hover:translate-x-2 transition-transform'>
 										Learn More
 										<ArrowRight className='h-4 w-4 ml-2' />
 									</div>

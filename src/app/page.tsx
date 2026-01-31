@@ -92,8 +92,9 @@ export default async function HomePage() {
 		price: 'From R1,000',
 	};
 
-    const services = await getFeaturedServices();
-    const blogPosts = await getPublishedBlogPosts(3);
+	const services = await getFeaturedServices();
+	const blogPosts = await getPublishedBlogPosts(3);
+
 
 	const whyChooseUs = [
 		{
@@ -126,7 +127,7 @@ export default async function HomePage() {
 			<section className='relative text-white py-20 lg:py-32'>
 				<Image
 					src="https://picsum.photos/seed/hero/1920/1080"
-                    data-ai-hint="compliance business"
+					data-ai-hint="compliance business"
 					alt='Bilacert compliance'
 					fill
 					priority
@@ -281,9 +282,9 @@ export default async function HomePage() {
 					</div>
 
 					<div className='text-center mt-12'>
-                        <Button asChild>
-						    <Link href='/blog'>View All Posts</Link>
-                        </Button>
+						<Button asChild>
+							<Link href='/blog'>View All Posts</Link>
+						</Button>
 					</div>
 				</div>
 			</section>
