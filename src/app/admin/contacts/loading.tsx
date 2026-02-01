@@ -1,24 +1,25 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ContactsLoading() {
     return (
-        <Card>
-            <CardHeader>
-                <div className="flex items-center justify-between">
-                    <CardTitle>All Contacts</CardTitle>
-                    <Skeleton className="h-10 w-32" />
-                </div>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-4">
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-10 w-full" />
-                </div>
-            </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+                <Card key={i}>
+                    <CardHeader>
+                        <div className="flex justify-between items-start">
+                            <Skeleton className="h-6 w-3/4" />
+                            <Skeleton className="h-8 w-8 rounded-full" />
+                        </div>
+                        <Skeleton className="h-4 w-1/2" />
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                         <Skeleton className="h-5 w-full" />
+                         <Skeleton className="h-5 w-3/4" />
+                    </CardContent>
+                </Card>
+            ))}
+        </div>
     )
 }
