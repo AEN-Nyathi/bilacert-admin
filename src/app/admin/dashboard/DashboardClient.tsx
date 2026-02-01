@@ -49,9 +49,10 @@ export default function DashboardClient() {
     const totalContacts = contacts.length;
 
     const totalRevenue = submissions
-      .filter(s => s.status === 'completed' && s.serviceId)
+      .filter(s => s.status === 'completed')
       .reduce((acc, submission) => {
-        const service = services.find(s => s.id === submission.serviceId);
+        // Find service by ID (UUID) or by slug (from serviceName)
+        const service = services.find(s => s.id === submission.serviceId || s.slug === submission.serviceName);
         return acc + (service?.pricing || 0);
       }, 0);
 
