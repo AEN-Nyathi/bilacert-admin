@@ -61,37 +61,6 @@ export default function AboutPage() {
 		},
 	];
 
-	const process = [
-		{
-			step: '1',
-			title: 'Consultation',
-			description: 'We assess your business needs and determine the required approvals.',
-		},
-		{
-			step: '2',
-			title: 'Documentation & Application Preparation',
-			description:
-				'We gather all necessary paperwork, ensuring accuracy and compliance with regulatory standards.',
-		},
-		{
-			step: '3',
-			title: 'Submission & Liaison',
-			description:
-				'We submit applications on your behalf and manage all communication with regulatory bodies.',
-		},
-		{
-			step: '4',
-			title: 'Follow-Up & Resolution',
-			description: 'We track application progress, address any issues, and ensure smooth approval.',
-		},
-		{
-			step: '5',
-			title: 'Ongoing Compliance Support',
-			description:
-				'We assist with renewals, amendments, and compliance updates to keep your business aligned with regulations.',
-		},
-	];
-
 	return (
 		<div className='min-h-screen'>
 			{/* Hero Section */}

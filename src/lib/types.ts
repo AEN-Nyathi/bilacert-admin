@@ -87,6 +87,7 @@ export interface BlogPost {
   image?: string;
   author?: string;
   readTime?: string;
+  date: string;
 }
 
 export interface Contact {

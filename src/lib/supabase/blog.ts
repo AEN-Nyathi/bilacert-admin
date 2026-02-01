@@ -15,6 +15,8 @@ function mapToBlogPost(item: any): BlogPost {
         published: item.published,
         createdAt: item.created_at,
         image: item.image,
+        author: item.author,
+        readTime: item.read_time,
     };
 }
 
@@ -24,7 +26,7 @@ export async function getPublishedBlogPosts(limit?: number): Promise<BlogPost[]>
         .from('blog_posts')
         .select('*')
         .eq('published', true)
-        .order('created_at', { ascending: false });
+        .order('date', { ascending: false });
 
     if (limit) {
         query = query.limit(limit);
