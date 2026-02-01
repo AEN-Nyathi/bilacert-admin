@@ -1,7 +1,7 @@
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getServiceBySlug, getAllPublishedServiceSlugs } from '@/lib/services';
+import { getServiceBySlug, getAllPublishedServiceSlugs } from '@/lib/supabase/services';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';

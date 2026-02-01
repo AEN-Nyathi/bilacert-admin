@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import WhatsAppButton from '@/components/WhatsAppButton';
+import MainLayout from '@/components/MainLayout';
 import FacebookSDKInitializer from '@/components/FacebookSDKInitializer';
-
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: {
@@ -37,10 +35,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased bg-background text-foreground">
         <FacebookSDKInitializer />
-        <Header />
-        <main>{children}</main>
-        <Footer />
-        <WhatsAppButton />
+        <MainLayout footer={<Footer />}>{children}</MainLayout>
         <Toaster />
       </body>
     </html>

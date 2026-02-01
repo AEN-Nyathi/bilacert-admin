@@ -2,7 +2,7 @@
 import 'server-only';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { createClient as createGenericClient } from '@supabase/supabase-js';
-import type { Service } from './types';
+import type { Service } from '../types';
 
 function mapToService(item: any): Service {
     return {

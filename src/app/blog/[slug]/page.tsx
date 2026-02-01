@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Calendar, User, ArrowLeft, Share2 } from 'lucide-react';
-import { getBlogPostBySlug, getAllPublishedBlogSlugs } from '@/lib/blog';
+import { getBlogPostBySlug, getAllPublishedBlogSlugs } from '@/lib/supabase/blog';
 import type { BlogPost } from '@/lib/types';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';

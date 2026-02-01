@@ -9,8 +9,8 @@ import {
 } from 'lucide-react';
 import StructuredData from '@/components/StructuredData';
 import Testimonials from '@/components/Testimonials';
-import { getFeaturedServices } from '@/lib/services';
-import { getPublishedBlogPosts } from '@/lib/blog';
+import { getFeaturedServices } from '@/lib/supabase/services';
+import { getPublishedBlogPosts } from '@/lib/supabase/blog';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/Icon';
 import { format } from 'date-fns';

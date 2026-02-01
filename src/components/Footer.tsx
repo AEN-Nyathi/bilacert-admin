@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Phone, Mail, Clock } from 'lucide-react';
-import { getPublishedServices } from '@/lib/services';
+import { getPublishedServices } from '@/lib/supabase/services';
 import Image from 'next/image';
 
 export default async function Footer() {

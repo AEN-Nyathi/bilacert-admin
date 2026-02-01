@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Calendar, ArrowRight, User } from 'lucide-react';
 import Image from 'next/image';
-import { getPublishedBlogPosts } from '@/lib/blog';
+import { getPublishedBlogPosts } from '@/lib/supabase/blog';
 import type { BlogPost } from '@/lib/types';
 import { format } from 'date-fns';
 

@@ -2,7 +2,7 @@
 import 'server-only';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { createClient as createGenericClient } from '@supabase/supabase-js';
-import type { BlogPost } from './types';
+import type { BlogPost } from '../types';
 
 function mapToBlogPost(item: any): BlogPost {
     return {

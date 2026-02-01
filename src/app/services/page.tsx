@@ -2,7 +2,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle } from 'lucide-react';
-import { getPublishedServices } from '@/lib/services';
+import { getPublishedServices } from '@/lib/supabase/services';
 import Icon from '@/components/Icon';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
