@@ -42,8 +42,9 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     }
 }
 
-export default async function BlogDetailsPage({ params }: { params: { id: string } }) {
-    const blog = await getBlog(params.id);
+export default async function BlogDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const blog = await getBlog(id);
 
     if (!blog) {
         notFound();

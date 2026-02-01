@@ -11,12 +11,10 @@ import type { PricingPlan, ProcessStep, SuccessStory } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 
 interface ServicePageProps {
-	params: {
-		slug: string;
-	};
+	params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
 	const service = await getServiceBySlug(params.slug);
 
 	if (!service) {
@@ -150,8 +148,8 @@ const renderSuccessStory = (story: SuccessStory | undefined) => {
 };
 
 
-export default async function ServiceDetailPage({ params }: { params: { slug: string } }) {
-    const { slug } = params;
+export default async function ServiceDetailPage({ params }: ServicePageProps) {
+    const { slug } = await params;
 	const service = await getServiceBySlug(slug);
 
 	if (!service) {

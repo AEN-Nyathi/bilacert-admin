@@ -8,10 +8,10 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 
 interface BlogPostPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post = await getBlogPostBySlug(params.slug);
 
   if (!post) {
@@ -40,8 +40,8 @@ export async function generateStaticParams() {
     return slugs;
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  const { slug } = await params;
   
   const post = await getBlogPostBySlug(slug);
 
