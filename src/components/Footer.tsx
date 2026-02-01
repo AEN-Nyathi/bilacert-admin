@@ -1,4 +1,3 @@
-
 import Link from 'next/link';
 import { Phone, Mail, Clock } from 'lucide-react';
 import { getPublishedServices } from '@/lib/supabase/services';
@@ -117,7 +116,7 @@ export default async function Footer() {
 								Terms of Service
 							</Link>
                             <Link
-                                href='/admin'
+                                href='/admin/login'
                                 className='text-primary-foreground/70 hover:text-accent text-sm transition-colors duration-200'>
                                 Admin
                             </Link>
