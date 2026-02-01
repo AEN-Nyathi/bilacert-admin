@@ -85,8 +85,8 @@ export interface BlogPost {
   published: boolean;
   createdAt: string;
   image?: string;
-  author?: string;
-  readTime?: string;
+  author: string;
+  readTime: string;
   date: string;
 }
 

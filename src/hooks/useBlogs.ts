@@ -37,6 +37,9 @@ export function useBlogs() {
             published: item.published,
             createdAt: item.created_at,
             image: item.image,
+            author: item.author,
+            readTime: item.read_time,
+            date: item.created_at,
         })) as BlogPost[];
 
         setBlogs(mappedData);

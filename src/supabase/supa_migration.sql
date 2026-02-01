@@ -1,3 +1,4 @@
+
 -- Drop tables in reverse order of dependency to avoid foreign key constraint issues
 DROP TABLE IF EXISTS "services" CASCADE;
 DROP TABLE IF EXISTS "blog_posts" CASCADE;
@@ -8,7 +9,7 @@ CREATE TABLE IF NOT EXISTS services (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   title TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
-  href TEXT NOT NULL,
+  href TEXT NOT NULL UNIQUE,
   category TEXT,
   description TEXT,
   short_description TEXT,
@@ -40,6 +41,8 @@ CREATE TABLE IF NOT EXISTS blog_posts (
     title TEXT NOT NULL,
     excerpt TEXT,
     content TEXT,
+    author TEXT,
+    read_time TEXT,
     category TEXT,
     published BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMPTZ DEFAULT now(),
@@ -78,7 +81,7 @@ INSERT INTO services (
   'ICASA type approval, ICASA certification, telecommunications approval, radio frequency approval, electronic device approval, ICASA compliance, type approval South Africa, ICASA testing',
   ARRAY['All telecommunications equipment', 'Radio frequency devices', 'Electronic communication products'],
   ARRAY['Completed application form', 'Technical documentation and specifications', 'Test reports from an accredited laboratory', 'Company registration documents'],
-  ARRAY['Full documentation preparation', 'ICASA submission and liaison', 'Application tracking', 'Compliance review'],
+  ARRAY['Application filing','Documentation review','Regulatory liaison'],
   'ICASA (Independent Communications Authority of South Africa) requires all electronic communication equipment to be type-approved before being sold or used in South Africa. This ensures devices meet regulatory, technical, and safety standards. Our team simplifies this complex process, handling all documentation, testing coordination, and regulatory communications to ensure your products reach the market quickly and compliantly.',
   '[
     { "title": "Standard", "description": "For new equipment", "features": ["Comprehensive testing", "Full documentation", "Compliance review"], "price": "R5,000", "popular": false },
@@ -125,7 +128,7 @@ INSERT INTO services (
     { "title": "Premium", "description": "End-to-End Approval & Compliance Support", "features": ["Complete end-to-end service", "Testing coordination", "Ongoing compliance support", "Priority processing"], "price": "R10,500", "popular": false }
   ]',
   '[
-    { "step": "1", "title": "Consultation & Product Review", "description": "We assess your product''s technical specifications and determine LOA requirements." },
+    { "step": "1", "title": "Consultation & Product Review", "description": "We assess your product''''s technical specifications and determine LOA requirements." },
     { "step": "2", "title": "Documentation & Compliance Check", "description": "We compile and verify all necessary compliance documents before submission." },
     { "step": "3", "title": "Submission & NRCS Liaison", "description": "Bilacert submits the application and manages all communication with NRCS." },
     { "step": "4", "title": "Testing (If Required)", "description": "For products needing laboratory testing, we coordinate with accredited testing facilities." },
@@ -211,8 +214,8 @@ INSERT INTO services (
   ]',
   '{
     "scenario": "A startup launching a VoIP communication platform needed an ECS license to operate legally.",
-    "challenge": "They were unfamiliar with ICASA''s licensing requirements and needed guidance on the application process.",
-    "solution": "Bilacert assessed their needs, filed their application, and ensured they met ICASA''s operational requirements.",
+    "challenge": "They were unfamiliar with ICASA''''s licensing requirements and needed guidance on the application process.",
+    "solution": "Bilacert assessed their needs, filed their application, and ensured they met ICASA''''s operational requirements.",
     "result": "The startup received their ECS license efficiently, allowing them to launch their VoIP platform legally and focus on growing their business."
   }'
 ),
@@ -297,7 +300,7 @@ INSERT INTO services (
 
 
 -- Seed Blog Posts Data
-INSERT INTO blog_posts (slug, title, excerpt, content, category, published, image) VALUES
+INSERT INTO blog_posts (slug, title, excerpt, content, category, published, image, author, read_time) VALUES
 (
   'icasa-type-approval-requirements',
   'Understanding ICASA Type Approval Requirements',
@@ -305,7 +308,9 @@ INSERT INTO blog_posts (slug, title, excerpt, content, category, published, imag
   '<p>ICASA (Independent Communications Authority of South Africa) type approval is a mandatory certification process...</p>',
   'ICASA Approvals',
   TRUE,
-  '/ICASA.png'
+  '/ICASA.png',
+  'Bilacert Team',
+  '5 min read'
 ),
 (
   'nrcs-loa-guide',
@@ -314,7 +319,9 @@ INSERT INTO blog_posts (slug, title, excerpt, content, category, published, imag
   '<p>The National Regulator for Compulsory Specifications (NRCS) Letter of Authority (LOA) is a critical certification...</p>',
   'NRCS Compliance',
   TRUE,
-  '/NRCS.jpg'
+  '/NRCS.jpg',
+  'Bilacert Team',
+  '7 min read'
 ),
 (
   'radio-dealer-licensing-guide',
@@ -323,7 +330,9 @@ INSERT INTO blog_posts (slug, title, excerpt, content, category, published, imag
   '<p>Operating as a radio dealer in South Africa requires proper licensing from ICASA...</p>',
   'Licensing',
   TRUE,
-  '/radio-dealer-licensing-guide.jpg'
+  '/radio-dealer-licensing-guide.jpg',
+  'Bilacert Team',
+  '6 min read'
 );
 
 

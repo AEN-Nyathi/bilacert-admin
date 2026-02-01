@@ -29,9 +29,8 @@ export const columns = ({ onEdit, onDelete, onViewDetails }: ColumnsOptions): Co
     cell: ({ row }) => <div className="max-w-[300px] truncate font-medium">{row.getValue("title")}</div>,
   },
   {
-    accessorKey: "slug",
-    header: "Slug",
-    cell: ({ row }) => <div className="max-w-[200px] truncate">{row.getValue("slug")}</div>,
+    accessorKey: "author",
+    header: "Author",
   },
   {
     accessorKey: "category",

@@ -15,7 +15,7 @@ function mapToBlogPost(item: any): BlogPost {
         published: item.published,
         createdAt: item.created_at,
         image: item.image,
-        author: item.author_name,
+        author: item.author,
         readTime: item.read_time,
         date: item.created_at,
     };
