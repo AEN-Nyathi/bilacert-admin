@@ -1,7 +1,7 @@
 
 import 'server-only';
 import { createClient as createServerClient } from '@/lib/supabase/server';
-import { createClient as createGenericClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import type { BlogPost } from '../types';
 
 function mapToBlogPost(item: any): BlogPost {
@@ -60,7 +60,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 }
 
 export async function getAllPublishedBlogSlugs(): Promise<{ slug: string }[]> {
-    const supabase = createGenericClient(
+    const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
