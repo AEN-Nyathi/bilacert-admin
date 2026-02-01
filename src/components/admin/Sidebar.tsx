@@ -10,6 +10,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/icons';
 import {
@@ -38,11 +39,13 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { toast } = useToast();
+  const { setOpenMobile } = useSidebar();
 
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      setOpenMobile(false);
       router.push('/admin/login');
     } catch (error: any) {
       toast({
@@ -56,7 +59,7 @@ export default function AdminSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <Link href="/admin/dashboard" className="flex items-center gap-2">
+        <Link href="/admin/dashboard" className="flex items-center gap-2" onClick={() => setOpenMobile(false)}>
           <Logo className="h-8 w-8 text-sidebar-primary" />
           <span className="text-lg font-semibold text-sidebar-foreground">
             Bilacert Admin
@@ -72,6 +75,7 @@ export default function AdminSidebar() {
                 isActive={pathname.startsWith(item.href)}
                 className="w-full justify-start"
                 tooltip={item.label}
+                onClick={() => setOpenMobile(false)}
               >
                 <Link href={item.href}>
                   <item.icon className="h-5 w-5" />
@@ -89,6 +93,7 @@ export default function AdminSidebar() {
               asChild
               className="w-full justify-start"
               tooltip="Settings"
+              onClick={() => setOpenMobile(false)}
             >
               <Link href="#">
                 <Settings className="h-5 w-5" />
