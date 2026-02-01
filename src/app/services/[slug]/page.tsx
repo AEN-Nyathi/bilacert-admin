@@ -21,8 +21,8 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 
 	if (!service) {
 		return {
-			title: 'Service Not Found',
-		};
+			title: 'Service Not Found'
+		}
 	}
 
 	return {
@@ -150,8 +150,8 @@ const renderSuccessStory = (story: SuccessStory | undefined) => {
 };
 
 
-export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params;
+export default async function ServiceDetailPage({ params }: { params: { slug: string } }) {
+    const { slug } = params;
 	const service = await getServiceBySlug(slug);
 
 	if (!service) {
