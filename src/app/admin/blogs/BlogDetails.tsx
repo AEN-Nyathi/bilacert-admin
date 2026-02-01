@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Badge } from '@/components/ui/badge';
@@ -86,6 +85,18 @@ export default function BlogDetails({ blog }: BlogDetailsProps) {
                         <div>
                             <h4 className="text-sm font-medium text-muted-foreground">Slug</h4>
                             <p className="text-sm font-mono text-card-foreground">{blog.slug}</p>
+                        </div>
+                    )}
+                    {blog.author_name && (
+                        <div>
+                            <h4 className="text-sm font-medium text-muted-foreground">Author</h4>
+                            <p className="text-sm text-card-foreground">{blog.author_name}</p>
+                        </div>
+                    )}
+                    {blog.read_time && (
+                         <div>
+                            <h4 className="text-sm font-medium text-muted-foreground">Read Time</h4>
+                            <p className="text-sm text-card-foreground">{blog.read_time}</p>
                         </div>
                     )}
                     {blog.excerpt && (

@@ -24,7 +24,6 @@ import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ImageUpload from '@/components/ui/ImageUpload';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 const blogSchema = z.object({
   title: z.string().min(1, 'Title is required'),

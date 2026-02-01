@@ -189,29 +189,6 @@ export default async function BlogPage() {
 					</div>
 				</div>
 			</section>
-
-			{/* Newsletter Signup */}
-			<section className='py-20 bg-primary text-white'>
-				<div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
-					<h2 className='text-3xl lg:text-4xl font-bold mb-6'>Stay Updated</h2>
-					<p className='text-xl mb-8 text-gray-200'>
-						Subscribe to our newsletter for the latest compliance insights, regulatory updates, and
-						expert guidance delivered to your inbox.
-					</p>
-					<form className='max-w-md mx-auto flex gap-4'>
-						<input
-							type='email'
-							placeholder='Enter your email'
-							className='flex-1 px-4 py-3 rounded-lg bg-primary-foreground/5 border border-primary-foreground/20 text-primary-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent'
-						/>
-						<button
-							type='submit'
-							className='bg-accent text-accent-foreground px-6 py-3 rounded-lg font-semibold hover:bg-accent/90 transition-colors duration-200'>
-							Subscribe
-						</button>
-					</form>
-				</div>
-			</section>
 		</div>
 	);
 }
