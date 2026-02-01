@@ -1,4 +1,3 @@
-
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getServiceBySlug, getAllPublishedServiceSlugs } from '@/lib/supabase/services';
@@ -141,18 +140,19 @@ const renderSuccessStory = (story: SuccessStory | undefined) => {
                         </div>
                          <div>
                             <h4 className="font-semibold">Result</h4>
-                            <p className="text-muted-foreground">{story.result}</p>
+                            <p className="text-muted-foreground font-medium">{story.result}</p>
                         </div>
                     </CardContent>
-                </Card>
+                 </Card>
             </div>
         </section>
     )
 };
 
 
-export default async function ServiceDetailPage({ params }: ServicePageProps) {
-	const service = await getServiceBySlug(params.slug);
+export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+	const service = await getServiceBySlug(slug);
 
 	if (!service) {
 		notFound();

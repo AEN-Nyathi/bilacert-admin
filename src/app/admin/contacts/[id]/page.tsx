@@ -1,8 +1,8 @@
-
 import { supabase } from '@/lib/supabase';
 import ContactDetails from '../ContactDetails';
 import { notFound } from 'next/navigation';
 import type { Contact } from '@/lib/types';
+import type { Metadata } from 'next';
 
 async function getContact(id: string): Promise<Contact | null> {
     const { data, error } = await supabase
@@ -25,7 +25,7 @@ async function getContact(id: string): Promise<Contact | null> {
     } as Contact;
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
     const contact = await getContact(params.id);
     if (!contact) {
         return {
@@ -37,8 +37,9 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     }
 }
 
-export default async function ContactDetailsPage({ params }: { params: { id: string } }) {
-    const contact = await getContact(params.id);
+export default async function ContactDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const contact = await getContact(id);
 
     if (!contact) {
         notFound();

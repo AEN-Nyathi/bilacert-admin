@@ -5,18 +5,43 @@ import { getBlogPostBySlug, getAllPublishedBlogSlugs } from '@/lib/supabase/blog
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import type { Metadata } from 'next';
 
 interface BlogPostPageProps {
   params: { slug: string };
 }
+
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+  const post = await getBlogPostBySlug(params.slug);
+
+  if (!post) {
+    return {
+      title: 'Blog Post Not Found'
+    }
+  }
+
+  return {
+    title: post.title,
+    description: post.excerpt,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      url: `https://bilacert.co.za/blog/${post.slug}`,
+      type: 'article',
+      publishedTime: post.createdAt,
+      images: post.image ? [{ url: post.image }] : [],
+    },
+  };
+}
+
 
 export async function generateStaticParams() {
     const slugs = await getAllPublishedBlogSlugs();
     return slugs;
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { slug } = params;
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   
   const post = await getBlogPostBySlug(slug);
 

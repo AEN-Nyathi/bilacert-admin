@@ -1,8 +1,8 @@
-
 import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import type { Testimonial } from '@/lib/types';
 import TestimonialDetails from '../TestimonialDetails';
+import type { Metadata } from 'next';
 
 async function getTestimonial(id: string): Promise<Testimonial | null> {
     const { data, error } = await supabase
@@ -22,7 +22,7 @@ async function getTestimonial(id: string): Promise<Testimonial | null> {
     } as Testimonial;
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
     const testimonial = await getTestimonial(params.id);
     if (!testimonial) {
         return {
@@ -34,8 +34,9 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     }
 }
 
-export default async function TestimonialDetailsPage({ params }: { params: { id: string } }) {
-    const testimonial = await getTestimonial(params.id);
+export default async function TestimonialDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const testimonial = await getTestimonial(id);
 
     if (!testimonial) {
         notFound();

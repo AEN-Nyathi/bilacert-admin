@@ -1,8 +1,8 @@
-
 import { supabase } from '@/lib/supabase';
 import SubmissionDetails from '../SubmissionDetails';
 import { notFound } from 'next/navigation';
 import type { Submission } from '@/lib/types';
+import type { Metadata } from 'next';
 
 async function getSubmission(id: string): Promise<Submission | null> {
     const { data, error } = await supabase
@@ -35,7 +35,7 @@ async function getSubmission(id: string): Promise<Submission | null> {
     } as Submission;
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
     const submission = await getSubmission(params.id);
     if (!submission) {
         return {
@@ -47,8 +47,9 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     }
 }
 
-export default async function SubmissionDetailsPage({ params }: { params: { id: string } }) {
-    const submission = await getSubmission(params.id);
+export default async function SubmissionDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const submission = await getSubmission(id);
 
     if (!submission) {
         notFound();

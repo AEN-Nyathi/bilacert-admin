@@ -1,4 +1,3 @@
-
 import { supabase } from '@/lib/supabase';
 import TestimonialForm from '../../TestimonialForm';
 import { notFound } from 'next/navigation';
@@ -32,8 +31,9 @@ async function getTestimonial(id: string): Promise<Testimonial | null> {
 }
 
 
-export default async function EditTestimonialPage({ params }: { params: { id: string } }) {
-    const testimonial = await getTestimonial(params.id);
+export default async function EditTestimonialPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const testimonial = await getTestimonial(id);
 
     if (!testimonial) {
         notFound();

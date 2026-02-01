@@ -1,8 +1,8 @@
-
 import { supabase } from '@/lib/supabase';
 import ServiceDetails from './ServiceDetails';
 import { notFound } from 'next/navigation';
 import type { Service } from '@/lib/types';
+import type { Metadata } from 'next';
 
 async function getService(id: string): Promise<Service | null> {
     const { data, error } = await supabase
@@ -45,7 +45,7 @@ async function getService(id: string): Promise<Service | null> {
     } as Service;
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
     const service = await getService(params.id);
     if (!service) {
         return {
@@ -57,8 +57,9 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     }
 }
 
-export default async function ServiceDetailsPage({ params }: { params: { id: string } }) {
-    const service = await getService(params.id);
+export default async function ServiceDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const service = await getService(id);
 
     if (!service) {
         notFound();

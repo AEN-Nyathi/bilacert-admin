@@ -1,4 +1,3 @@
-
 import { supabase } from '@/lib/supabase';
 import ContactForm from '../../ContactForm';
 import { notFound } from 'next/navigation';
@@ -35,8 +34,9 @@ async function getContact(id: string): Promise<Contact | null> {
 }
 
 
-export default async function EditContactPage({ params }: { params: { id: string } }) {
-    const contact = await getContact(params.id);
+export default async function EditContactPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const contact = await getContact(id);
 
     if (!contact) {
         notFound();

@@ -1,4 +1,3 @@
-
 import { supabase } from '@/lib/supabase';
 import ServiceForm from '../../new/ServiceForm';
 import { notFound } from 'next/navigation';
@@ -55,8 +54,9 @@ async function getService(id: string): Promise<Service | null> {
 }
 
 
-export default async function EditServicePage({ params }: { params: { id: string } }) {
-    const service = await getService(params.id);
+export default async function EditServicePage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const service = await getService(id);
 
     if (!service) {
         notFound();

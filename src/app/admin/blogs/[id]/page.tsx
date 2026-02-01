@@ -1,8 +1,8 @@
-
 import { supabase } from '@/lib/supabase';
 import BlogDetails from '../BlogDetails';
 import { notFound } from 'next/navigation';
 import type { BlogPost } from '@/lib/types';
+import type { Metadata } from 'next';
 
 async function getBlog(id: string): Promise<BlogPost | null> {
     const { data, error } = await supabase
@@ -25,10 +25,13 @@ async function getBlog(id: string): Promise<BlogPost | null> {
         published: data.published,
         createdAt: data.created_at,
         image: data.image,
+        author: data.author,
+        readTime: data.read_time,
+        date: data.created_at,
     } as BlogPost;
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
     const blog = await getBlog(params.id);
     if (!blog) {
         return {
@@ -40,8 +43,9 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     }
 }
 
-export default async function BlogDetailsPage({ params }: { params: { id: string } }) {
-    const blog = await getBlog(params.id);
+export default async function BlogDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const blog = await getBlog(id);
 
     if (!blog) {
         notFound();

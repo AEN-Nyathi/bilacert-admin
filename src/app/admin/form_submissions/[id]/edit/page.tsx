@@ -1,4 +1,3 @@
-
 import { supabase } from '@/lib/supabase';
 import SubmissionForm from '../../SubmissionForm';
 import { notFound } from 'next/navigation';
@@ -44,8 +43,9 @@ async function getSubmission(id: string): Promise<Submission | null> {
     } as Submission;
 }
 
-export default async function EditSubmissionPage({ params }: { params: { id: string } }) {
-    const submission = await getSubmission(params.id);
+export default async function EditSubmissionPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const submission = await getSubmission(id);
 
     if (!submission) {
         notFound();
