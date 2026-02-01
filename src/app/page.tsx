@@ -148,7 +148,7 @@ export default async function HomePage() {
 								<Button size="lg" asChild>
 									<Link href='/contact'>Get Free Consultation</Link>
 								</Button>
-								<Button size="lg" variant="outline" asChild>
+								<Button size="lg" variant="outline" asChild className="bg-transparent border-white text-white hover:bg-white hover:text-primary">
 									<Link href='/services'>View Our Services</Link>
 								</Button>
 							</div>
@@ -303,7 +303,7 @@ export default async function HomePage() {
 						<Button size="lg" asChild>
 							<Link href='/contact'>Get Free Consultation</Link>
 						</Button>
-						<Button size="lg" variant="outline" asChild>
+						<Button size="lg" variant="outline" asChild className="bg-transparent border-white text-white hover:bg-white hover:text-primary">
 							<a href='tel:0754304433'>Call 075 430 4433</a>
 						</Button>
 					</div>
