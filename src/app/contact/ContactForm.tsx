@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
-import { useFormSubmission } from '@/hooks/useFormSubmission';
+import { useFormSubmission } from '@/hooks/use-form-submission';
 import { Button } from '@/components/ui/button';
 
 export default function ContactForm() {
@@ -53,6 +53,7 @@ export default function ContactForm() {
 
 	return (
 		<div className='min-h-screen'>
+			{/* Hero Section */}
 			<section className='relative text-white py-20'>
 				<Image
 					src="https://picsum.photos/seed/contact/1920/1080"
@@ -74,6 +75,7 @@ export default function ContactForm() {
 				</div>
 			</section>
 
+			{/* Contact Information */}
 			<section className='py-20'>
 				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
 					<div className='grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16'>
