@@ -1,15 +1,15 @@
-
 'use client';
 
 import {
-  CreditCard,
   DollarSign,
   BarChart as BarChartIcon,
   Clock,
+  Users,
 } from 'lucide-react';
 import StatCard from '@/components/admin/StatCard';
 import { useSubmissions } from '@/hooks/useSubmissions';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { useContacts } from '@/hooks/useContacts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useMemo } from 'react';
 import { format } from 'date-fns';
@@ -35,15 +35,20 @@ const getIconForServiceType = (submission: Submission, props?: { className: stri
 };
 
 export default function DashboardClient() {
-  const { submissions, loading, error } = useSubmissions();
+  const { submissions, loading: submissionsLoading, error: submissionsError } = useSubmissions();
+  const { contacts, loading: contactsLoading, error: contactsError } = useContacts();
+
+  const loading = submissionsLoading || contactsLoading;
+  const error = submissionsError || contactsError;
 
   const stats = useMemo(() => {
     const total = submissions.length;
     const newCount = submissions.filter(s => s.status === 'pending').length;
     const inProgress = submissions.filter(s => s.status === 'in-progress').length;
     const completed = submissions.filter(s => s.status === 'completed').length;
-    return { total, newCount, inProgress, completed };
-  }, [submissions]);
+    const totalContacts = contacts.length;
+    return { total, newCount, inProgress, completed, totalContacts };
+  }, [submissions, contacts]);
 
   const recentSubmissions = useMemo(() => {
     return submissions.slice(0, 5);
@@ -59,7 +64,7 @@ export default function DashboardClient() {
   }, [submissions]);
   
   if (error) {
-    return <div className="text-destructive">Error loading submissions: {error.message}</div>;
+    return <div className="text-destructive">Error loading dashboard data: {error.message}</div>;
   }
 
   return (
@@ -67,8 +72,8 @@ export default function DashboardClient() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard title="Total Submissions" value={loading ? '...' : `${stats.total}`} icon={<Icon name="Package" className="h-4 w-4" />} />
         <StatCard title="New Applications" value={loading ? '...' : `${stats.newCount}`} icon={<BarChartIcon className="h-4 w-4" />} description="Awaiting review" />
-        <StatCard title="In Progress" value={loading ? '...' : `${stats.inProgress}`} icon={<CreditCard className="h-4 w-4" />} />
-        <StatCard title="Total Revenue (Mock)" value={loading ? '...' : '$45,231.89'} icon={<DollarSign className="h-4 w-4" />} description="+20.1% from last month" />
+        <StatCard title="Total Contacts" value={loading ? '...' : `${stats.totalContacts}`} icon={<Users className="h-4 w-4" />} />
+        <StatCard title="Total Revenue (Mock)" value={loading ? '...' : `ZAR 45,231.89`} icon={<DollarSign className="h-4 w-4" />} description="+20.1% from last month" />
       </div>
 
       <div className="grid gap-8 md:grid-cols-2">
