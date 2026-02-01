@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useServices } from '@/hooks/useServices';
 import { Service } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
+import { PlusCircle, MoreHorizontal } from 'lucide-react';
 import DeleteServiceDialog from './DeleteServiceDialog';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -18,7 +18,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import Icon from '@/components/Icon';
 import ServicesLoading from './loading';
 
 export default function ServicesClient() {
@@ -73,54 +72,53 @@ export default function ServicesClient() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service) => (
-              <Card key={service.id} className="flex flex-col">
-                <CardHeader>
-                    <div className="flex justify-between items-start">
-                        <CardTitle className="text-lg line-clamp-2">{service.title}</CardTitle>
-                        <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem asChild>
-                                <Link href={`/admin/services/${service.id}`}>View Details</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleEdit(service)}>
-                                Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                                className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                                onClick={() => handleDelete(service)}
-                            >
-                                Delete
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                  <CardDescription>{service.category}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4 flex-grow">
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant={service.published ? "default" : "secondary"}>
-                      {service.published ? 'Published' : 'Draft'}
-                    </Badge>
-                    {service.featured && <Badge variant="outline">Featured</Badge>}
-                  </div>
-                  <p className="text-sm text-muted-foreground line-clamp-3">{service.shortDescription}</p>
-                </CardContent>
-                <CardFooter>
-                  <Button asChild variant="secondary" className="w-full">
-                    <Link href={`/admin/services/${service.id}`}>
-                      View Details
+                <div key={service.id} className="group relative">
+                    <Link href={`/admin/services/${service.id}`} className="absolute inset-0 z-10" aria-label={`View ${service.title}`}>
+                        <span className="sr-only">View Details</span>
                     </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
+                    <Card className="flex h-full flex-col transition-all duration-300 group-hover:shadow-lg group-hover:border-primary/50">
+                        <CardHeader>
+                            <div className="flex justify-between items-start">
+                                <CardTitle className="text-lg line-clamp-2">{service.title}</CardTitle>
+                                <div className="relative z-20">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.preventDefault()}>
+                                                <span className="sr-only">Open menu</span>
+                                                <MoreHorizontal className="h-4 w-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                            <DropdownMenuItem onClick={(e) => { e.preventDefault(); router.push(`/admin/services/${service.id}`) }}>View Details</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={(e) => { e.preventDefault(); handleEdit(service); }}>Edit</DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem
+                                                className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                                                onClick={(e) => { e.preventDefault(); handleDelete(service); }}
+                                            >
+                                                Delete
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
+                            </div>
+                        <CardDescription>{service.category}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4 flex-grow">
+                        <div className="flex flex-wrap gap-2">
+                            <Badge variant={service.published ? "default" : "secondary"}>
+                            {service.published ? 'Published' : 'Draft'}
+                            </Badge>
+                            {service.featured && <Badge variant="outline">Featured</Badge>}
+                        </div>
+                        <p className="text-sm text-muted-foreground line-clamp-3">{service.shortDescription}</p>
+                        </CardContent>
+                        <CardFooter>
+                           <p className="text-lg font-semibold">{service.pricing ? `R ${service.pricing.toLocaleString()}`: 'Not Set'}</p>
+                        </CardFooter>
+                    </Card>
+                </div>
             ))}
           </div>
         )}

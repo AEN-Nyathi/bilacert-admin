@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useContacts } from '@/hooks/useContacts';
 import { Contact } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, MoreHorizontal, Mail, Phone } from 'lucide-react';
+import { MoreHorizontal, Mail, Phone } from 'lucide-react';
 import DeleteContactDialog from './DeleteContactDialog';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -63,46 +63,53 @@ export default function ContactsClient() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {contacts.map((contact) => (
-              <Card key={contact.id} className="flex flex-col">
-                <CardHeader>
-                    <div className="flex justify-between items-start">
-                        <CardTitle className="text-lg line-clamp-1">{contact.name}</CardTitle>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <span className="sr-only">Open menu</span>
-                                    <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem onClick={() => handleViewDetails(contact)}>View</DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleEdit(contact)}>Edit</DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                    className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                                    onClick={() => handleDelete(contact)}
-                                >
-                                    Delete
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                  <CardDescription>{contact.company || 'No company'}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3 flex-grow">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Mail className="h-4 w-4" />
-                    <a href={`mailto:${contact.email}`} className="truncate hover:underline">{contact.email}</a>
-                  </div>
-                  {contact.phone && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Phone className="h-4 w-4" />
-                      <span>{contact.phone}</span>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+              <div key={contact.id} className="group relative">
+                <Link href={`/admin/contacts/${contact.id}`} className="absolute inset-0 z-10" aria-label={`View ${contact.name}`}>
+                    <span className="sr-only">View Details</span>
+                </Link>
+                <Card className="flex h-full flex-col transition-all duration-300 group-hover:shadow-lg group-hover:border-primary/50">
+                    <CardHeader>
+                        <div className="flex justify-between items-start">
+                            <CardTitle className="text-lg line-clamp-1">{contact.name}</CardTitle>
+                            <div className="relative z-20">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.preventDefault()}>
+                                            <span className="sr-only">Open menu</span>
+                                            <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                        <DropdownMenuItem onClick={(e) => { e.preventDefault(); handleViewDetails(contact); }}>View</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={(e) => { e.preventDefault(); handleEdit(contact); }}>Edit</DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem
+                                            className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                                            onClick={(e) => { e.preventDefault(); handleDelete(contact); }}
+                                        >
+                                            Delete
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                        </div>
+                      <CardDescription>{contact.company || 'No company'}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3 flex-grow">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Mail className="h-4 w-4" />
+                        <a href={`mailto:${contact.email}`} onClick={(e) => e.stopPropagation()} className="truncate hover:underline">{contact.email}</a>
+                      </div>
+                      {contact.phone && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Phone className="h-4 w-4" />
+                          <span>{contact.phone}</span>
+                        </div>
+                      )}
+                    </CardContent>
+                </Card>
+              </div>
             ))}
           </div>
         )}

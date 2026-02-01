@@ -38,8 +38,8 @@ export default function TestimonialsClient() {
   };
   
   const onDeleted = () => {
-    handleCloseDialogs();
-    router.refresh();
+      handleCloseDialogs();
+      router.refresh();
   }
 
   if (error) {
@@ -66,43 +66,46 @@ export default function TestimonialsClient() {
         ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {testimonials.map((testimonial) => (
-                    <Card key={testimonial.id} className="flex flex-col h-full hover:shadow-lg hover:border-primary/50 transition-all">
-                        <CardHeader className="flex-row items-center justify-between">
-                            <div>
-                                <CardTitle className="text-base">Testimonial</CardTitle>
-                                <CardDescription className="text-xs">
-                                    Added on {format(new Date(testimonial.createdAt), 'PP')}
-                                </CardDescription>
-                            </div>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <span className="sr-only">Open menu</span>
-                                    <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem asChild>
-                                    <Link href={`/admin/testimonials/${testimonial.id}`}>View</Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem asChild>
-                                    <Link href={`/admin/testimonials/${testimonial.id}/edit`}>Edit</Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                    className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                                    onClick={() => handleDelete(testimonial)}
-                                >
-                                    Delete
-                                </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </CardHeader>
-                        <CardContent className="flex-grow p-0 overflow-hidden">
-                            <TestimonialEmbed postUrl={testimonial.postUrl} />
-                        </CardContent>
-                    </Card>
+                    <div key={testimonial.id} className="group relative">
+                        <Link href={`/admin/testimonials/${testimonial.id}`} className="absolute inset-0 z-10" aria-label={`View testimonial`}>
+                            <span className="sr-only">View Details</span>
+                        </Link>
+                        <Card className="flex flex-col h-full hover:shadow-lg hover:border-primary/50 transition-all">
+                            <CardHeader className="flex-row items-center justify-between">
+                                <div>
+                                    <CardTitle className="text-base">Testimonial</CardTitle>
+                                    <CardDescription className="text-xs">
+                                        Added on {format(new Date(testimonial.createdAt), 'PP')}
+                                    </CardDescription>
+                                </div>
+                                <div className="relative z-20">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.preventDefault()}>
+                                        <span className="sr-only">Open menu</span>
+                                        <MoreHorizontal className="h-4 w-4" />
+                                    </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                    <DropdownMenuItem onClick={(e) => { e.preventDefault(); router.push(`/admin/testimonials/${testimonial.id}`)}}>View</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={(e) => { e.preventDefault(); router.push(`/admin/testimonials/${testimonial.id}/edit`)}}>Edit</DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                        className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                                        onClick={(e) => { e.preventDefault(); handleDelete(testimonial); }}
+                                    >
+                                        Delete
+                                    </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="flex-grow p-0 overflow-hidden">
+                                <TestimonialEmbed postUrl={testimonial.postUrl} />
+                            </CardContent>
+                        </Card>
+                    </div>
                 ))}
             </div>
         )}

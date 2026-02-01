@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -19,10 +18,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function BlogsClient() {
   const { blogs, loading, error } = useBlogs();
-
+  const router = useRouter();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
 
@@ -30,11 +30,20 @@ export default function BlogsClient() {
     setSelectedBlog(blog);
     setIsDeleteDialogOpen(true);
   };
+  
+  const handleEdit = (blog: BlogPost) => {
+    router.push(`/admin/blogs/${blog.id}/edit`);
+  }
 
   const handleCloseDialogs = () => {
     setIsDeleteDialogOpen(false);
     setSelectedBlog(null);
   };
+  
+  const onDeleted = () => {
+    handleCloseDialogs();
+    router.refresh();
+  }
 
   if (error) {
     return <div className="text-destructive">Error loading posts: {error.message}</div>;
@@ -57,20 +66,16 @@ export default function BlogsClient() {
                 </Link>
                 <div className="absolute top-4 right-4 z-20">
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-background/60 backdrop-blur-sm hover:bg-background">
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-background/60 backdrop-blur-sm hover:bg-background" onClick={(e) => e.preventDefault()}>
                           <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                         <DropdownMenuItem asChild>
-                            <Link href={`/admin/blogs/${blog.id}`}>View</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                            <Link href={`/admin/blogs/${blog.id}/edit`}>Edit</Link>
-                        </DropdownMenuItem>
+                         <DropdownMenuItem onClick={(e) => { e.preventDefault(); router.push(`/admin/blogs/${blog.id}`)}}>View</DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => { e.preventDefault(); handleEdit(blog)}}>Edit</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           className="text-destructive focus:bg-destructive/10 focus:text-destructive"
@@ -122,7 +127,7 @@ export default function BlogsClient() {
             isOpen={isDeleteDialogOpen}
             onClose={handleCloseDialogs}
             blog={selectedBlog}
-            onDeleted={handleCloseDialogs}
+            onDeleted={onDeleted}
         />
       )}
     </>
