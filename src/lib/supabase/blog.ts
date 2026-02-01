@@ -15,8 +15,9 @@ function mapToBlogPost(item: any): BlogPost {
         published: item.published,
         createdAt: item.created_at,
         image: item.image,
-        author: item.author,
+        author: item.author_name,
         readTime: item.read_time,
+        date: item.created_at,
     };
 }
 
@@ -26,7 +27,7 @@ export async function getPublishedBlogPosts(limit?: number): Promise<BlogPost[]>
         .from('blog_posts')
         .select('*')
         .eq('published', true)
-        .order('date', { ascending: false });
+        .order('created_at', { ascending: false });
 
     if (limit) {
         query = query.limit(limit);
@@ -35,7 +36,7 @@ export async function getPublishedBlogPosts(limit?: number): Promise<BlogPost[]>
     const { data, error } = await query;
   
     if (error) {
-      console.error('Error fetching blog posts:', error);
+      console.error('Error fetching blog posts:', error.message);
       return [];
     }
   
