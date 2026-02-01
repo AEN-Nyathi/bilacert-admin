@@ -1,4 +1,3 @@
-
 import 'server-only';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { createClient } from '@supabase/supabase-js';
@@ -15,9 +14,8 @@ function mapToBlogPost(item: any): BlogPost {
         published: item.published,
         createdAt: item.created_at,
         image: item.image,
-        author: item.author,
-        readTime: item.read_time,
-        date: item.created_at,
+        author_name: item.author_name,
+        read_time: item.read_time,
     };
 }
 

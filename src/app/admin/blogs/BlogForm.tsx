@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -29,8 +28,8 @@ import ImageUpload from '@/components/ui/ImageUpload';
 const blogSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   slug: z.string().min(1, 'Slug is required'),
-  author: z.string().optional(),
-  readTime: z.string().optional(),
+  author_name: z.string().optional(),
+  read_time: z.string().optional(),
   category: z.string().optional(),
   excerpt: z.string().optional(),
   content: z.string().optional(),
@@ -60,8 +59,8 @@ export default function BlogForm({ blog }: BlogFormProps) {
     defaultValues: {
       title: '',
       slug: '',
-      author: 'Bilacert Team',
-      readTime: '5 min read',
+      author_name: 'Bilacert Team',
+      read_time: '5 min read',
       category: '',
       excerpt: '',
       content: '',
@@ -92,8 +91,8 @@ export default function BlogForm({ blog }: BlogFormProps) {
       reset({
         title: blog.title,
         slug: blog.slug,
-        author: blog.author || 'Bilacert Team',
-        readTime: blog.readTime || '5 min read',
+        author_name: blog.author_name || 'Bilacert Team',
+        read_time: blog.read_time || '5 min read',
         category: blog.category || '',
         excerpt: blog.excerpt || '',
         content: blog.content || '',
@@ -108,8 +107,8 @@ export default function BlogForm({ blog }: BlogFormProps) {
       const blogData = {
         title: values.title,
         slug: values.slug,
-        author: values.author,
-        read_time: values.readTime,
+        author_name: values.author_name,
+        read_time: values.read_time,
         category: values.category,
         excerpt: values.excerpt,
         content: values.content,
@@ -179,7 +178,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
         />
         <FormField
           control={form.control}
-          name="author"
+          name="author_name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Author</FormLabel>
@@ -192,7 +191,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
         />
         <FormField
           control={form.control}
-          name="readTime"
+          name="read_time"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Read Time</FormLabel>

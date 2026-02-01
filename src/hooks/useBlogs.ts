@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -37,9 +36,8 @@ export function useBlogs() {
             published: item.published,
             createdAt: item.created_at,
             image: item.image,
-            author: item.author,
-            readTime: item.read_time,
-            date: item.created_at,
+            author_name: item.author_name,
+            read_time: item.read_time,
         })) as BlogPost[];
 
         setBlogs(mappedData);

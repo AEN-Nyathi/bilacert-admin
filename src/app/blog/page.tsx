@@ -92,7 +92,7 @@ export default async function BlogPage() {
 									<div className='flex items-center space-x-4 text-gray-200 mb-6'>
 										<div className='flex items-center space-x-2'>
 											<User className='h-4 w-4' />
-											<span>Bilacert Team</span>
+											<span>{featuredPost.author_name || 'Bilacert Team'}</span>
 										</div>
 										<div className='flex items-center space-x-2'>
 											<Calendar className='h-4 w-4' />
@@ -100,6 +100,7 @@ export default async function BlogPage() {
 												{format(new Date(featuredPost.createdAt), 'PP')}
 											</span>
 										</div>
+										<span>{featuredPost.read_time}</span>
 									</div>
 									<Link
 										href={`/blog/${featuredPost.slug}`}
@@ -173,7 +174,7 @@ export default async function BlogPage() {
 									<div className='flex items-center justify-between text-sm text-muted-foreground mt-auto'>
 										<div className='flex items-center space-x-2'>
 											<User className='h-4 w-4' />
-											<span>Bilacert Team</span>
+											<span>{post.author_name || 'Bilacert Team'}</span>
 										</div>
 										<div className='flex items-center space-x-2'>
 											<Calendar className='h-4 w-4' />
@@ -201,7 +202,7 @@ export default async function BlogPage() {
 						<input
 							type='email'
 							placeholder='Enter your email'
-							className='flex-1 px-4 py-3 rounded-lg bg-primary-foreground/5 border border-primary-foreground/20 text-primary-foreground placeholder-gray-300 focus:outline-none focus:border-accent'
+							className='flex-1 px-4 py-3 rounded-lg bg-primary-foreground/5 border border-primary-foreground/20 text-primary-foreground placeholder:text-muted-foreground focus:outline-none focus:border-accent'
 						/>
 						<button
 							type='submit'

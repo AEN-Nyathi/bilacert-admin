@@ -1,4 +1,3 @@
-
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
@@ -29,7 +28,7 @@ export const columns = ({ onEdit, onDelete, onViewDetails }: ColumnsOptions): Co
     cell: ({ row }) => <div className="max-w-[300px] truncate font-medium">{row.getValue("title")}</div>,
   },
   {
-    accessorKey: "author",
+    accessorKey: "author_name",
     header: "Author",
   },
   {

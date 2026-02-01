@@ -1,4 +1,3 @@
-
 export interface PricingPlan {
   title: string;
   description: string;
@@ -85,9 +84,8 @@ export interface BlogPost {
   published: boolean;
   createdAt: string;
   image?: string;
-  author: string;
-  readTime: string;
-  date: string;
+  author_name?: string;
+  read_time?: string;
 }
 
 export interface Contact {

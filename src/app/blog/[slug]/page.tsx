@@ -40,8 +40,8 @@ export async function generateStaticParams() {
     return slugs;
 }
 
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
   
   const post = await getBlogPostBySlug(slug);
 
@@ -79,22 +79,22 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 </p>
             )}
             <div className="flex items-center justify-center space-x-6 text-muted-foreground">
-              {post.author && 
+              {post.author_name && 
                 <div className="flex items-center space-x-2">
                   <User className="h-5 w-5" />
-                  <span>{post.author}</span>
+                  <span>{post.author_name}</span>
                 </div>
               }
               <div className="flex items-center space-x-2">
                 <Calendar className="h-5 w-5" />
                 <span>
-                  {format(new Date(post.createdAt || post.date), 'PP')}
+                  {format(new Date(post.createdAt), 'PP')}
                 </span>
               </div>
-              {post.readTime && 
+              {post.read_time && 
                 <div className="flex items-center space-x-2">
                   <Clock className="h-5 w-5" />
-                  <span>{post.readTime}</span>
+                  <span>{post.read_time}</span>
                 </div>
               }
             </div>

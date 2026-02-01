@@ -33,16 +33,14 @@ async function getBlog(id: string): Promise<BlogPost | null> {
         published: data.published,
         createdAt: data.created_at,
         image: data.image,
-        author: data.author,
-        readTime: data.read_time,
-        date: data.created_at,
+        author_name: data.author_name,
+        read_time: data.read_time,
     } as BlogPost;
 }
 
 
-export default async function EditBlogPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
-    const blog = await getBlog(id);
+export default async function EditBlogPage({ params }: { params: { id: string } }) {
+    const blog = await getBlog(params.id);
 
     if (!blog) {
         notFound();
