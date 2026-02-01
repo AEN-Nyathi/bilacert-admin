@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Calendar, User, ArrowLeft, Share2 } from 'lucide-react';
+import { Calendar, User, ArrowLeft, Share2, Clock } from 'lucide-react';
 import { getBlogPostBySlug, getAllPublishedBlogSlugs } from '@/lib/supabase/blog';
-import type { BlogPost } from '@/lib/types';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -13,7 +12,7 @@ interface BlogPostPageProps {
 
 export async function generateStaticParams() {
     const slugs = await getAllPublishedBlogSlugs();
-    return slugs.map(({ slug }) => ({ slug }));
+    return slugs;
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
@@ -38,7 +37,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
       </div>
 
-      <section className="py-12 bg-secondary-gray">
+      <section className="py-12 bg-secondary">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             {post.category && (
@@ -55,16 +54,24 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 </p>
             )}
             <div className="flex items-center justify-center space-x-6 text-muted-foreground">
-              <div className="flex items-center space-x-2">
-                <User className="h-5 w-5" />
-                <span>Bilacert Team</span>
-              </div>
+              {post.author && 
+                <div className="flex items-center space-x-2">
+                  <User className="h-5 w-5" />
+                  <span>{post.author}</span>
+                </div>
+              }
               <div className="flex items-center space-x-2">
                 <Calendar className="h-5 w-5" />
                 <span>
-                  {format(new Date(post.createdAt), 'PP')}
+                  {format(new Date(post.createdAt || post.date), 'PP')}
                 </span>
               </div>
+              {post.readTime && 
+                <div className="flex items-center space-x-2">
+                  <Clock className="h-5 w-5" />
+                  <span>{post.readTime}</span>
+                </div>
+              }
             </div>
           </div>
         </div>
@@ -87,8 +94,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-12 bg-secondary-gray">
+      <section className="py-12 bg-secondary">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-card rounded-xl shadow-sm p-8 text-center">
             <h3 className="text-2xl font-bold text-primary mb-4">Found this helpful?</h3>
