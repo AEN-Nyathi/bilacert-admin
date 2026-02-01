@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
-import { useFormSubmission } from '@/hooks/use-form-submission';
+import { useFormSubmission } from '@/hooks/useFormSubmission';
 import { Button } from '@/components/ui/button';
 
 export default function ContactForm() {
