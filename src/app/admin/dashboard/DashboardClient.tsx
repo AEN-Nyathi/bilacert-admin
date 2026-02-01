@@ -9,6 +9,7 @@ import {
 import StatCard from '@/components/admin/StatCard';
 import { useSubmissions } from '@/hooks/useSubmissions';
 import { useContacts } from '@/hooks/useContacts';
+import { useServices } from '@/hooks/useServices';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useMemo } from 'react';
@@ -37,18 +38,25 @@ const getIconForServiceType = (submission: Submission, props?: { className: stri
 export default function DashboardClient() {
   const { submissions, loading: submissionsLoading, error: submissionsError } = useSubmissions();
   const { contacts, loading: contactsLoading, error: contactsError } = useContacts();
+  const { services, loading: servicesLoading, error: servicesError } = useServices();
 
-  const loading = submissionsLoading || contactsLoading;
-  const error = submissionsError || contactsError;
+  const loading = submissionsLoading || contactsLoading || servicesLoading;
+  const error = submissionsError || contactsError || servicesError;
 
   const stats = useMemo(() => {
     const total = submissions.length;
     const newCount = submissions.filter(s => s.status === 'pending').length;
-    const inProgress = submissions.filter(s => s.status === 'in-progress').length;
-    const completed = submissions.filter(s => s.status === 'completed').length;
     const totalContacts = contacts.length;
-    return { total, newCount, inProgress, completed, totalContacts };
-  }, [submissions, contacts]);
+
+    const totalRevenue = submissions
+      .filter(s => s.status === 'completed' && s.serviceId)
+      .reduce((acc, submission) => {
+        const service = services.find(s => s.id === submission.serviceId);
+        return acc + (service?.pricing || 0);
+      }, 0);
+
+    return { total, newCount, totalContacts, totalRevenue };
+  }, [submissions, contacts, services]);
 
   const recentSubmissions = useMemo(() => {
     return submissions.slice(0, 5);
@@ -73,7 +81,12 @@ export default function DashboardClient() {
         <StatCard title="Total Submissions" value={loading ? '...' : `${stats.total}`} icon={<Icon name="Package" className="h-4 w-4" />} />
         <StatCard title="New Applications" value={loading ? '...' : `${stats.newCount}`} icon={<BarChartIcon className="h-4 w-4" />} description="Awaiting review" />
         <StatCard title="Total Contacts" value={loading ? '...' : `${stats.totalContacts}`} icon={<Users className="h-4 w-4" />} />
-        <StatCard title="Total Revenue (Mock)" value={loading ? '...' : `ZAR 45,231.89`} icon={<DollarSign className="h-4 w-4" />} description="+20.1% from last month" />
+        <StatCard 
+            title="Total Revenue" 
+            value={loading ? '...' : `R ${stats.totalRevenue.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} 
+            icon={<DollarSign className="h-4 w-4" />} 
+            description="From completed submissions" 
+        />
       </div>
 
       <div className="grid gap-8 md:grid-cols-2">
