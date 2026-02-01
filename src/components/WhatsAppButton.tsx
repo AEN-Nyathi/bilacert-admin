@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from './ui/button';
-import { FaWhatsapp } from 'react-icons/fa6';
+import { FaWhatsapp } from 'react-icons/fa';
 
 export default function WhatsAppButton() {
   const phoneNumber = '27754304433'; // South African format
