@@ -21,12 +21,14 @@ interface DeleteContactDialogProps {
   isOpen: boolean;
   onClose: () => void;
   contact: Contact | null;
+  onDeleted?: () => void;
 }
 
 export default function DeleteContactDialog({
   isOpen,
   onClose,
   contact,
+  onDeleted,
 }: DeleteContactDialogProps) {
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -47,7 +49,11 @@ export default function DeleteContactDialog({
         title: 'Contact deleted',
         description: `The contact "${contact.name}" has been successfully deleted.`,
       });
-      onClose();
+      if (onDeleted) {
+        onDeleted();
+      } else {
+        onClose();
+      }
     } catch (error: any) {
       toast({
         variant: 'destructive',

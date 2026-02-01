@@ -21,12 +21,14 @@ interface DeleteSubmissionDialogProps {
   isOpen: boolean;
   onClose: () => void;
   submission: Submission | null;
+  onDeleted?: () => void;
 }
 
 export default function DeleteSubmissionDialog({
   isOpen,
   onClose,
   submission,
+  onDeleted
 }: DeleteSubmissionDialogProps) {
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -47,7 +49,11 @@ export default function DeleteSubmissionDialog({
         title: 'Submission deleted',
         description: `The submission from "${submission.fullName}" has been successfully deleted.`,
       });
-      onClose();
+      if (onDeleted) {
+        onDeleted();
+      } else {
+        onClose();
+      }
     } catch (error: any) {
       toast({
         variant: 'destructive',

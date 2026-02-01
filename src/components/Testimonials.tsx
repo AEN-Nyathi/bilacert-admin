@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -8,10 +9,12 @@ import { Card, CardContent } from '@/components/ui/card';
 declare global {
     interface Window {
         FB?: {
+            init: (params: { xfbml: boolean; version: string; }) => void;
             XFBML: {
-                parse: () => void;
+                parse: (element?: HTMLElement) => void;
             };
         };
+        fbAsyncInit?: () => void;
     }
 }
 
