@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
-import { useFormSubmission } from '@/hooks/use-form-submission';
+import { useFormSubmission } from '@/hooks/useFormSubmission';
 import { Button } from '@/components/ui/button';
 
 export default function ContactForm() {
@@ -133,7 +133,103 @@ export default function ContactForm() {
 							<form
 								onSubmit={onSubmit}
 								className='space-y-6'>
-								{/* Form fields here */}
+								<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+									<div>
+										<label
+											htmlFor='name'
+											className='block text-sm font-medium text-gray-700 mb-2'>
+											Full Name *
+										</label>
+										<input
+											type='text'
+											id='name'
+											name='name'
+											required
+											value={formData.name}
+											onChange={handleChange}
+											className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent'
+											placeholder='Your full name'
+										/>
+									</div>
+
+									<div>
+										<label
+											htmlFor='email'
+											className='block text-sm font-medium text-gray-700 mb-2'>
+											Email Address *
+										</label>
+										<input
+											type='email'
+											id='email'
+											name='email'
+											required
+											value={formData.email}
+											onChange={handleChange}
+											className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent'
+											placeholder='your.email@example.com'
+										/>
+									</div>
+								</div>
+
+								<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+									<div>
+										<label
+											htmlFor='phone'
+											className='block text-sm font-medium text-gray-700 mb-2'>
+											Phone Number
+										</label>
+										<input
+											type='tel'
+											id='phone'
+											name='phone'
+											value={formData.phone}
+											onChange={handleChange}
+											className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent'
+											placeholder='+27 XX XXX XXXX'
+										/>
+									</div>
+
+									<div>
+										<label
+											htmlFor='service'
+											className='block text-sm font-medium text-gray-700 mb-2'>
+											Service Interest
+										</label>
+										<select
+											id='service'
+											name='service'
+											value={formData.service}
+											onChange={handleChange}
+											className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent'>
+											<option value=''>Select a service</option>
+											<option value='icasa-type-approvals'>ICASA Type Approvals</option>
+											<option value='nrcs-loa-applications'>NRCS LOA Applications</option>
+											<option value='radio-dealer-licensing'>Radio Dealer Licensing</option>
+											<option value='class-ecs-ecns-licensing'>Class ECS/ECNS Licensing</option>
+											<option value='license-exemptions'>License Exemptions</option>
+											<option value='ski-boat-vhf-licensing'>Ski Boat VHF Licensing</option>
+											<option value='general-inquiry'>General Inquiry</option>
+										</select>
+									</div>
+								</div>
+
+								<div>
+									<label
+										htmlFor='message'
+										className='block text-sm font-medium text-gray-700 mb-2'>
+										Message *
+									</label>
+									<textarea
+										id='message'
+										name='message'
+										required
+										rows={6}
+										value={formData.message}
+											onChange={handleChange}
+										className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent'
+										placeholder='Tell us about your compliance needs...'
+									/>
+								</div>
 								 <button
 									type='submit'
 									disabled={isLoading}
@@ -146,6 +242,31 @@ export default function ContactForm() {
 								</button>
 							</form>
 						</div>
+					</div>
+				</div>
+			</section>
+
+			{/* CTA Section */}
+			<section className='py-20 bg-secondary-gray'>
+				<div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
+					<h2 className='text-3xl font-bold text-primary mb-6'>Need Immediate Assistance?</h2>
+					<p className='text-xl text-gray-600 mb-8'>
+						For urgent compliance matters, call us directly at 075 430 4433 or reach out via
+						WhatsApp for instant support.
+					</p>
+					<div className='flex flex-col sm:flex-row gap-4 justify-center'>
+						<Button asChild size="lg">
+							<a href='tel:0754304433'>Call Now</a>
+						</Button>
+						<Button asChild variant="outline" size="lg">
+							<a
+								href='https://wa.me/27754304433'
+								target='_blank'
+								rel='noopener noreferrer'
+								>
+								WhatsApp Us
+							</a>
+						</Button>
 					</div>
 				</div>
 			</section>
