@@ -92,7 +92,7 @@ export default function BlogsClient() {
 
                 <div className="relative h-48 w-full">
                     <Image
-                        src={blog.image || `https://picsum.photos/seed/${blog.id}/600/400`}
+                        src={blog.featured_image || `https://picsum.photos/seed/${blog.id}/600/400`}
                         alt={blog.title}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"

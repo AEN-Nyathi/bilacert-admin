@@ -67,6 +67,7 @@ export interface Service {
   pricingPlans?: PricingPlan[];
   processSteps?: ProcessStep[];
   successStory?: SuccessStory;
+  updatedAt?: string;
 }
 
 export interface Testimonial {
@@ -106,4 +107,5 @@ export interface Contact {
   phone?: string;
   service?: string;
   message?: string;
+  submitted_at: string;
 }

@@ -112,7 +112,7 @@ export default async function BlogPage() {
 							</div>
 							<div className='relative min-h-[300px] lg:min-h-0'>
 								<Image
-									src={featuredPost.image || `https://picsum.photos/seed/${featuredPost.id}/800/600`}
+									src={featuredPost.featured_image || `https://picsum.photos/seed/${featuredPost.id}/800/600`}
 									alt={featuredPost.title}
 									fill
 									className='object-cover'
@@ -154,7 +154,7 @@ export default async function BlogPage() {
 								className='bg-card rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-2 overflow-hidden flex flex-col'>
 								<div className='relative h-48 bg-gray-200 flex items-center justify-center overflow-hidden'>
 									<Image
-										src={post.image || `https://picsum.photos/seed/${post.id}/600/400`}
+										src={post.featured_image || `https://picsum.photos/seed/${post.id}/600/400`}
 										alt={post.title}
 										fill
 										style={{ objectFit: 'cover' }}
@@ -174,7 +174,7 @@ export default async function BlogPage() {
 									<div className='flex items-center justify-between text-sm text-muted-foreground mt-auto'>
 										<div className='flex items-center space-x-2'>
 											<User className='h-4 w-4' />
-											<span>{post.author_name || 'Bilacert Team'}</span>
+											<span>{post.author_.name || 'Bilacert Team'}</span>
 										</div>
 										<div className='flex items-center space-x-2'>
 											<Calendar className='h-4 w-4' />

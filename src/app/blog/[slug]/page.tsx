@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       url: `https://bilacert.co.za/blog/${post.slug}`,
       type: 'article',
       publishedTime: post.createdAt,
-      images: post.image ? [{ url: post.image }] : [],
+      images: post.featured_image ? [{ url: post.featured_image }] : [],
     },
   };
 }
@@ -102,9 +102,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
       </section>
 
-      {post.image && (
+      {post.featured_image && (
         <div className="relative h-64 md:h-96 max-w-5xl mx-auto my-8 rounded-lg overflow-hidden">
-            <Image src={post.image} alt={post.title} fill className="object-cover" />
+            <Image src={post.featured_image} alt={post.title} fill className="object-cover" />
         </div>
       )}
 

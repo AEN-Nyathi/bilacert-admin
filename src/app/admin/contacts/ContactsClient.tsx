@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import ContactsLoading from './loading';
+import { format } from 'date-fns';
 
 export default function ContactsClient() {
   const { contacts, loading, error } = useContacts();
@@ -94,7 +95,7 @@ export default function ContactsClient() {
                                 </DropdownMenu>
                             </div>
                         </div>
-                      <CardDescription>{contact.company || 'No company'}</CardDescription>
+                      <CardDescription>{contact.service || `Submitted on ${format(new Date(contact.submitted_at), 'PP')}`}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-3 flex-grow">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
