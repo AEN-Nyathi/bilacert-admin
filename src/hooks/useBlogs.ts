@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -33,11 +34,21 @@ export function useBlogs() {
             excerpt: item.excerpt,
             content: item.content,
             category: item.category,
-            published: item.published,
-            createdAt: item.created_at,
-            image: item.image,
-            author_name: item.author_name,
+            tags: item.tags,
             read_time: item.read_time,
+            seo_title: item.seo_title,
+            seo_description: item.seo_description,
+            seo_keywords: item.seo_keywords,
+            featured_image: item.featured_image,
+            thumbnail: item.thumbnail,
+            published: item.published,
+            published_at: item.published_at,
+            featured: item.featured,
+            author_id: item.author_id,
+            author_name: item.author_name,
+            views_count: item.views_count,
+            createdAt: item.created_at,
+            updatedAt: item.updated_at,
         })) as BlogPost[];
 
         setBlogs(mappedData);

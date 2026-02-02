@@ -1,3 +1,4 @@
+
 export interface PricingPlan {
   title: string;
   description: string;
@@ -81,16 +82,21 @@ export interface BlogPost {
   excerpt?: string;
   content?: string;
   category?: string;
-  published: boolean;
-  createdAt: string;
-  featured_image?: string;
-  thumbnail?: string;
-  author_name?: string;
-  read_time?: string;
   tags?: string;
+  read_time?: string;
   seo_title?: string;
   seo_description?: string;
   seo_keywords?: string;
+  featured_image?: string;
+  thumbnail?: string;
+  published: boolean;
+  published_at?: string;
+  featured: boolean;
+  author_id?: string;
+  author_name?: string;
+  views_count?: number;
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface Contact {

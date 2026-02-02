@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -26,6 +27,7 @@ import ImageUpload from '@/components/ui/ImageUpload';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const blogSchema = z.object({
+  id: z.string().min(1, 'ID is required'),
   title: z.string().min(1, 'Title is required'),
   slug: z.string().min(1, 'Slug is required'),
   author_name: z.string().optional(),
@@ -63,6 +65,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
   const form = useForm<BlogFormValues>({
     resolver: zodResolver(blogSchema),
     defaultValues: {
+      id: '',
       title: '',
       slug: '',
       author_name: 'Bilacert Team',
@@ -94,13 +97,16 @@ export default function BlogForm({ blog }: BlogFormProps) {
 
   useEffect(() => {
     if (!isEditing && title) {
-      setValue('slug', slugify(title), { shouldValidate: true });
+      const slug = slugify(title);
+      setValue('slug', slug);
+      setValue('id', slug); // Also set ID from slug for new posts
     }
   }, [title, setValue, isEditing]);
 
   useEffect(() => {
     if (blog) {
       reset({
+        id: blog.id,
         title: blog.title,
         slug: blog.slug,
         author_name: blog.author_name || 'Bilacert Team',
@@ -123,6 +129,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
   const onSubmit = async (values: BlogFormValues) => {
     try {
       const blogData = {
+        id: values.id,
         title: values.title,
         slug: values.slug,
         author_name: values.author_name,
