@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -72,13 +73,15 @@ export default function TestimonialForm({ testimonial }: TestimonialFormProps) {
       );
 
       if (!response.ok) {
-        let errorMessage = `An API error occurred: ${response.statusText}`;
+        let errorMessage = `API Error: ${response.status} ${response.statusText}`;
         try {
-          const errorData = await response.json();
-          if (errorData && errorData.error) {
-            errorMessage = errorData.error;
-          }
-        } catch (e) {}
+            const errorData = await response.json();
+            if (errorData.error) {
+                errorMessage = errorData.error;
+            }
+        } catch (jsonError) {
+            console.error("Could not parse JSON from error response.");
+        }
         throw new Error(errorMessage);
       }
 

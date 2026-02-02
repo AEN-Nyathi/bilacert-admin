@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -41,14 +42,14 @@ export default function DeleteBlogDialog({
       });
 
       if (!response.ok) {
-        let errorMessage = `An API error occurred: ${response.statusText}`;
+        let errorMessage = `API Error: ${response.status} ${response.statusText}`;
         try {
-          const errorData = await response.json();
-          if (errorData && errorData.error) {
-            errorMessage = errorData.error;
-          }
-        } catch (e) {
-          // The response was not JSON. The statusText is the best we have.
+            const errorData = await response.json();
+            if (errorData.error) {
+                errorMessage = errorData.error;
+            }
+        } catch (jsonError) {
+            console.error("Could not parse JSON from error response.");
         }
         throw new Error(errorMessage);
       }

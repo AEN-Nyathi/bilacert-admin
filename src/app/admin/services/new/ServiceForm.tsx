@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm, useFieldArray } from 'react-hook-form';
@@ -231,20 +232,14 @@ export default function ServiceForm({ service }: ServiceFormProps) {
       );
 
       if (!response.ok) {
-        let errorMessage = `An API error occurred (status: ${response.status})`;
+        let errorMessage = `API Error: ${response.status} ${response.statusText}`;
         try {
-            const errorBody = await response.text();
-            try {
-                const errorData = JSON.parse(errorBody);
-                if (errorData.error) {
-                    errorMessage = errorData.error;
-                }
-            } catch (parseError) {
-                console.error("API response was not JSON:", errorBody);
-                errorMessage = "A server error occurred. Please check the console for details."
+            const errorData = await response.json();
+            if (errorData.error) {
+                errorMessage = errorData.error;
             }
-        } catch (e) {
-            console.error("Could not read API error response body:", e);
+        } catch (jsonError) {
+            console.error("Could not parse JSON from error response.");
         }
         throw new Error(errorMessage);
       }
