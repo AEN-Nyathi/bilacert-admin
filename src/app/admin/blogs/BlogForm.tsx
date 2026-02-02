@@ -105,7 +105,6 @@ export default function BlogForm({ blog }: BlogFormProps) {
         slug: blog.slug,
         author_name: blog.author_name || 'Bilacert Team',
         read_time: blog.read_time || '5 min read',
-        category: blog.category || '',
         tags: Array.isArray(blog.tags) ? blog.tags.join(', ') : '',
         excerpt: blog.excerpt || '',
         content: blog.content || '',
@@ -155,8 +154,17 @@ export default function BlogForm({ blog }: BlogFormProps) {
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        let errorMessage = `An API error occurred (status: ${response.status})`;
+        try {
+          const errorData = await response.json();
+          if (errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (e) {
+          // Response was not JSON, likely an HTML error page.
+          console.error("API response was not JSON:", await response.text());
+        }
+        throw new Error(errorMessage);
       }
 
       toast({

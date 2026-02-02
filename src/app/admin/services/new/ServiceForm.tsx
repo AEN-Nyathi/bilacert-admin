@@ -231,8 +231,16 @@ export default function ServiceForm({ service }: ServiceFormProps) {
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        let errorMessage = `An API error occurred (status: ${response.status})`;
+        try {
+            const errorData = await response.json();
+            if (errorData.error) {
+                errorMessage = errorData.error;
+            }
+        } catch (e) {
+            console.error("API response was not JSON:", await response.text());
+        }
+        throw new Error(errorMessage);
       }
 
       toast({

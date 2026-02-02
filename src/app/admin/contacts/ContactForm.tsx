@@ -88,8 +88,16 @@ export default function ContactForm({ contact }: ContactFormProps) {
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to save contact.');
+        let errorMessage = `An API error occurred (status: ${response.status})`;
+        try {
+            const errorData = await response.json();
+            if (errorData.error) {
+                errorMessage = errorData.error;
+            }
+        } catch (e) {
+            console.error("API response was not JSON:", await response.text());
+        }
+        throw new Error(errorMessage);
       }
 
       toast({
