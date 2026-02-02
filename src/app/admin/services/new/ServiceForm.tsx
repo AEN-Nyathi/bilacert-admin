@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm, useFieldArray } from 'react-hook-form';
@@ -231,6 +230,17 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         }
       );
 
+      if (!response.ok) {
+        let errorMessage = `An API error occurred: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          if (errorData && errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (e) {}
+        throw new Error(errorMessage);
+      }
+
       toast({
         title: `Service ${isEditing ? 'updated' : 'created'} successfully!`,
       });
@@ -251,6 +261,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
+            
             <Card>
               <CardHeader><CardTitle>Core Details</CardTitle></CardHeader>
               <CardContent className="space-y-4">

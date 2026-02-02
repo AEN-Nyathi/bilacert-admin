@@ -41,8 +41,14 @@ export default function DeleteTestimonialDialog({
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete testimonial.');
+        let errorMessage = `An API error occurred: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          if (errorData && errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (e) {}
+        throw new Error(errorMessage);
       }
 
       toast({

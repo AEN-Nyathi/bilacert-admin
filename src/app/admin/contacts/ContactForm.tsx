@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -88,6 +87,17 @@ export default function ContactForm({ contact }: ContactFormProps) {
         }
       );
       
+      if (!response.ok) {
+        let errorMessage = `An API error occurred: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          if (errorData && errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (e) {}
+        throw new Error(errorMessage);
+      }
+
       toast({
         title: `Contact ${isEditing ? 'updated' : 'added'} successfully!`,
       });

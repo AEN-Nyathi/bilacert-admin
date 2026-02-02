@@ -154,24 +154,14 @@ export default function BlogForm({ blog }: BlogFormProps) {
       );
       
       if (!response.ok) {
-        let errorMessage = `An API error occurred (status: ${response.status})`;
+        let errorMessage = `An API error occurred: ${response.statusText}`;
         try {
-            // Try to read the response body as text first
-            const errorBody = await response.text();
-            try {
-                // Then try to parse it as JSON
-                const errorData = JSON.parse(errorBody);
-                if (errorData.error) {
-                    errorMessage = errorData.error;
-                }
-            } catch (parseError) {
-                // If it's not JSON, it's probably an HTML error page.
-                console.error("API response was not JSON:", errorBody);
-                errorMessage = "A server error occurred. Please check the console for details."
-            }
+          const errorData = await response.json();
+          if (errorData && errorData.error) {
+            errorMessage = errorData.error;
+          }
         } catch (e) {
-            // If we can't even read the body, stick with the generic error
-            console.error("Could not read API error response body:", e);
+          // The response was not JSON. The statusText is the best we have.
         }
         throw new Error(errorMessage);
       }
@@ -187,6 +177,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
         title: 'Error saving blog post',
         description: error.message,
       });
+      throw new Error(error.message);
     }
   };
 

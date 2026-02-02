@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -71,6 +70,17 @@ export default function TestimonialForm({ testimonial }: TestimonialFormProps) {
           body: JSON.stringify(testimonialData),
         }
       );
+
+      if (!response.ok) {
+        let errorMessage = `An API error occurred: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          if (errorData && errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (e) {}
+        throw new Error(errorMessage);
+      }
 
       toast({
         title: `Testimonial ${testimonial ? 'updated' : 'added'} successfully!`,

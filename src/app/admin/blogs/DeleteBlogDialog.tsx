@@ -41,8 +41,16 @@ export default function DeleteBlogDialog({
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete post.');
+        let errorMessage = `An API error occurred: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          if (errorData && errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (e) {
+          // The response was not JSON. The statusText is the best we have.
+        }
+        throw new Error(errorMessage);
       }
 
       toast({
