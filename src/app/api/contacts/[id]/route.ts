@@ -1,18 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createAdminApiClient } from '@/lib/supabase/api';
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+  const { supabase, error: authError } = await createAdminApiClient();
+  if (authError) return authError;
+  
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !serviceRoleKey) {
-      throw new Error("Missing Supabase credentials for server-side operations.");
-    }
-    const supabase = createClient(supabaseUrl, serviceRoleKey);
-
     const contactData = await request.json();
-    const { data, error } = await supabase
+    const { data, error } = await supabase!
       .from('contacts')
       .update(contactData)
       .eq('id', params.id)
@@ -28,16 +23,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+    const { supabase, error: authError } = await createAdminApiClient();
+    if (authError) return authError;
+
     try {
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-        if (!supabaseUrl || !serviceRoleKey) {
-          throw new Error("Missing Supabase credentials for server-side operations.");
-        }
-        const supabase = createClient(supabaseUrl, serviceRoleKey);
-
-        const { error } = await supabase.from('contacts').delete().eq('id', params.id);
+        const { error } = await supabase!.from('contacts').delete().eq('id', params.id);
         if (error) throw error;
         return NextResponse.json({ message: 'Contact deleted successfully' });
     } catch (error: any) {

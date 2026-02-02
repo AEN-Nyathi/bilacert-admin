@@ -1,18 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createAdminApiClient } from '@/lib/supabase/api';
 
 export async function POST(request: NextRequest) {
+  const { supabase, error: authError } = await createAdminApiClient();
+  if (authError) return authError;
+
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !serviceRoleKey) {
-      throw new Error("Missing Supabase credentials for server-side operations.");
-    }
-    const supabase = createClient(supabaseUrl, serviceRoleKey);
-
     const contactData = await request.json();
-    const { data, error } = await supabase
+    const { data, error } = await supabase!
       .from('contacts')
       .insert([contactData])
       .select()
