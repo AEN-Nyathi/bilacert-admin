@@ -1,4 +1,3 @@
-
 'use client';
 
 import { supabase } from '@/lib/supabase';
@@ -48,6 +47,7 @@ export default function ImageUpload({ bucket, onUpload, initialUrl, onRemove }: 
         title: 'Error uploading image',
         description: error.message,
       });
+      throw error;
     } finally {
       setUploading(false);
     }
