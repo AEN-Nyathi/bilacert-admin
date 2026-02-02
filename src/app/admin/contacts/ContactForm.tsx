@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -90,12 +91,18 @@ export default function ContactForm({ contact }: ContactFormProps) {
       if (!response.ok) {
         let errorMessage = `An API error occurred (status: ${response.status})`;
         try {
-            const errorData = await response.json();
-            if (errorData.error) {
-                errorMessage = errorData.error;
+            const errorBody = await response.text();
+            try {
+                const errorData = JSON.parse(errorBody);
+                if (errorData.error) {
+                    errorMessage = errorData.error;
+                }
+            } catch (parseError) {
+                console.error("API response was not JSON:", errorBody);
+                errorMessage = "A server error occurred. Please check the console for details."
             }
         } catch (e) {
-            console.error("API response was not JSON:", await response.text());
+            console.error("Could not read API error response body:", e);
         }
         throw new Error(errorMessage);
       }
@@ -196,3 +203,5 @@ export default function ContactForm({ contact }: ContactFormProps) {
     </Form>
   );
 }
+
+    
