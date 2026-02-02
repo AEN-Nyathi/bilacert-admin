@@ -3,7 +3,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -107,7 +106,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
         author_name: blog.author_name || 'Bilacert Team',
         read_time: blog.read_time || '5 min read',
         category: blog.category || '',
-        tags: blog.tags || '',
+        tags: Array.isArray(blog.tags) ? blog.tags.join(', ') : '',
         excerpt: blog.excerpt || '',
         content: blog.content || '',
         published: blog.published,
@@ -142,24 +141,26 @@ export default function BlogForm({ blog }: BlogFormProps) {
         updated_at: new Date().toISOString(),
       };
 
-      let response;
-      if (blog) {
-        response = await supabase
-          .from('blog_posts')
-          .update(blogData)
-          .eq('id', blog.id);
-      } else {
-        response = await supabase.from('blog_posts').insert([
-          { ...blogData, created_at: new Date().toISOString() },
-        ]);
-      }
+      const response = await fetch(
+        isEditing ? `/api/blogs/${blog!.id}` : '/api/blogs',
+        {
+          method: isEditing ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(
+            isEditing
+              ? blogData
+              : { ...blogData, created_at: new Date().toISOString() }
+          ),
+        }
+      );
 
-      if (response.error) {
-        throw response.error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
 
       toast({
-        title: `Blog post ${blog ? 'updated' : 'created'} successfully!`,
+        title: `Blog post ${isEditing ? 'updated' : 'created'} successfully!`,
       });
       router.push('/admin/blogs');
       router.refresh();

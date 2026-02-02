@@ -1,10 +1,8 @@
-
 'use client';
 
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -191,7 +189,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
     try {
       const transformStringToArray = (str?: string) => str ? str.split('\n').map(s => s.trim()).filter(Boolean) : [];
 
-      const serviceData = {
+      const serviceData: any = {
         title: values.title,
         slug: values.slug,
         href: values.href,
@@ -219,20 +217,22 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         updated_at: new Date().toISOString(),
       };
 
-      let response;
-      if (isEditing) {
-        response = await supabase
-          .from('services')
-          .update(serviceData)
-          .eq('id', service.id);
-      } else {
-        response = await supabase.from('services').insert([
-          { ...serviceData, created_at: new Date().toISOString() },
-        ]);
-      }
+      const response = await fetch(
+        isEditing ? `/api/services/${service!.id}` : '/api/services',
+        {
+          method: isEditing ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(
+            isEditing
+              ? serviceData
+              : { ...serviceData, created_at: new Date().toISOString() }
+          ),
+        }
+      );
 
-      if (response.error) {
-        throw response.error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
 
       toast({
@@ -391,5 +391,3 @@ export default function ServiceForm({ service }: ServiceFormProps) {
     </Form>
   );
 }
-
-    

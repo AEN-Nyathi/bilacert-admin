@@ -1,10 +1,8 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -63,21 +61,19 @@ export default function TestimonialForm({ testimonial }: TestimonialFormProps) {
       const testimonialData = {
         post_url: values.postUrl,
       };
+      
+      const response = await fetch(
+        isEditing ? `/api/testimonials/${testimonial!.id}` : '/api/testimonials',
+        {
+          method: isEditing ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(testimonialData),
+        }
+      );
 
-      let response;
-      if (testimonial) {
-        response = await supabase
-          .from('testimonials')
-          .update(testimonialData)
-          .eq('id', testimonial.id);
-      } else {
-        response = await supabase.from('testimonials').insert([
-          { ...testimonialData },
-        ]);
-      }
-
-      if (response.error) {
-        throw response.error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save testimonial.');
       }
 
       toast({

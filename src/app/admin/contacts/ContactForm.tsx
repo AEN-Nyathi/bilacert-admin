@@ -3,7 +3,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -79,20 +78,18 @@ export default function ContactForm({ contact }: ContactFormProps) {
         message: values.message,
       };
 
-      let response;
-      if (isEditing) {
-        response = await supabase
-          .from('contacts')
-          .update(contactData)
-          .eq('id', contact.id);
-      } else {
-        response = await supabase.from('contacts').insert([
-          { ...contactData },
-        ]);
-      }
+      const response = await fetch(
+        isEditing ? `/api/contacts/${contact!.id}` : '/api/contacts',
+        {
+          method: isEditing ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(contactData),
+        }
+      );
 
-      if (response.error) {
-        throw response.error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save contact.');
       }
 
       toast({

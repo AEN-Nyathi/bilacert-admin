@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -12,7 +11,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabase';
 import type { BlogPost } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
@@ -38,12 +36,14 @@ export default function DeleteBlogDialog({
 
     setIsDeleting(true);
     try {
-      const { error } = await supabase
-        .from('blog_posts')
-        .delete()
-        .eq('id', blog.id);
+      const response = await fetch(`/api/blogs/${blog.id}`, {
+        method: 'DELETE',
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete post.');
+      }
 
       toast({
         title: 'Blog post deleted',
