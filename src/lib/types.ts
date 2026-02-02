@@ -83,9 +83,14 @@ export interface BlogPost {
   category?: string;
   published: boolean;
   createdAt: string;
-  image?: string;
+  featured_image?: string;
+  thumbnail?: string;
   author_name?: string;
   read_time?: string;
+  tags?: string;
+  seo_title?: string;
+  seo_description?: string;
+  seo_keywords?: string;
 }
 
 export interface Contact {
@@ -93,6 +98,6 @@ export interface Contact {
   name: string;
   email: string;
   phone?: string;
-  company?: string;
+  service?: string;
   message?: string;
 }

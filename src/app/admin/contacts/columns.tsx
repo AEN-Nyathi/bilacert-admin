@@ -1,4 +1,3 @@
-
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
@@ -65,9 +64,9 @@ export const columns = ({ onEdit, onDelete }: ColumnsOptions): ColumnDef<Contact
         cell: ({ row }) => row.getValue("phone") || "N/A",
     },
     {
-        accessorKey: "company",
-        header: "Company",
-        cell: ({ row }) => row.getValue("company") || "N/A",
+        accessorKey: "service",
+        header: "Service",
+        cell: ({ row }) => row.getValue("service") || "N/A",
     },
     {
         id: "actions",

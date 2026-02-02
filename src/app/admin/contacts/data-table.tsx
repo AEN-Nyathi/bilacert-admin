@@ -1,4 +1,3 @@
-
 "use client"
 
 import {
@@ -11,6 +10,8 @@ import {
   SortingState,
   RowSelectionState,
   Row,
+  getFilteredRowModel,
+  ColumnFiltersState,
 } from "@tanstack/react-table"
 
 import {
@@ -26,6 +27,7 @@ import { useState } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useRouter } from "next/navigation"
 import type { Contact } from "@/lib/types"
+import { Input } from '@/components/ui/input'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -40,6 +42,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([])
     const [rowSelection, setRowSelection] = useState({})
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const router = useRouter();
 
   const table = useReactTable({
@@ -50,9 +53,12 @@ export function DataTable<TData, TValue>({
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onRowSelectionChange: setRowSelection,
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
     state: {
         sorting,
         rowSelection,
+        columnFilters,
     }
   })
 
@@ -65,6 +71,17 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
+        <div className="flex items-center py-4">
+            <Input
+                placeholder="Filter by name or email..."
+                value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                onChange={(event) => {
+                    table.getColumn("name")?.setFilterValue(event.target.value)
+                    table.getColumn("email")?.setFilterValue(event.target.value)
+                }}
+                className="max-w-sm"
+            />
+        </div>
         <div className="rounded-md border">
         <Table>
             <TableHeader>

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -32,7 +31,7 @@ export function useContacts() {
             name: item.name,
             email: item.email,
             phone: item.phone,
-            company: item.company,
+            service: item.service,
             message: item.message,
         })) as Contact[];
 

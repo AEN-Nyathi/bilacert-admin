@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -27,7 +26,7 @@ const contactSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Please enter a valid email'),
   phone: z.string().optional(),
-  company: z.string().optional(),
+  service: z.string().optional(),
   message: z.string().optional(),
 });
 
@@ -46,7 +45,7 @@ export default function ContactForm({ contact }: ContactFormProps) {
       name: '',
       email: '',
       phone: '',
-      company: '',
+      service: '',
       message: '',
     },
   });
@@ -64,16 +63,8 @@ export default function ContactForm({ contact }: ContactFormProps) {
         name: contact.name,
         email: contact.email,
         phone: contact.phone || '',
-        company: contact.company || '',
+        service: contact.service || '',
         message: contact.message || '',
-      });
-    } else {
-      reset({
-        name: '',
-        email: '',
-        phone: '',
-        company: '',
-        message: '',
       });
     }
   }, [contact, reset]);
@@ -84,7 +75,7 @@ export default function ContactForm({ contact }: ContactFormProps) {
         name: values.name,
         email: values.email,
         phone: values.phone,
-        company: values.company,
+        service: values.service,
         message: values.message,
       };
 
@@ -162,12 +153,12 @@ export default function ContactForm({ contact }: ContactFormProps) {
         />
         <FormField
           control={form.control}
-          name="company"
+          name="service"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Company</FormLabel>
+              <FormLabel>Service</FormLabel>
               <FormControl>
-                <Input placeholder="Acme Inc." {...field} />
+                <Input placeholder="e.g. ICASA Type Approval" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

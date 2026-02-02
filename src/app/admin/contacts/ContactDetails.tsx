@@ -1,4 +1,3 @@
-
 'use client';
 
 import type { Contact } from '@/lib/types';
@@ -83,10 +82,10 @@ export default function ContactDetails({ contact }: ContactDetailsProps) {
                                 </a>
                             </div>
                         )}
-                         {contact.company && (
+                         {contact.service && (
                             <div>
-                                <h4 className="text-sm font-medium text-muted-foreground">Company</h4>
-                                <p className="text-sm text-card-foreground">{contact.company}</p>
+                                <h4 className="text-sm font-medium text-muted-foreground">Service of Interest</h4>
+                                <p className="text-sm text-card-foreground">{contact.service}</p>
                             </div>
                         )}
                     </div>

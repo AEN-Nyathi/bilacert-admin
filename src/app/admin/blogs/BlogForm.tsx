@@ -24,6 +24,7 @@ import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ImageUpload from '@/components/ui/ImageUpload';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const blogSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -31,10 +32,16 @@ const blogSchema = z.object({
   author_name: z.string().optional(),
   read_time: z.string().optional(),
   category: z.string().optional(),
+  tags: z.string().optional(),
   excerpt: z.string().optional(),
   content: z.string().optional(),
   published: z.boolean(),
-  image: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
+  featured_image: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
+  thumbnail: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
+  featured: z.boolean(),
+  seo_title: z.string().optional(),
+  seo_description: z.string().optional(),
+  seo_keywords: z.string().optional(),
 });
 
 type BlogFormValues = z.infer<typeof blogSchema>;
@@ -62,10 +69,16 @@ export default function BlogForm({ blog }: BlogFormProps) {
       author_name: 'Bilacert Team',
       read_time: '5 min read',
       category: '',
+      tags: '',
       excerpt: '',
       content: '',
       published: false,
-      image: '',
+      featured_image: '',
+      thumbnail: '',
+      featured: false,
+      seo_title: '',
+      seo_description: '',
+      seo_keywords: '',
     },
   });
 
@@ -94,10 +107,16 @@ export default function BlogForm({ blog }: BlogFormProps) {
         author_name: blog.author_name || 'Bilacert Team',
         read_time: blog.read_time || '5 min read',
         category: blog.category || '',
+        tags: blog.tags || '',
         excerpt: blog.excerpt || '',
         content: blog.content || '',
         published: blog.published,
-        image: blog.image || '',
+        featured_image: blog.featured_image || '',
+        thumbnail: blog.thumbnail || '',
+        featured: blog.featured || false,
+        seo_title: blog.seo_title || '',
+        seo_description: blog.seo_description || '',
+        seo_keywords: blog.seo_keywords || '',
       });
     }
   }, [blog, reset]);
@@ -110,10 +129,16 @@ export default function BlogForm({ blog }: BlogFormProps) {
         author_name: values.author_name,
         read_time: values.read_time,
         category: values.category,
+        tags: values.tags,
         excerpt: values.excerpt,
         content: values.content,
         published: values.published,
-        image: values.image,
+        featured_image: values.featured_image,
+        thumbnail: values.thumbnail,
+        featured: values.featured,
+        seo_title: values.seo_title,
+        seo_description: values.seo_description,
+        seo_keywords: values.seo_keywords,
         updated_at: new Date().toISOString(),
       };
 
@@ -204,10 +229,28 @@ export default function BlogForm({ blog }: BlogFormProps) {
         />
         <FormField
           control={form.control}
-          name="image"
+          name="featured_image"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image</FormLabel>
+              <FormLabel>Featured Image</FormLabel>
+              <FormControl>
+                <ImageUpload 
+                    bucket='blogs'
+                    initialUrl={field.value}
+                    onUpload={(url) => field.onChange(url)}
+                    onRemove={() => field.onChange('')}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="thumbnail"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Thumbnail Image</FormLabel>
               <FormControl>
                 <ImageUpload 
                     bucket='blogs'
@@ -233,7 +276,20 @@ export default function BlogForm({ blog }: BlogFormProps) {
             </FormItem>
           )}
         />
-          <FormField
+        <FormField
+          control={form.control}
+          name="tags"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tags (comma separated)</FormLabel>
+              <FormControl>
+                <Input placeholder="e.g., icasa, nrcs, compliance" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
           control={form.control}
           name="excerpt"
           render={({ field }) => (
@@ -265,6 +321,34 @@ export default function BlogForm({ blog }: BlogFormProps) {
               <FormMessage />
             </FormItem>
           )}
+        />
+        <Card>
+            <CardHeader>
+                <CardTitle>SEO</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <FormField control={form.control} name="seo_title" render={({ field }) => ( <FormItem><FormLabel>SEO Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                <FormField control={form.control} name="seo_description" render={({ field }) => ( <FormItem><FormLabel>SEO Description</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                <FormField control={form.control} name="seo_keywords" render={({ field }) => ( <FormItem><FormLabel>SEO Keywords (comma separated)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )}/>
+            </CardContent>
+        </Card>
+        <FormField
+            control={form.control}
+            name="featured"
+            render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                <FormLabel>Featured Post</FormLabel>
+                <FormDescription>Display this post prominently.</FormDescription>
+                </div>
+                <FormControl>
+                <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                />
+                </FormControl>
+            </FormItem>
+            )}
         />
         <FormField
           control={form.control}
