@@ -1,3 +1,4 @@
+
 'use client';
 
 import { supabase } from '@/lib/supabase';
@@ -26,7 +27,7 @@ export default function ImageUpload({ bucket, onUpload, initialUrl, onRemove }: 
     setUploading(true);
     try {
       const fileName = `${Date.now()}_${file.name.replace(/\s/g, '_')}`;
-      const filePath = `public/${fileName}`;
+      const filePath = fileName;
 
       const { data, error } = await supabase.storage
         .from(bucket)
