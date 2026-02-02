@@ -111,6 +111,7 @@ export default function ContactForm({ contact }: ContactFormProps) {
         title: 'Error saving contact',
         description: error.message,
       });
+      throw new Error(error.message);
     }
   };
 

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -137,6 +136,7 @@ export default function SubmissionForm({ submission }: SubmissionFormProps) {
         title: 'Error saving submission',
         description: error.message,
       });
+      throw new Error(error.message);
     }
   };
 

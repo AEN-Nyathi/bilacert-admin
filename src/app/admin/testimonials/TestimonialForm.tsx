@@ -96,6 +96,7 @@ export default function TestimonialForm({ testimonial }: TestimonialFormProps) {
         title: 'Error saving testimonial',
         description: error.message,
       });
+      throw new Error(error.message);
     }
   };
 

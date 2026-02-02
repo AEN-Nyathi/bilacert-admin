@@ -255,6 +255,7 @@ export default function ServiceForm({ service }: ServiceFormProps) {
         title: 'Error saving service',
         description: error.message,
       });
+      throw new Error(error.message);
     }
   };
 

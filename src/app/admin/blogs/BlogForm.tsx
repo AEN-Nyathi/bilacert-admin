@@ -148,7 +148,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
           body: JSON.stringify(
             isEditing
               ? blogData
-              : { ...blogData, id: values.slug, created_at: new Date().toISOString() }
+              : { ...blogData, created_at: new Date().toISOString() }
           ),
         }
       );
@@ -178,6 +178,7 @@ export default function BlogForm({ blog }: BlogFormProps) {
         title: 'Error saving blog post',
         description: error.message,
       });
+      throw new Error(error.message);
     }
   };
 
