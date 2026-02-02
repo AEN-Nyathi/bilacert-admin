@@ -50,8 +50,8 @@ const serviceSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   slug: z.string().min(1, 'Slug is required'),
   href: z.string().min(1, 'URL (href) is required').refine(val => val.startsWith('/'), { message: 'Href must start with /' }),
-  category: z.string().optional(),
-  description: z.string().optional(),
+  category: z.string().min(1, 'Category is required'),
+  description: z.string().min(1, 'Description is required'),
   shortDescription: z.string().optional(),
   icon: z.string().optional(),
   orderIndex: z.coerce.number().optional(),
@@ -231,13 +231,21 @@ export default function ServiceForm({ service }: ServiceFormProps) {
       );
 
       if (!response.ok) {
-        let errorMessage = `An API error occurred: ${response.statusText}`;
+        let errorMessage = `An API error occurred (status: ${response.status})`;
         try {
-          const errorData = await response.json();
-          if (errorData && errorData.error) {
-            errorMessage = errorData.error;
-          }
-        } catch (e) {}
+            const errorBody = await response.text();
+            try {
+                const errorData = JSON.parse(errorBody);
+                if (errorData.error) {
+                    errorMessage = errorData.error;
+                }
+            } catch (parseError) {
+                console.error("API response was not JSON:", errorBody);
+                errorMessage = "A server error occurred. Please check the console for details."
+            }
+        } catch (e) {
+            console.error("Could not read API error response body:", e);
+        }
         throw new Error(errorMessage);
       }
 
