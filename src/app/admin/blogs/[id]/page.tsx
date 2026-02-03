@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/supabase';
 import BlogDetails from '../BlogDetails';
 import { notFound } from 'next/navigation';
 import type { BlogPost } from '@/lib/types';

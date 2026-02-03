@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { submitContactForm } from '@/app/contact/actions';
 
 export interface FormSubmissionPayload {
-	formType: string; // 'contact', 'service-form', etc.
 	serviceId?: string; // Optional: which service the form is for
 	fullName: string;
 	email: string;
@@ -27,7 +27,7 @@ export interface UseFormSubmissionState {
 }
 
 /**
- * Hook for submitting forms to Supabase via the /api/form-submissions endpoint
+ * Hook for submitting forms to Supabase via Server Actions
  */
 export function useFormSubmission() {
 	const [isLoading, setIsLoading] = useState(false);
@@ -41,24 +41,16 @@ export function useFormSubmission() {
 			setSuccessMessage(null);
 
 			try {
-				const response = await fetch('/api/form-submissions', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(payload),
-				});
+        const result = await submitContactForm({ ...payload, formType: 'contact' });
 
-				const data = (await response.json()) as FormSubmissionResponse;
-
-				if (!response.ok) {
-					const errorMessage = data.error || 'Failed to submit form. Please try again.';
+				if (!result.success) {
+					const errorMessage = result.message || 'Failed to submit form. Please try again.';
 					setError(errorMessage);
 					return { success: false, message: errorMessage };
 				}
 
-				setSuccessMessage(data.message);
-				return data;
+				setSuccessMessage(result.message);
+				return result;
 			} catch (err) {
 				const errorMessage =
 					err instanceof Error ? err.message : 'An unexpected error occurred';

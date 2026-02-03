@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { Contact } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import { deleteContact } from './actions';
 
 interface DeleteContactDialogProps {
   isOpen: boolean;
@@ -37,21 +38,10 @@ export default function DeleteContactDialog({
 
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/contacts/${contact.id}`, {
-        method: 'DELETE',
-      });
-      
-      if (!response.ok) {
-        let errorMessage = `API Error: ${response.status} ${response.statusText}`;
-        try {
-            const errorData = await response.json();
-            if (errorData.error) {
-                errorMessage = errorData.error;
-            }
-        } catch (jsonError) {
-            console.error("Could not parse JSON from error response.");
-        }
-        throw new Error(errorMessage);
+      const result = await deleteContact(contact.id);
+
+      if (result?.error) {
+        throw new Error(result.error);
       }
 
       toast({
@@ -60,8 +50,6 @@ export default function DeleteContactDialog({
       });
       if (onDeleted) {
         onDeleted();
-      } else {
-        onClose();
       }
     } catch (error: any) {
       toast({
@@ -71,6 +59,7 @@ export default function DeleteContactDialog({
       });
     } finally {
       setIsDeleting(false);
+      onClose();
     }
   };
 

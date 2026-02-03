@@ -1,7 +1,7 @@
 'use client';
 
 import { useUser } from '@/hooks/useUser';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/supabase';
 import {
   DropdownMenu,
   DropdownMenuContent,

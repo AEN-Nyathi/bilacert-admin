@@ -3,7 +3,6 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -20,12 +19,10 @@ import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { testimonialSchema } from './schema';
+import { upsertTestimonial } from './actions';
 
-const testimonialSchema = z.object({
-  postUrl: z.string().url('Please enter a valid Facebook post URL'),
-});
-
-type TestimonialFormValues = z.infer<typeof testimonialSchema>;
+type TestimonialFormValues = Zod.infer<typeof testimonialSchema>;
 
 interface TestimonialFormProps {
   testimonial?: Testimonial | null;
@@ -59,34 +56,15 @@ export default function TestimonialForm({ testimonial }: TestimonialFormProps) {
 
   const onSubmit = async (values: TestimonialFormValues) => {
     try {
-      const testimonialData = {
-        post_url: values.postUrl,
-      };
-      
-      const response = await fetch(
-        isEditing ? `/api/testimonials/${testimonial!.id}` : '/api/testimonials',
-        {
-          method: isEditing ? 'PUT' : 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(testimonialData),
-        }
-      );
 
-      if (!response.ok) {
-        let errorMessage = `API Error: ${response.status} ${response.statusText}`;
-        try {
-            const errorData = await response.json();
-            if (errorData.error) {
-                errorMessage = errorData.error;
-            }
-        } catch (jsonError) {
-            console.error("Could not parse JSON from error response.");
-        }
-        throw new Error(errorMessage);
+      const result = await upsertTestimonial(values, testimonial?.id);
+
+      if (result.error) {
+        throw new Error(result.error);
       }
 
       toast({
-        title: `Testimonial ${testimonial ? 'updated' : 'added'} successfully!`,
+        title: result.message,
       });
       router.push('/admin/testimonials');
       router.refresh();
@@ -97,7 +75,6 @@ export default function TestimonialForm({ testimonial }: TestimonialFormProps) {
         title: 'Error saving testimonial',
         description: error.message,
       });
-      throw new Error(error.message);
     }
   };
 

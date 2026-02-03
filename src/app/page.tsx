@@ -211,7 +211,7 @@ export default async function HomePage() {
 									<Icon name={service.icon || 'Shield'} className='h-8 w-8' />
 								</div>
 								<h3 className='text-xl font-semibold text-primary mb-3'>{service.title}</h3>
-								<p className='text-gray-600 mb-4'>{service.shortDescription}</p>
+								<p className='text-gray-600 mb-4'>{service.short_description}</p>
 								<div className='flex items-center text-accent font-medium'>
 									Learn More
 									<ArrowRight className='h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-200' />

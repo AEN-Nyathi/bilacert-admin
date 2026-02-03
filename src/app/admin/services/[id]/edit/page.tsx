@@ -1,5 +1,5 @@
-import { supabase } from '@/lib/supabase';
-import ServiceForm from '../../new/ServiceForm';
+import { createSupabaseAdminClient } from '@/lib/supabase/admin';
+import ServiceForm from '../../ServiceForm';
 import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import type { Service } from '@/lib/types';
@@ -12,51 +12,28 @@ export const metadata = {
     description: 'Edit an existing regulatory service.',
 };
 
+
+
+
 async function getService(id: string): Promise<Service | null> {
+    const supabase = createSupabaseAdminClient();
     const { data, error } = await supabase
         .from('services')
         .select('*')
         .eq('id', id)
         .single();
 
-    if (error || !data) {
+    if (error) {
+        console.error('Error fetching service:', error);
         return null;
     }
 
-    return {
-        id: data.id,
-        title: data.title,
-        slug: data.slug,
-        href: data.href,
-        category: data.category,
-        description: data.description,
-        shortDescription: data.short_description,
-        icon: data.icon,
-        orderIndex: data.order_index,
-        content: data.content,
-        features: data.features,
-        requirements: data.requirements,
-        includes: data.includes,
-        published: data.published,
-        featured: data.featured,
-        createdAt: data.created_at,
-        processingTime: data.processing_time,
-        pricing: data.pricing,
-        image: data.image,
-        thumbnail: data.thumbnail,
-        seoTitle: data.seo_title,
-        seoDescription: data.seo_description,
-        seoKeywords: data.seo_keywords,
-        pricingPlans: data.pricing_plans,
-        processSteps: data.process_steps,
-        successStory: data.success_story,
-    } as Service;
+    return data as Service;
 }
 
-
-export default async function EditServicePage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
-    const service = await getService(id);
+export default async function EditServicePage({ params }:  { params: Promise<{ id: string }> } ) {
+    const slug = (await params).id;
+    const service = await getService(slug);
 
     if (!service) {
         notFound();

@@ -177,10 +177,10 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
                                 <p className="text-sm text-card-foreground">{service.description}</p>
                             </div>
                         )}
-                        {service.shortDescription && (
+                        {service.short_description && (
                             <div>
                                 <h4 className="text-sm font-medium text-muted-foreground">Short Description</h4>
-                                <p className="text-sm text-card-foreground">{service.shortDescription}</p>
+                                <p className="text-sm text-card-foreground">{service.short_description}</p>
                             </div>
                         )}
                         {service.content && (
@@ -226,16 +226,16 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
                                 </div>
                             </div>
                         )}
-                        {service.orderIndex !== undefined && (
+                        {service.order_index !== undefined && (
                              <div>
                                 <h4 className="text-sm font-medium text-muted-foreground">Order Index</h4>
-                                <p className="text-sm text-card-foreground">{service.orderIndex}</p>
+                                <p className="text-sm text-card-foreground">{service.order_index}</p>
                             </div>
                         )}
-                        {service.processingTime && (
+                        {service.processing_time && (
                             <div>
                                 <h4 className="text-sm font-medium text-muted-foreground">Processing Time</h4>
-                                <p className="text-sm text-card-foreground">{service.processingTime}</p>
+                                <p className="text-sm text-card-foreground">{service.processing_time}</p>
                             </div>
                         )}
                         {service.pricing !== null && service.pricing !== undefined && (
@@ -246,7 +246,7 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
                         )}
                          <div>
                             <h4 className="text-sm font-medium text-muted-foreground">Created At</h4>
-                            <p className="text-sm text-card-foreground">{format(new Date(service.createdAt), 'PPpp')}</p>
+                            <p className="text-sm text-card-foreground">{format(new Date(service.created_at), 'PPpp')}</p>
                         </div>
                     </div>
                 </div>
@@ -270,26 +270,26 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
                         </div>
                     </div>
                 )}
-                 {(service.seoTitle || service.seoDescription || service.seoKeywords) && (
+                 {(service.seo_title || service.seo_description || service.seo_keywords) && (
                     <div className="mt-6 border-t pt-6">
                         <h3 className="text-lg font-medium mb-4">SEO</h3>
                         <div className="grid md:grid-cols-2 gap-6">
-                        {service.seoTitle && (
+                        {service.seo_title && (
                             <div>
                             <h4 className="text-sm font-medium text-muted-foreground">SEO Title</h4>
-                            <p className="text-sm text-card-foreground">{service.seoTitle}</p>
+                            <p className="text-sm text-card-foreground">{service.seo_title}</p>
                             </div>
                         )}
-                        {service.seoDescription && (
+                        {service.seo_description && (
                             <div>
                             <h4 className="text-sm font-medium text-muted-foreground">SEO Description</h4>
-                            <p className="text-sm text-card-foreground">{service.seoDescription}</p>
+                            <p className="text-sm text-card-foreground">{service.seo_description}</p>
                             </div>
                         )}
-                        {service.seoKeywords && (
+                        {service.seo_keywords && (
                              <div className="col-span-full">
                             <h4 className="text-sm font-medium text-muted-foreground">SEO Keywords</h4>
-                            <p className="text-sm text-card-foreground">{service.seoKeywords}</p>
+                            <p className="text-sm text-card-foreground">{service.seo_keywords}</p>
                             </div>
                         )}
                         </div>
@@ -298,15 +298,15 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
 
                 <div className="mt-6 border-t pt-6">
                     <h3 className="text-lg font-medium mb-4">Pricing Plans</h3>
-                    {renderPricingPlans(service.pricingPlans)}
+                    {renderPricingPlans(service.pricing_plans)}
                 </div>
                  <div className="mt-6 border-t pt-6">
                     <h3 className="text-lg font-medium mb-4">Process Steps</h3>
-                    {renderProcessSteps(service.processSteps)}
+                    {renderProcessSteps(service.process_steps)}
                 </div>
                  <div className="mt-6 border-t pt-6">
                     <h3 className="text-lg font-medium mb-4">Success Story</h3>
-                    {renderSuccessStory(service.successStory)}
+                    {renderSuccessStory(service.success_story)}
                 </div>
 
             </CardContent>

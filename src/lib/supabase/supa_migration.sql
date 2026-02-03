@@ -1,7 +1,7 @@
 -- Drop existing tables to start fresh
-DROP TABLE IF EXISTS services;
-DROP TABLE IF EXISTS blog_posts;
-DROP TABLE IF EXISTS testimonials;
+DROP TABLE IF EXISTS services CASCADE;
+DROP TABLE IF EXISTS blog_posts CASCADE;
+DROP TABLE IF EXISTS testimonials CASCADE;
 
 -- Create services table with all fields including JSONB for structured data
 CREATE TABLE services (
@@ -41,6 +41,8 @@ CREATE TABLE blog_posts (
   excerpt TEXT,
   content TEXT,
   category TEXT,
+  author TEXT,
+  read_time TEXT,
   published BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   image TEXT
@@ -53,7 +55,7 @@ CREATE TABLE testimonials (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Seed Services Data from bilacert.xml structure
+-- Seed Services Data
 
 -- 1. ICASA Type Approvals
 INSERT INTO services (title, slug, href, category, description, short_description, icon, content, features, requirements, includes, published, featured, processing_time, pricing, image, thumbnail, seo_title, seo_description, seo_keywords, pricing_plans, process_steps, success_story)
@@ -110,8 +112,6 @@ VALUES (
   '[{"step": "1", "title": "Consultation & Eligibility Check", "description": "We assess whether your business requires a Class ECS or ECNS license and identify necessary documentation."}, {"step": "2", "title": "Application Preparation", "description": "Our experts compile, review, and prepare all required documents for complete and accurate submission."}, {"step": "3", "title": "Submission & ICASA Liaison", "description": "We submit the application and manage all interactions with ICASA to streamline the approval process."}, {"step": "4", "title": "License Approval & Issuance", "description": "Once approved, we ensure you receive your official ICASA license."}, {"step": "5", "title": "Post-License Compliance", "description": "We provide ongoing support for license renewals, amendments, and regulatory compliance updates."}]',
   '{"scenario": "A startup launching a VoIP communication platform needed an ECS license to operate legally.", "challenge": "They were unfamiliar with ICASA''s licensing requirements and needed guidance on the application process.", "solution": "Bilacert assessed their needs, filed their application, and ensured they met ICASA''s operational requirements.", "result": "The startup received their ECS license efficiently, allowing them to launch their VoIP platform legally and focus on growing their business."}'
 );
-
--- Repeat for the other 4 services...
 
 -- 3. License Exemptions
 INSERT INTO services (title, slug, href, category, description, short_description, icon, content, features, requirements, includes, published, featured, processing_time, pricing, image, thumbnail, seo_title, seo_description, seo_keywords, pricing_plans, process_steps, success_story)
@@ -226,7 +226,7 @@ VALUES (
 );
 
 -- Seed Blog Posts Data
-INSERT INTO blog_posts (slug, title, excerpt, content, category, published, image) VALUES
+INSERT INTO blog_posts (slug, title, excerpt, content, category, published, image, author, read_time) VALUES
 (
   'icasa-type-approval-requirements',
   'Understanding ICASA Type Approval Requirements',
@@ -234,7 +234,9 @@ INSERT INTO blog_posts (slug, title, excerpt, content, category, published, imag
   E'<p>ICASA (Independent Communications Authority of South Africa) type approval is a mandatory certification process for all electronic communication equipment before it can be sold or used in South Africa. This comprehensive guide will help you understand the requirements and navigate the process successfully.</p>\n      \n      <h2>What is ICASA Type Approval?</h2>\n      <p>ICASA type approval ensures that electronic communication devices meet South African regulatory, technical, and safety standards. This includes telecommunications equipment, radio frequency devices, and other electronic communication products.</p>\n      \n      <h2>Types of ICASA Approvals</h2>\n      <h3>Standard Type Approval</h3>\n      <p>Required for most telecommunications and radio frequency devices. This is the most common type of approval and involves comprehensive testing and documentation.</p>\n      \n      <h3>Simplified Type Approval</h3>\n      <p>Available for products that meet specific pre-approved conditions. This streamlined process is faster and less expensive for qualifying products.</p>\n      \n      <h3>Tested & Untested Approvals</h3>\n      <p>We guide clients through the decision-making process, ensuring they select the right approval method based on their product specifications and requirements.</p>\n      \n      <h2>The Application Process</h2>\n      <p>Our team handles the entire application process, from initial assessment to final approval. We ensure all documentation is complete and accurate, minimizing delays and maximizing success rates.</p>\n      \n      <h2>Why Choose Bilacert?</h2>\n      <p>With our expertise and streamlined processes, we typically reduce approval times by 30% compared to industry average, while maintaining a 100% success rate on first-time applications.</p>',
   'ICASA Approvals',
   TRUE,
-  '/ICASA.png'
+  '/ICASA.png',
+  'Bilacert Team',
+  '5 min read'
 ),
 (
   'nrcs-loa-guide',
@@ -243,7 +245,9 @@ INSERT INTO blog_posts (slug, title, excerpt, content, category, published, imag
   E'<p>The National Regulator for Compulsory Specifications (NRCS) Letter of Authority (LOA) is a critical certification for electrical and electronic products entering the South African market.</p>\n      \n      <h2>What is an NRCS LOA?</h2>\n      <p>An NRCS LOA is a certificate that confirms your product meets South African safety and quality standards. It''s required for certain electrical and electronic products before they can be imported, sold, or distributed.</p>\n      \n      <h2>Which Products Require an LOA?</h2>\n      <p>Products that typically require an NRCS LOA include electrical appliances, electronic devices, lighting products, and other regulated electrical equipment.</p>\n      \n      <h2>The Application Process</h2>\n      <p>Our team manages the entire LOA application process, including product assessment, documentation preparation, testing coordination, and submission to NRCS.</p>',
   'NRCS Compliance',
   TRUE,
-  '/NRCS.jpg'
+  '/NRCS.jpg',
+  'Bilacert Team',
+  '7 min read'
 );
 
 

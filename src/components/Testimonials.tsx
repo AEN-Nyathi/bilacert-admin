@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Testimonial } from '@/lib/types';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/supabase';
 import { Card, CardContent } from '@/components/ui/card';
 
 declare global {

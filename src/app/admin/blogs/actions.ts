@@ -13,9 +13,14 @@ export async function upsertBlog(values: unknown, blogId?: string) {
     return { error: parsedValues.error.message };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { id,slug, ...rest } = parsedValues.data;
+
+  const dataToUpsert = slug ? { ...rest, id: slug, slug:slug } : rest;
+
   const { data: blogData, error } = await supabase
     .from('blog_posts')
-    .upsert(blogId ? { ...parsedValues.data, id: blogId } : parsedValues.data)
+    .upsert(dataToUpsert)
     .select('*')
     .single();
 

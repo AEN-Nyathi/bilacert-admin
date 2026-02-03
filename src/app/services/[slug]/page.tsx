@@ -11,7 +11,7 @@ import type { PricingPlan, ProcessStep, SuccessStory } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 
 interface ServicePageProps {
-	params: Promise<{ slug: string }>;
+	params: { slug: string };
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
@@ -22,20 +22,22 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 			title: 'Service Not Found'
 		}
 	}
+    
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 	return {
-		title: service.seoTitle || service.title,
-		description: service.seoDescription || service.description,
-		keywords: service.seoKeywords ? service.seoKeywords.split(',') : [service.title, service.category],
+		title: service.seo_title || service.title,
+		description: service.seo_description || service.description,
+		keywords: service.seo_keywords ? service.seo_keywords.split(',') : [service.title, service.category],
 		openGraph: {
-			title: service.seoTitle || service.title,
-			description: service.seoDescription || service.description,
-			url: `https://bilacert.co.za${service.href}`,
+			title: service.seo_title || service.title,
+			description: service.seo_description || service.description,
+			url: `${siteUrl}${service.href}`,
 			type: 'website',
 			images: service.image ? [{ url: service.image }] : [],
 		},
 		alternates: {
-			canonical: `https://bilacert.co.za${service.href}`,
+			canonical: `${siteUrl}${service.href}`,
 		},
 	};
 }
@@ -148,13 +150,15 @@ const renderSuccessStory = (story: SuccessStory | undefined) => {
 };
 
 
-export default async function ServiceDetailPage({ params }: ServicePageProps) {
+export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
 	const service = await getServiceBySlug(slug);
 
 	if (!service) {
 		notFound();
 	}
+
+    const formPath = `/forms/${slug}`;
 
 	return (
 		<div className='min-h-screen'>
@@ -179,9 +183,9 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                             <p className="text-accent font-semibold">{service.category}</p>
                         </div>
 						<h1 className='text-4xl lg:text-5xl font-bold mb-4'>{service.title}</h1>
-						<p className='text-xl text-gray-200 mb-8'>{service.shortDescription || service.description}</p>
+						<p className='text-xl text-gray-200 mb-8'>{service.short_description || service.description}</p>
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <Button size="lg" asChild><Link href={service.href.replace('/services/', '/forms/')}>Get a Quote</Link></Button>
+                            <Button size="lg" asChild><Link href={formPath}>Get a Quote</Link></Button>
                             <Button size="lg" variant="outline" asChild><a href="tel:0754304433">Call Now</a></Button>
                         </div>
 					</div>
@@ -215,9 +219,9 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                 </div>
             </section>
 
-			{renderPricingPlans(service.pricingPlans, service.href.replace('/services/', '/forms/'))}
-			{renderProcessSteps(service.processSteps)}
-			{renderSuccessStory(service.successStory)}
+			{renderPricingPlans(service.pricing_plans, formPath)}
+			{renderProcessSteps(service.process_steps)}
+			{renderSuccessStory(service.success_story)}
 		</div>
 	);
 }

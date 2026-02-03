@@ -23,7 +23,7 @@ import {
   Users,
   FileSpreadsheet,
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/supabase';
 import { useToast } from '@/hooks/use-toast';
 
 const navItems = [

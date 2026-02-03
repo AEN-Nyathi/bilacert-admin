@@ -10,11 +10,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import type { Submission } from '@/lib/types';
 import { statusVariantMap } from './columns';
 import { Loader2 } from 'lucide-react';
+import { updateSubmissionStatus } from './actions';
 
 interface StatusUpdateProps {
   submission: Submission;
@@ -27,17 +27,14 @@ export default function StatusUpdate({ submission }: StatusUpdateProps) {
   const [currentStatus, setCurrentStatus] = useState(submission.status);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleStatusChange = async (newStatus: string) => {
+  const handleStatusChange = async (newStatus: Submission['status']) => {
     if (newStatus === currentStatus) return;
 
     setIsLoading(true);
     try {
-      const { error } = await supabase
-        .from('form_submissions')
-        .update({ status: newStatus, updated_at: new Date().toISOString() })
-        .eq('id', submission.id);
+      const result = await updateSubmissionStatus(submission.id, newStatus);
 
-      if (error) throw error;
+      if (result.error) throw new Error(result.error);
 
       setCurrentStatus(newStatus as Submission['status']);
       toast({

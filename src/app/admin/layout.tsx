@@ -8,7 +8,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import AdminSidebar from '@/components/admin/Sidebar';
 import AdminHeader from '@/components/admin/Header';
 import { Loader2 } from 'lucide-react';
-import { isSupabaseConfigured } from '@/lib/supabase';
+import { isSupabaseConfigured } from '@/lib/supabase/supabase';
 import SupabaseNotConfigured from '@/components/admin/SupabaseNotConfigured';
 
 export default function AdminLayout({

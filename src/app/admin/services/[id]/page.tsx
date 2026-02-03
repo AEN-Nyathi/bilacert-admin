@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/supabase';
 import ServiceDetails from './ServiceDetails';
 import { notFound } from 'next/navigation';
 import type { Service } from '@/lib/types';
@@ -22,26 +22,26 @@ async function getService(id: string): Promise<Service | null> {
         href: data.href,
         category: data.category,
         description: data.description,
-        shortDescription: data.short_description,
+        short_description: data.short_description,
         icon: data.icon,
-        orderIndex: data.order_index,
+        order_index: data.order_index,
         content: data.content,
         features: data.features,
         requirements: data.requirements,
         includes: data.includes,
         published: data.published,
         featured: data.featured,
-        createdAt: data.created_at,
-        processingTime: data.processing_time,
+        created_at: data.created_at,
+        processing_time: data.processing_time,
         pricing: data.pricing,
         image: data.image,
         thumbnail: data.thumbnail,
-        seoTitle: data.seo_title,
-        seoDescription: data.seo_description,
-        seoKeywords: data.seo_keywords,
-        pricingPlans: data.pricing_plans,
-        processSteps: data.process_steps,
-        successStory: data.success_story,
+        seo_title: data.seo_title,
+        seo_description: data.seo_description,
+        seo_keywords: data.seo_keywords,
+        pricing_plans: data.pricing_plans,
+        process_steps: data.process_steps,
+        success_story: data.success_story,
     } as Service;
 }
 

@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/supabase';
 import ContactDetails from '../ContactDetails';
 import { notFound } from 'next/navigation';
 import type { Contact } from '@/lib/types';
@@ -22,6 +22,7 @@ async function getContact(id: string): Promise<Contact | null> {
         phone: data.phone,
         company: data.company,
         message: data.message,
+        submitted_at: data.submitted_at,
     } as Contact;
 }
 
@@ -37,8 +38,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     }
 }
 
-export default async function ContactDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+export default async function ContactDetailsPage({ params }: { params: { id: string } }) {
+    const { id } = params;
     const contact = await getContact(id);
 
     if (!contact) {

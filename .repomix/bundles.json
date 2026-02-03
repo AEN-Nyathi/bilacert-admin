@@ -1,0 +1,13 @@
+{
+  "bundles": {
+    "bilacert-879": {
+      "name": "bilacert",
+      "created": "2026-02-03T16:27:05.012Z",
+      "lastUsed": "2026-02-03T16:27:05.012Z",
+      "tags": [],
+      "files": [
+        "src"
+      ]
+    }
+  }
+}

@@ -44,30 +44,30 @@ export interface Service {
   id: string;
   title: string;
   description: string;
-  shortDescription?: string;
+  short_description?: string;
   slug: string;
   icon?: string;
   href: string;
   category: string;
-  orderIndex?: number;
+  order_index?: number;
   content?: string;
   features?: string[];
   requirements?: string[];
   includes?: string[];
   published: boolean;
   featured: boolean;
-  createdAt: string;
-  processingTime?: string;
+  created_at: string;
+  processing_time?: string;
   pricing?: number;
   image?: string;
   thumbnail?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoKeywords?: string;
-  pricingPlans?: PricingPlan[];
-  processSteps?: ProcessStep[];
-  successStory?: SuccessStory;
-  updatedAt?: string;
+  seo_title?: string;
+  seo_description?: string;
+  seo_keywords?: string;
+  pricing_plans?: PricingPlan[];
+  process_steps?: ProcessStep[];
+  success_story?: SuccessStory;
+  updated_at?: string;
 }
 
 export interface Testimonial {

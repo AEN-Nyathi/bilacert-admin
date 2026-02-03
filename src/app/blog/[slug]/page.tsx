@@ -8,10 +8,10 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 
 interface BlogPostPageProps {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const post = await getBlogPostBySlug(params.slug);
 
   if (!post) {
@@ -19,6 +19,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title: 'Blog Post Not Found'
     }
   }
+  
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
   return {
     title: post.title,
@@ -26,7 +28,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      url: `https://bilacert.co.za/blog/${post.slug}`,
+      url: `${siteUrl}/blog/${post.slug}`,
       type: 'article',
       publishedTime: post.createdAt,
       images: post.featured_image ? [{ url: post.featured_image }] : [],
@@ -40,7 +42,7 @@ export async function generateStaticParams() {
     return slugs;
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   
   const post = await getBlogPostBySlug(slug);
@@ -111,6 +113,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <section className="py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-card rounded-xl shadow-sm p-8 lg:p-12">
+            {/* 
+              NOTE: Using dangerouslySetInnerHTML can be a security risk if the content is not properly sanitized.
+              In a real-world application, you would want to use a library like DOMPurify to sanitize the HTML before rendering it.
+            */}
             <div
               className="prose prose-lg max-w-none dark:prose-invert"
               dangerouslySetInnerHTML={{ __html: post.content || '' }}

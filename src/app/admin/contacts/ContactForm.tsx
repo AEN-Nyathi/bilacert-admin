@@ -3,7 +3,6 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -21,16 +20,10 @@ import { Loader2 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { contactSchema } from './schema';
+import { upsertContact } from './actions';
 
-const contactSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Please enter a valid email'),
-  phone: z.string().optional(),
-  service: z.string().optional(),
-  message: z.string().optional(),
-});
-
-type ContactFormValues = z.infer<typeof contactSchema>;
+type ContactFormValues = Zod.infer<typeof contactSchema>;
 
 interface ContactFormProps {
   contact?: Contact | null;
@@ -71,38 +64,14 @@ export default function ContactForm({ contact }: ContactFormProps) {
 
   const onSubmit = async (values: ContactFormValues) => {
     try {
-      const contactData = {
-        name: values.name,
-        email: values.email,
-        phone: values.phone,
-        service: values.service,
-        message: values.message,
-      };
+      const result = await upsertContact(values, contact?.id);
 
-      const response = await fetch(
-        isEditing ? `/api/contacts/${contact!.id}` : '/api/contacts',
-        {
-          method: isEditing ? 'PUT' : 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(contactData),
-        }
-      );
-      
-      if (!response.ok) {
-        let errorMessage = `API Error: ${response.status} ${response.statusText}`;
-        try {
-            const errorData = await response.json();
-            if (errorData.error) {
-                errorMessage = errorData.error;
-            }
-        } catch (jsonError) {
-            console.error("Could not parse JSON from error response.");
-        }
-        throw new Error(errorMessage);
+      if (result.error) {
+        throw new Error(result.error);
       }
 
       toast({
-        title: `Contact ${isEditing ? 'updated' : 'added'} successfully!`,
+        title: result.message,
       });
       router.push('/admin/contacts');
       router.refresh();
@@ -112,7 +81,6 @@ export default function ContactForm({ contact }: ContactFormProps) {
         title: 'Error saving contact',
         description: error.message,
       });
-      throw new Error(error.message);
     }
   };
 
@@ -165,7 +133,7 @@ export default function ContactForm({ contact }: ContactFormProps) {
             <FormItem>
               <FormLabel>Service</FormLabel>
               <FormControl>
-                <Input placeholder="e.g. ICASA Type Approval" {...field} />
+                <Input placeholder="e.g. Web Development" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

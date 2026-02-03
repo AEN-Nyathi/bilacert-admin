@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase/supabase';
 import SubmissionDetails from '../SubmissionDetails';
 import { notFound } from 'next/navigation';
 import type { Submission } from '@/lib/types';

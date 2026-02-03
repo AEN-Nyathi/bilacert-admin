@@ -2,8 +2,6 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -28,29 +26,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { submissionSchema } from './schema';
+import { upsertSubmission } from './actions';
 
-const submissionSchema = z.object({
-  fullName: z.string().min(1, 'Full name is required'),
-  email: z.string().email(),
-  phone: z.string().optional(),
-  company: z.string().optional(),
-  industry: z.string().optional(),
-  serviceName: z.string().optional(),
-  status: z.enum(['pending', 'in-progress', 'completed', 'rejected', 'archived']),
-  details: z.string().optional().refine((val) => {
-    if (!val || val.trim() === '') return true;
-    try {
-      JSON.parse(val);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }, { message: 'Details must be a valid JSON object.' }),
-  internalNotes: z.string().optional(),
-  assignedTo: z.string().optional(),
-});
-
-type SubmissionFormValues = z.infer<typeof submissionSchema>;
+type SubmissionFormValues = Zod.infer<typeof submissionSchema>;
 
 interface SubmissionFormProps {
   submission: Submission;
@@ -100,33 +79,14 @@ export default function SubmissionForm({ submission }: SubmissionFormProps) {
 
   const onSubmit = async (values: SubmissionFormValues) => {
     try {
-      const submissionData = {
-        full_name: values.fullName,
-        email: values.email,
-        phone: values.phone,
-        company: values.company,
-        industry: values.industry,
-        service_name: values.serviceName,
-        status: values.status,
-        details: values.details ? JSON.parse(values.details) : null,
-        internal_notes: values.internalNotes,
-        assigned_to: values.assignedTo || null,
-        updated_at: new Date().toISOString(),
-      };
+      const result = await upsertSubmission(values, submission.id);
 
-      const { error } = await supabase
-          .from('form_submissions')
-          .update(submissionData)
-          .eq('id', submission.id)
-          .select()
-          .single();
-
-      if (error) {
-        throw error;
+      if (result.error) {
+        throw new Error(result.error);
       }
       
       toast({
-        title: `Submission updated successfully!`,
+        title: result.message,
       });
       router.push(`/admin/form_submissions/${submission.id}`);
       router.refresh();
@@ -136,7 +96,6 @@ export default function SubmissionForm({ submission }: SubmissionFormProps) {
         title: 'Error saving submission',
         description: error.message,
       });
-      throw new Error(error.message);
     }
   };
 

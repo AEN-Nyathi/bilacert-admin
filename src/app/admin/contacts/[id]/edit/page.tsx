@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+ import { supabase } from '@/lib/supabase/supabase';
 import ContactForm from '../../ContactForm';
 import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -30,6 +30,7 @@ async function getContact(id: string): Promise<Contact | null> {
         phone: data.phone,
         company: data.company,
         message: data.message,
+        submitted_at: data.submitted_at,
     } as Contact;
 }
 

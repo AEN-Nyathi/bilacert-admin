@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server'
 // This function creates a Supabase client for use in API routes
 // and ensures that the user is an authenticated admin.
 export async function createAdminApiClient() {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
